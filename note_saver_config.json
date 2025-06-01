@@ -1,0 +1,11 @@
+{
+  "log_file": "logs/notes.md",
+  "image_dir": "logs/images",
+  "auto_timestamp": true,
+  "date_format": "%Y-%m-%d %H:%M:%S",
+  "markdown_format": true,
+  "auto_backup": false,
+  "max_image_size": 1024,
+  "compress_images": true,
+  "language": "zh-CN"
+}

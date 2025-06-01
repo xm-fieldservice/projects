@@ -1,0 +1,461 @@
+<!--
+FILE: demo.html
+REQ: 演示如何在任意页面中调用NoteSaver工具包
+CHECK: 工具包引入,API调用,真实本地路径选择,外部应用模拟
+HIST: 2025-01-31-AI生成
+-->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NoteSaver工具包 - 外部应用演示</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f7fa;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .demo-section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .demo-section h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 5px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .textarea {
+            width: 100%;
+            min-height: 120px;
+            padding: 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 16px;
+            font-family: inherit;
+            resize: vertical;
+            margin: 10px 0;
+        }
+
+        .textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .status {
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px 0;
+            font-weight: 500;
+        }
+
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .status.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .code-block {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+        }
+
+        .image-preview {
+            max-width: 100%;
+            margin: 10px 0;
+            text-align: center;
+        }
+
+        .image-preview img {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 8px;
+            border: 2px solid #e1e5e9;
+        }
+
+        .path-display {
+            background: #e8f4fd;
+            border: 1px solid #bee5eb;
+            border-radius: 8px;
+            padding: 10px;
+            margin: 10px 0;
+            font-family: monospace;
+            color: #0c5460;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🔧 NoteSaver 工具包</h1>
+        <p>模拟任意外部应用调用笔记保存功能</p>
+    </div>
+
+    <!-- 工具包状态 -->
+    <div class="demo-section">
+        <h2>🚀 工具包状态</h2>
+        <div id="toolkit-status" class="status info">正在初始化NoteSaver工具包...</div>
+        <div id="current-path" class="path-display hidden">当前保存路径: 未设置</div>
+        
+        <!-- 浏览器兼容性提示 -->
+        <div id="browser-support" class="status info" style="margin-top: 15px;">
+            <strong>💡 浏览器支持说明：</strong><br>
+            • <span id="fs-support-status">正在检测...</span><br>
+            • 推荐使用Chrome 86+或Edge 86+获得最佳体验<br>
+            • 较旧浏览器将使用降级方案（保存到项目目录）
+        </div>
+    </div>
+
+    <!-- 1. 路径选择演示 -->
+    <div class="demo-section">
+        <h2>📁 1. 路径选择功能</h2>
+        <p>模拟外部应用需要选择本地保存路径：</p>
+        <button id="btn-select-path" class="btn">选择本地文件路径</button>
+        <div class="code-block">
+            <strong>调用代码:</strong><br>
+            <code>await noteSaver.selectFilePath();</code>
+        </div>
+    </div>
+
+    <!-- 2. 内容输入演示 -->
+    <div class="demo-section">
+        <h2>✏️ 2. 内容输入功能</h2>
+        <p>模拟外部应用的输入框（支持Ctrl+V粘贴图片）：</p>
+        <textarea id="content-input" class="textarea" placeholder="在这里输入内容...
+
+支持Ctrl+V粘贴剪贴板图片
+这是模拟外部应用的输入框"></textarea>
+        <div id="image-preview" class="image-preview"></div>
+        <div class="code-block">
+            <strong>调用代码:</strong><br>
+            <code>noteSaver.listenPaste(inputElement, callback);</code>
+        </div>
+    </div>
+
+    <!-- 3. 保存动作演示 -->
+    <div class="demo-section">
+        <h2>💾 3. 保存动作功能</h2>
+        <p>模拟外部应用的保存按钮或快捷键：</p>
+        <button id="btn-save" class="btn btn-success">保存笔记 (Ctrl+S)</button>
+        <button id="btn-quick-save" class="btn btn-warning">快速保存 (自动选路径)</button>
+        <div class="code-block">
+            <strong>调用代码:</strong><br>
+            <code>await noteSaver.saveNote(content, options);</code>
+        </div>
+    </div>
+
+    <!-- 4. 格式定义演示 -->
+    <div class="demo-section">
+        <h2>📝 4. 格式定义功能</h2>
+        <p>外部应用可以定义保存格式：</p>
+        <button id="btn-format-md" class="btn">设置为Markdown格式</button>
+        <button id="btn-format-txt" class="btn">设置为纯文本格式</button>
+        <div class="code-block">
+            <strong>调用代码:</strong><br>
+            <code>noteSaver.setFormat('markdown');</code>
+        </div>
+    </div>
+
+    <!-- 5. 全局API演示 -->
+    <div class="demo-section">
+        <h2>🌐 5. 全局便捷API</h2>
+        <p>任意页面可以直接调用全局函数：</p>
+        <button id="btn-global-save" class="btn">全局快速保存</button>
+        <button id="btn-global-path" class="btn">全局路径选择</button>
+        <div class="code-block">
+            <strong>调用代码:</strong><br>
+            <code>await quickSaveNote(content);</code><br>
+            <code>await quickSelectPath();</code>
+        </div>
+    </div>
+
+    <!-- 状态显示 -->
+    <div id="status-message" class="status hidden"></div>
+
+    <!-- 引入NoteSaver工具包 -->
+    <script src="../note_saver_toolkit/js/note-saver.js"></script>
+    
+    <script>
+        // 全局NoteSaver实例
+        let noteSaver;
+        
+        // DOM元素
+        const toolkitStatus = document.getElementById('toolkit-status');
+        const currentPath = document.getElementById('current-path');
+        const contentInput = document.getElementById('content-input');
+        const imagePreview = document.getElementById('image-preview');
+        const statusMessage = document.getElementById('status-message');
+
+        // 显示状态消息
+        function showStatus(message, type = 'info') {
+            statusMessage.textContent = message;
+            statusMessage.className = `status ${type}`;
+            statusMessage.classList.remove('hidden');
+            
+            setTimeout(() => {
+                statusMessage.classList.add('hidden');
+            }, 4000);
+        }
+
+        // 更新路径显示
+        function updatePathDisplay(path) {
+            if (path) {
+                currentPath.textContent = `当前保存路径: ${path}`;
+                currentPath.classList.remove('hidden');
+            }
+        }
+
+        // 检测浏览器文件系统支持
+        function checkFileSystemSupport() {
+            const supportStatus = document.getElementById('fs-support-status');
+            
+            if ('showSaveFilePicker' in window) {
+                supportStatus.innerHTML = '✅ 支持直接保存到本地文件（File System Access API）';
+                supportStatus.style.color = '#155724';
+            } else {
+                supportStatus.innerHTML = '⚠️ 不支持直接文件访问，使用降级方案';
+                supportStatus.style.color = '#856404';
+            }
+        }
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                // 检测浏览器支持
+                checkFileSystemSupport();
+                
+                // 创建NoteSaver实例
+                noteSaver = createNoteSaver({
+                    apiBase: 'http://localhost:5000/api'
+                });
+
+                // 等待初始化完成
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+                toolkitStatus.textContent = '✅ NoteSaver工具包已就绪';
+                toolkitStatus.className = 'status success';
+
+                // 设置图片粘贴监听
+                noteSaver.listenPaste(contentInput, (imageData, count) => {
+                    showImagePreview(imageData);
+                    showStatus(`✅ 已粘贴第${count}张图片`, 'success');
+                });
+
+            } catch (error) {
+                toolkitStatus.textContent = '❌ NoteSaver工具包初始化失败: ' + error.message;
+                toolkitStatus.className = 'status error';
+            }
+        });
+
+        // 1. 路径选择
+        document.getElementById('btn-select-path').addEventListener('click', async () => {
+            try {
+                const path = await noteSaver.selectFilePath();
+                updatePathDisplay(path);
+                showStatus('✅ 路径选择成功: ' + path, 'success');
+            } catch (error) {
+                showStatus('❌ 路径选择失败: ' + error.message, 'error');
+            }
+        });
+
+        // 2. 保存笔记
+        document.getElementById('btn-save').addEventListener('click', async () => {
+            const content = contentInput.value.trim();
+            
+            try {
+                const result = await noteSaver.saveNote(content, {
+                    appName: '外部应用演示'
+                });
+                
+                showStatus('✅ ' + result.message, 'success');
+                contentInput.value = '';
+                imagePreview.innerHTML = '';
+            } catch (error) {
+                showStatus('❌ ' + error.message, 'error');
+            }
+        });
+
+        // 3. 快速保存
+        document.getElementById('btn-quick-save').addEventListener('click', async () => {
+            const content = contentInput.value.trim();
+            
+            try {
+                const result = await quickSaveNote(content, {
+                    appName: '快速保存演示'
+                });
+                
+                showStatus('✅ 快速保存成功', 'success');
+                contentInput.value = '';
+                imagePreview.innerHTML = '';
+            } catch (error) {
+                showStatus('❌ ' + error.message, 'error');
+            }
+        });
+
+        // 4. 格式设置
+        document.getElementById('btn-format-md').addEventListener('click', () => {
+            noteSaver.setFormat('markdown');
+            showStatus('✅ 已设置为Markdown格式', 'success');
+        });
+
+        document.getElementById('btn-format-txt').addEventListener('click', () => {
+            noteSaver.setFormat('text');
+            showStatus('✅ 已设置为纯文本格式', 'success');
+        });
+
+        // 5. 全局API
+        document.getElementById('btn-global-save').addEventListener('click', async () => {
+            const content = contentInput.value.trim();
+            
+            try {
+                await quickSaveNote(content);
+                showStatus('✅ 全局快速保存成功', 'success');
+                contentInput.value = '';
+            } catch (error) {
+                showStatus('❌ ' + error.message, 'error');
+            }
+        });
+
+        document.getElementById('btn-global-path').addEventListener('click', async () => {
+            try {
+                const path = await quickSelectPath();
+                updatePathDisplay(path);
+                showStatus('✅ 全局路径选择成功', 'success');
+            } catch (error) {
+                showStatus('❌ ' + error.message, 'error');
+            }
+        });
+
+        // 显示图片预览
+        function showImagePreview(imageSrc) {
+            const container = document.createElement('div');
+            container.style.marginTop = '10px';
+            container.style.display = 'inline-block';
+            container.style.marginRight = '10px';
+            
+            const img = document.createElement('img');
+            img.src = imageSrc;
+            img.style.maxWidth = '150px';
+            img.style.maxHeight = '150px';
+            img.style.borderRadius = '8px';
+            img.style.border = '2px solid #e1e5e9';
+            
+            const removeBtn = document.createElement('button');
+            removeBtn.textContent = '×';
+            removeBtn.style.position = 'relative';
+            removeBtn.style.top = '-20px';
+            removeBtn.style.left = '-20px';
+            removeBtn.style.background = '#dc3545';
+            removeBtn.style.color = 'white';
+            removeBtn.style.border = 'none';
+            removeBtn.style.borderRadius = '50%';
+            removeBtn.style.width = '20px';
+            removeBtn.style.height = '20px';
+            removeBtn.style.cursor = 'pointer';
+            removeBtn.onclick = () => {
+                // 从数组中删除
+                const index = noteSaver.pastedImages.findIndex(img => img === imageSrc);
+                if (index > -1) {
+                    noteSaver.pastedImages.splice(index, 1);
+                }
+                container.remove();
+                showStatus('已删除图片', 'info');
+            };
+            
+            container.appendChild(img);
+            container.appendChild(removeBtn);
+            imagePreview.appendChild(container);
+        }
+
+        // 快捷键支持
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.key === 's') {
+                e.preventDefault();
+                document.getElementById('btn-save').click();
+            }
+        });
+    </script>
+</body>
+</html> 
