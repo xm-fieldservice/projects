@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>用户登录 - 智能问答系统</title>
+    <link rel="stylesheet" href="auth-block/auth.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="auth-container">
+        <!-- 背景动画 -->
+        <div class="background-animation">
+            <div class="floating-shapes">
+                <div class="shape shape-1"></div>
+                <div class="shape shape-2"></div>
+                <div class="shape shape-3"></div>
+                <div class="shape shape-4"></div>
+                <div class="shape shape-5"></div>
+            </div>
+        </div>
+        
+        <!-- 主登录卡片 -->
+        <div class="auth-card">
+            <!-- 系统Logo和标题 -->
+            <div class="auth-header">
+                <div class="logo">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <h1 class="system-title">智能问答系统</h1>
+                <p class="system-subtitle">AI驱动的个人知识管理平台</p>
+            </div>
+            
+            <!-- 登录表单 -->
+            <form class="auth-form" id="loginForm">
+                <div class="form-group">
+                    <label for="username" class="form-label">
+                        <i class="fas fa-user"></i>
+                        用户名
+                    </label>
+                    <input 
+                        type="text" 
+                        id="username" 
+                        name="username" 
+                        class="form-input" 
+                        placeholder="请输入用户名"
+                        required
+                        autocomplete="username"
+                    >
+                    <div class="input-error" id="usernameError"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password" class="form-label">
+                        <i class="fas fa-lock"></i>
+                        密码
+                    </label>
+                    <div class="password-input-wrapper">
+                        <input 
+                            type="password" 
+                            id="password" 
+                            name="password" 
+                            class="form-input" 
+                            placeholder="请输入密码"
+                            required
+                            autocomplete="current-password"
+                        >
+                        <button type="button" class="password-toggle" id="passwordToggle">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    <div class="input-error" id="passwordError"></div>
+                </div>
+                
+                <!-- 记住我 -->
+                <div class="form-options">
+                    <label class="checkbox-container">
+                        <input type="checkbox" id="rememberMe" name="rememberMe">
+                        <span class="checkmark"></span>
+                        记住我
+                    </label>
+                    <a href="#" class="forgot-password">忘记密码？</a>
+                </div>
+                
+                <!-- 登录按钮 -->
+                <button type="submit" class="btn btn-primary btn-login" id="loginBtn">
+                    <span class="btn-text">登录</span>
+                    <span class="btn-spinner" style="display: none;">
+                        <i class="fas fa-spinner fa-spin"></i>
+                    </span>
+                </button>
+                
+                <!-- 登录错误提示 -->
+                <div class="auth-error" id="authError" style="display: none;">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span id="authErrorText"></span>
+                </div>
+            </form>
+            
+            <!-- 分割线 -->
+            <div class="divider">
+                <span>或者</span>
+            </div>
+            
+            <!-- 演示模式 -->
+            <div class="demo-section">
+                <button type="button" class="btn btn-demo" id="demoBtn">
+                    <i class="fas fa-play-circle"></i>
+                    演示模式
+                </button>
+                <p class="demo-description">
+                    无需注册，立即体验系统功能
+                </p>
+            </div>
+            
+            <!-- 快速登录提示 -->
+            <div class="quick-login-tips">
+                <div class="tips-header">
+                    <i class="fas fa-lightbulb"></i>
+                    快速开始
+                </div>
+                <div class="tips-content">
+                    <div class="tip-item">
+                        <strong>管理员：</strong> admin / admin123
+                    </div>
+                    <div class="tip-item">
+                        <strong>普通用户：</strong> user / user123
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 系统信息 -->
+        <div class="system-info">
+            <div class="version-info">
+                <span>版本 v3.0</span>
+                <span>•</span>
+                <span>完整解耦版</span>
+            </div>
+            <div class="tech-stack">
+                <span>基于</span>
+                <span class="tech-item">HTML5</span>
+                <span>•</span>
+                <span class="tech-item">CSS3</span>
+                <span>•</span>
+                <span class="tech-item">JavaScript</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 加载状态遮罩 -->
+    <div class="loading-overlay" id="loadingOverlay" style="display: none;">
+        <div class="loading-spinner">
+            <div class="spinner-ring"></div>
+            <div class="loading-text">正在登录...</div>
+        </div>
+    </div>
+    
+    <!-- JavaScript引入 -->
+    <script src="../shared/utils.js"></script>
+    <script src="../shared/api.js"></script>
+    <script src="auth-block/auth.js"></script>
+    
+    <!-- 初始化脚本 -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // 初始化认证系统
+            AuthBlock.init();
+            
+            // 自动聚焦到用户名输入框
+            document.getElementById('username').focus();
+            
+            // 检查是否有记住的用户信息
+            const rememberedUser = QAUtils.storage.get('remembered_user');
+            if (rememberedUser) {
+                document.getElementById('username').value = rememberedUser.username;
+                document.getElementById('rememberMe').checked = true;
+            }
+        });
+    </script>
+</body>
+</html> 
