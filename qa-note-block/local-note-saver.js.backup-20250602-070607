@@ -1,0 +1,358 @@
+/**
+ * LocalNoteSaver - Local Note Saving Toolkit
+ */
+
+class LocalNoteSaver {
+    constructor(options = {}) {
+        this.config = {
+            appName: options.appName || 'App',
+            timestampFormat: options.timestampFormat || 'zh-CN',
+            debugMode: options.debugMode || false,
+            ...options
+        };
+        
+        this.selectedFileHandle = null;
+        this.currentFileName = '';
+        this.inputElement = null;
+        this.images = [];
+        
+        this.init();
+    }
+    
+    init() {
+        this.log('LocalNoteSaver init...');
+        this.setupPasteListener();
+        this.log('LocalNoteSaver ready');
+    }
+    
+    bindSelectButton(selector) {
+        const button = typeof selector === 'string' ? document.querySelector(selector) : selector;
+        if (!button) {
+            this.log('Button not found:', selector);
+            return;
+        }
+        
+        button.addEventListener('click', async () => {
+            try {
+                await this.selectFile();
+            } catch (error) {
+                this.log('File selection failed:', error.message);
+            }
+        });
+        
+        this.log('Select button bound:', selector);
+    }
+    
+    bindInput(selector) {
+        const input = typeof selector === 'string' ? document.querySelector(selector) : selector;
+        if (!input) {
+            this.log('Input not found:', selector);
+            return;
+        }
+        
+        this.inputElement = input;
+        this.log('Input bound:', selector);
+    }
+    
+    bindCreateButton(selector) {
+        const button = typeof selector === 'string' ? document.querySelector(selector) : selector;
+        if (!button) {
+            this.log('Create button not found:', selector);
+            return;
+        }
+        
+        button.addEventListener('click', async () => {
+            try {
+                await this.createNewFile();
+            } catch (error) {
+                this.log('File creation failed:', error.message);
+            }
+        });
+        
+        this.log('Create button bound:', selector);
+    }
+    
+    async selectFile() {
+        if ('showOpenFilePicker' in window) {
+            try {
+                const [fileHandle] = await window.showOpenFilePicker({
+                    types: [{
+                        description: 'Markdown files',
+                        accept: {
+                            'text/markdown': ['.md'],
+                        },
+                    }, {
+                        description: 'Text files',
+                        accept: {
+                            'text/plain': ['.txt'],
+                        },
+                    }],
+                    multiple: false
+                });
+                
+                const permission = await fileHandle.requestPermission({ mode: 'readwrite' });
+                if (permission !== 'granted') {
+                    throw new Error('No file write permission');
+                }
+                
+                this.selectedFileHandle = fileHandle;
+                this.currentFileName = fileHandle.name;
+                
+                this.log('File selected:', this.currentFileName);
+                this.showStatus('File selected: ' + this.currentFileName, 'success');
+                
+                return this.currentFileName;
+                
+            } catch (error) {
+                if (error.name === 'AbortError') {
+                    this.log('File selection cancelled');
+                    return null;
+                }
+                throw error;
+            }
+        } else {
+            this.showStatus('File API not supported', 'warning');
+            throw new Error('File System Access API not supported');
+        }
+    }
+    
+    async createNewFile() {
+        if ('showSaveFilePicker' in window) {
+            try {
+                const fileHandle = await window.showSaveFilePicker({
+                    types: [{
+                        description: 'Markdown files',
+                        accept: {
+                            'text/markdown': ['.md'],
+                        },
+                    }],
+                    suggestedName: 'note-' + new Date().toLocaleDateString() + '.md'
+                });
+                
+                const permission = await fileHandle.requestPermission({ mode: 'readwrite' });
+                if (permission !== 'granted') {
+                    throw new Error('No file write permission');
+                }
+                
+                this.selectedFileHandle = fileHandle;
+                this.currentFileName = fileHandle.name;
+                
+                this.log('New file created:', this.currentFileName);
+                this.showStatus('New file created: ' + this.currentFileName, 'success');
+                
+                return this.currentFileName;
+                
+            } catch (error) {
+                if (error.name === 'AbortError') {
+                    this.log('File creation cancelled');
+                    return null;
+                }
+                throw error;
+            }
+        } else {
+            const fileName = prompt('Enter filename:', 'note-' + new Date().toLocaleDateString() + '.md');
+            if (fileName) {
+                this.currentFileName = fileName;
+                this.log('Filename set:', this.currentFileName);
+                this.showStatus('Filename set: ' + this.currentFileName, 'info');
+                return this.currentFileName;
+            }
+            return null;
+        }
+    }
+    
+    async saveNote() {
+        const content = this.getInputContent();
+        
+        if (!content.trim()) {
+            this.showStatus('Please enter content', 'warning');
+            return { success: false, error: 'Empty content' };
+        }
+        
+        if (this.selectedFileHandle) {
+            return await this.saveToLocalFile(content);
+        } else {
+            return await this.saveAsDownload(content);
+        }
+    }
+    
+    async saveToLocalFile(content) {
+        if (!this.selectedFileHandle) {
+            throw new Error('No file selected');
+        }
+        
+        try {
+            const finalContent = this.prepareSaveContent(content);
+            
+            const writable = await this.selectedFileHandle.createWritable();
+            await writable.write(finalContent);
+            await writable.close();
+            
+            this.log('File saved:', this.currentFileName);
+            this.showStatus('Saved to: ' + this.currentFileName, 'success');
+            
+            return {
+                success: true,
+                fileName: this.currentFileName,
+                method: 'file-system-api',
+                size: finalContent.length
+            };
+            
+        } catch (error) {
+            this.log('File save failed:', error);
+            this.showStatus('Save failed: ' + error.message, 'error');
+            throw error;
+        }
+    }
+    
+    async saveAsDownload(content) {
+        try {
+            const finalContent = this.prepareSaveContent(content);
+            const fileName = this.currentFileName || 'note-' + new Date().toLocaleDateString() + '.md';
+            
+            const blob = new Blob([finalContent], { type: 'text/markdown;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = fileName;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            this.log('File downloaded:', fileName);
+            this.showStatus('Downloaded: ' + fileName, 'success');
+            
+            return {
+                success: true,
+                fileName: fileName,
+                method: 'download',
+                size: finalContent.length
+            };
+            
+        } catch (error) {
+            this.log('Download failed:', error);
+            this.showStatus('Download failed: ' + error.message, 'error');
+            throw error;
+        }
+    }
+    
+    prepareSaveContent(content) {
+        let finalContent = content;
+        
+        const timestamp = new Date().toLocaleString(this.config.timestampFormat);
+        finalContent = '<!-- Saved: ' + timestamp + ' -->\n<!-- Source: ' + this.config.appName + ' -->\n\n' + finalContent;
+        
+        if (this.images.length > 0) {
+            finalContent += '\n\n## Images\n\n';
+            this.images.forEach((imageData, index) => {
+                finalContent += '![Image ' + (index + 1) + '](' + imageData + ')\n\n';
+            });
+        }
+        
+        return finalContent;
+    }
+    
+    getInputContent() {
+        if (!this.inputElement) {
+            return '';
+        }
+        return this.inputElement.value || this.inputElement.textContent || '';
+    }
+    
+    clearInput() {
+        if (this.inputElement) {
+            if (this.inputElement.value !== undefined) {
+                this.inputElement.value = '';
+            } else {
+                this.inputElement.textContent = '';
+            }
+        }
+        this.images = [];
+    }
+    
+    setupPasteListener() {
+        document.addEventListener('paste', (event) => {
+            if (document.activeElement === this.inputElement) {
+                this.handlePaste(event);
+            }
+        });
+    }
+    
+    handlePaste(event) {
+        const items = event.clipboardData.items;
+        
+        for (let item of items) {
+            if (item.type.startsWith('image/')) {
+                event.preventDefault();
+                
+                const file = item.getAsFile();
+                if (file) {
+                    this.addImage(file);
+                }
+            }
+        }
+    }
+    
+    addImage(file) {
+        if (typeof file === 'string') {
+            this.images.push(file);
+            this.log('Image added: ' + this.images.length);
+            this.showStatus('Image added ' + this.images.length, 'info');
+            return;
+        }
+        
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            const base64Data = event.target.result;
+            this.images.push(base64Data);
+            this.log('Image added: ' + this.images.length);
+            this.showStatus('Image added ' + this.images.length, 'info');
+        };
+        reader.readAsDataURL(file);
+    }
+    
+    showStatus(message, type = 'info') {
+        const statusEl = document.querySelector('[data-note-saver-status]') 
+                       || document.querySelector('.note-saver-status')
+                       || document.querySelector('#note-saver-status');
+                       
+        if (statusEl) {
+            statusEl.textContent = message;
+            statusEl.className = 'note-saver-status ' + type;
+            
+            setTimeout(() => {
+                statusEl.textContent = '';
+                statusEl.className = 'note-saver-status';
+            }, 3000);
+        }
+        
+        this.log('Status: ' + message);
+    }
+    
+    log(...args) {
+        if (this.config.debugMode) {
+            console.log('[LocalNoteSaver]', ...args);
+        }
+    }
+    
+    getStatus() {
+        return {
+            hasFile: !!this.selectedFileHandle,
+            fileName: this.currentFileName,
+            imageCount: this.images.length,
+            hasInput: !!this.inputElement,
+            apiSupported: 'showSaveFilePicker' in window
+        };
+    }
+}
+
+// Global methods
+window.LocalNoteSaver = LocalNoteSaver;
+
+window.createNoteSaver = function(options = {}) {
+    return new LocalNoteSaver(options);
+};
+
+console.log('LocalNoteSaver toolkit loaded'); 
