@@ -173,13 +173,26 @@ class NoteSaver {
             try {
                 const file = await this.selectedFileHandle.getFile();
                 existingContent = await file.text();
+                console.log('读取到现有内容长度:', existingContent.length);
             } catch (e) {
+                console.log('文件不存在或读取失败，创建新文件');
                 // 文件不存在或读取失败，使用空内容
             }
             
-            // 写入文件
-            const writable = await this.selectedFileHandle.createWritable();
-            await writable.write(existingContent + fullContent);
+            // 写入文件 - 使用 keepExistingData: true 避免清空文件
+            const writable = await this.selectedFileHandle.createWritable({ 
+                keepExistingData: true 
+            });
+            
+            // 移动到文件末尾然后写入新内容
+            if (existingContent.length > 0) {
+                await writable.seek(existingContent.length);
+                await writable.write(fullContent);
+            } else {
+                // 新文件直接写入
+                await writable.write(fullContent);
+            }
+            
             await writable.close();
             
             // 清空已保存的图片
