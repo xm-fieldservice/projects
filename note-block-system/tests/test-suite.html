@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>笔记块系统 - 测试套件</title>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f0f2f5;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+        }
+        
+        .test-container {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .test-header {
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #34495e;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 10px;
+        }
+        
+        .test-case {
+            margin-bottom: 20px;
+            padding: 15px;
+            border-left: 4px solid #3498db;
+            background: #f8f9fa;
+        }
+        
+        .test-name {
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .test-result {
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            font-family: monospace;
+        }
+        
+        .test-pass {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        
+        .test-fail {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        
+        .test-summary {
+            background: #e9ecef;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: center;
+            font-size: 1.2em;
+        }
+        
+        .btn {
+            background: #3498db;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 16px;
+        }
+        
+        .btn:hover {
+            background: #2980b9;
+        }
+        
+        .btn-success {
+            background: #27ae60;
+        }
+        
+        .btn-danger {
+            background: #e74c3c;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #ecf0f1;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #27ae60, #2ecc71);
+            transition: width 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 笔记块系统测试套件</h1>
+    
+    <div class="test-summary">
+        <div>测试进度: <span id="progress-text">0/0</span></div>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+        </div>
+        <div>
+            <button class="btn btn-success" onclick="runAllTests()">运行所有测试</button>
+            <button class="btn" onclick="runQuickTests()">快速测试</button>
+            <button class="btn btn-danger" onclick="clearResults()">清空结果</button>
+        </div>
+    </div>
+    
+    <!-- 基础功能测试 -->
+    <div class="test-container">
+        <div class="test-header">🔧 基础功能测试</div>
+        
+        <div class="test-case">
+            <div class="test-name">1. 系统初始化测试</div>
+            <div id="test-1-result" class="test-result"></div>
+        </div>
+        
+        <div class="test-case">
+            <div class="test-name">2. 工具包创建测试</div>
+            <div id="test-2-result" class="test-result"></div>
+        </div>
+        
+        <div class="test-case">
+            <div class="test-name">3. 函数接口测试</div>
+            <div id="test-3-result" class="test-result"></div>
+        </div>
+    </div>
+    
+    <!-- 策略生成测试 -->
+    <div class="test-container">
+        <div class="test-header">🤖 策略生成测试</div>
+        
+        <div class="test-case">
+            <div class="test-name">4. 样例分析测试</div>
+            <div id="test-4-result" class="test-result"></div>
+        </div>
+        
+        <div class="test-case">
+            <div class="test-name">5. 策略生成测试</div>
+            <div id="test-5-result" class="test-result"></div>
+        </div>
+        
+        <div class="test-case">
+            <div class="test-name">6. 策略验证测试</div>
+            <div id="test-6-result" class="test-result"></div>
+        </div>
+    </div>
+    
+    <!-- 笔记生成测试 -->
+    <div class="test-container">
+        <div class="test-header">📝 笔记生成测试</div>
+        
+        <div class="test-case">
+            <div class="test-name">7. 基础笔记生成测试</div>
+            <div id="test-7-result" class="test-result"></div>
+        </div>
+        
+        <div class="test-case">
+            <div class="test-name">8. 复杂结构生成测试</div>
+            <div id="test-8-result" class="test-result"></div>
+        </div>
+        
+        <div class="test-case">
+            <div class="test-name">9. 策略切换测试</div>
+            <div id="test-9-result" class="test-result"></div>
+        </div>
+    </div>
+    
+    <!-- 高级功能测试 -->
+    <div class="test-container">
+        <div class="test-header">🚀 高级功能测试</div>
+        
+        <div class="test-case">
+            <div class="test-name">10. 快速原型测试</div>
+            <div id="test-10-result" class="test-result"></div>
+        </div>
+        
+        <div class="test-case">
+            <div class="test-name">11. 批量处理测试</div>
+            <div id="test-11-result" class="test-result"></div>
+        </div>
+        
+        <div class="test-case">
+            <div class="test-name">12. 策略对比测试</div>
+            <div id="test-12-result" class="test-result"></div>
+        </div>
+    </div>
+    
+    <!-- 兼容性测试 -->
+    <div class="test-container">
+        <div class="test-header">🔄 兼容性测试</div>
+        
+        <div class="test-case">
+            <div class="test-name">13. 版本检测测试</div>
+            <div id="test-13-result" class="test-result"></div>
+        </div>
+        
+        <div class="test-case">
+            <div class="test-name">14. 格式转换测试</div>
+            <div id="test-14-result" class="test-result"></div>
+        </div>
+        
+        <div class="test-case">
+            <div class="test-name">15. 错误处理测试</div>
+            <div id="test-15-result" class="test-result"></div>
+        </div>
+    </div>
+
+    <!-- 引入核心组件 -->
+    <script src="../core/pluggable-note-generator.js"></script>
+    <script src="../core/auto-strategy-generator.js"></script>
+    <script src="../core/note-compatibility-adapter.js"></script>
+    <script src="../tools/note-toolkit.js"></script>
+    
+    <script>
+        // 测试结果跟踪
+        let testResults = [];
+        let totalTests = 15;
+        
+        // 测试用例定义
+        const testCases = [
+            // 基础功能测试
+            {
+                id: 1,
+                name: "系统初始化测试",
+                test: function() {
+                    if (typeof NoteToolkit === 'undefined') {
+                        throw new Error('NoteToolkit未定义');
+                    }
+                    if (typeof PluggableNoteGenerator === 'undefined') {
+                        throw new Error('PluggableNoteGenerator未定义');
+                    }
+                    if (typeof AutoStrategyGenerator === 'undefined') {
+                        throw new Error('AutoStrategyGenerator未定义');
+                    }
+                    return "✅ 所有核心组件已正确加载";
+                }
+            },
+            {
+                id: 2,
+                name: "工具包创建测试",
+                test: function() {
+                    const toolkit = new NoteToolkit();
+                    if (!toolkit.version) {
+                        throw new Error('工具包版本信息缺失');
+                    }
+                    if (typeof toolkit.generate !== 'function') {
+                        throw new Error('generate方法不存在');
+                    }
+                    return `✅ 工具包创建成功，版本: ${toolkit.version}`;
+                }
+            },
+            {
+                id: 3,
+                name: "函数接口测试",
+                test: function() {
+                    if (typeof useNoteStrategy !== 'function') {
+                        throw new Error('useNoteStrategy函数不存在');
+                    }
+                    if (typeof generateNote !== 'function') {
+                        throw new Error('generateNote函数不存在');
+                    }
+                    if (typeof quickPrototype !== 'function') {
+                        throw new Error('quickPrototype函数不存在');
+                    }
+                    return "✅ 所有函数接口正常";
+                }
+            },
+            
+            // 策略生成测试
+            {
+                id: 4,
+                name: "样例分析测试",
+                test: function() {
+                    const sample = `
+                    【问题】测试问题
+                    └─【答案】测试答案
+                      ├─要点1：内容1
+                      └─要点2：内容2
+                    `;
+                    
+                    const toolkit = new NoteToolkit();
+                    const result = toolkit.autoGenerator.analyzeSample(sample);
+                    
+                    if (!result.patterns || result.patterns.length === 0) {
+                        throw new Error('样例分析失败，未检测到模式');
+                    }
+                    
+                    return `✅ 样例分析成功，检测到 ${result.patterns.length} 个模式`;
+                }
+            },
+            {
+                id: 5,
+                name: "策略生成测试",
+                test: function() {
+                    const sample = `
+                    问：什么是测试？
+                    答：验证功能正确性
+                      - 单元测试
+                      - 集成测试
+                    `;
+                    
+                    const result = generateStrategyFromSample(sample, 'test_strategy');
+                    
+                    if (!result.success) {
+                        throw new Error(`策略生成失败: ${result.error}`);
+                    }
+                    
+                    return "✅ 策略生成成功";
+                }
+            },
+            {
+                id: 6,
+                name: "策略验证测试",
+                test: function() {
+                    const sample = `
+                    [Q] 测试问题
+                    [A] 测试答案
+                        • 要点1
+                        • 要点2
+                    `;
+                    
+                    generateStrategyFromSample(sample, 'validation_test');
+                    const result = validateSample(sample, 'validation_test');
+                    
+                    if (!result.valid) {
+                        throw new Error(`策略验证失败: ${result.errors.join(', ')}`);
+                    }
+                    
+                    return "✅ 策略验证通过";
+                }
+            },
+            
+            // 笔记生成测试
+            {
+                id: 7,
+                name: "基础笔记生成测试",
+                test: function() {
+                    useNoteStrategy(`
+                    问：测试
+                    答：成功
+                    `, 'basic_test');
+                    
+                    const note = generateNote({
+                        question: "什么是JavaScript？",
+                        answer: "编程语言"
+                    });
+                    
+                    if (!note || note.length === 0) {
+                        throw new Error('笔记生成失败');
+                    }
+                    
+                    return `✅ 笔记生成成功，长度: ${note.length} 字符`;
+                }
+            },
+            {
+                id: 8,
+                name: "复杂结构生成测试",
+                test: function() {
+                    const complexSample = `
+                    【主题】编程学习路径
+                    └─【核心】分阶段学习
+                      ├─【基础阶段】语法掌握
+                      │  ├─变量和数据类型
+                      │  └─控制结构
+                      └─【进阶阶段】项目实践
+                         ├─小项目练习
+                         └─开源贡献
+                    `;
+                    
+                    useNoteStrategy(complexSample, 'complex_test');
+                    
+                    const note = generateNote({
+                        question: "如何学习数据科学？",
+                        answer: "系统性学习",
+                        stages: [
+                            {
+                                name: "数学基础",
+                                items: ["线性代数", "统计学"]
+                            },
+                            {
+                                name: "编程技能",
+                                items: ["Python", "R语言"]
+                            }
+                        ]
+                    });
+                    
+                    if (!note.includes('数据科学')) {
+                        throw new Error('复杂结构生成失败');
+                    }
+                    
+                    return "✅ 复杂结构生成成功";
+                }
+            },
+            {
+                id: 9,
+                name: "策略切换测试",
+                test: function() {
+                    // 创建两个不同的策略
+                    useNoteStrategy('问：A\n答：B', 'strategy_a');
+                    useNoteStrategy('[Q] A\n[A] B', 'strategy_b');
+                    
+                    // 测试切换
+                    switchToStrategy('strategy_a');
+                    const noteA = generateNote({ question: "测试", answer: "A格式" });
+                    
+                    switchToStrategy('strategy_b');
+                    const noteB = generateNote({ question: "测试", answer: "B格式" });
+                    
+                    if (noteA === noteB) {
+                        throw new Error('策略切换无效，生成内容相同');
+                    }
+                    
+                    return "✅ 策略切换成功";
+                }
+            },
+            
+            // 高级功能测试
+            {
+                id: 10,
+                name: "快速原型测试",
+                test: function() {
+                    const sample = `
+                    ## 问题
+                    什么是原型？
+                    
+                    ## 答案
+                    快速验证概念
+                    - 优点：快速
+                    - 缺点：粗糙
+                    `;
+                    
+                    const testData = {
+                        question: "什么是MVP？",
+                        answer: "最小可行产品",
+                        details: ["核心功能", "用户反馈"]
+                    };
+                    
+                    const result = quickPrototype(sample, testData);
+                    
+                    if (!result.success) {
+                        throw new Error(`快速原型失败: ${result.error}`);
+                    }
+                    
+                    return `✅ 快速原型成功，策略: ${result.strategyName}`;
+                }
+            },
+            {
+                id: 11,
+                name: "批量处理测试",
+                test: function() {
+                    const samples = [
+                        { name: '格式1', content: 'Q: 测试\nA: 成功' },
+                        { name: '格式2', content: '问：测试\n答：成功' },
+                        { name: '格式3', content: '【问】测试\n【答】成功' }
+                    ];
+                    
+                    const results = batchProcessSamples(samples);
+                    
+                    if (results.length !== samples.length) {
+                        throw new Error('批量处理数量不匹配');
+                    }
+                    
+                    const successCount = results.filter(r => r.success).length;
+                    return `✅ 批量处理完成，成功: ${successCount}/${samples.length}`;
+                }
+            },
+            {
+                id: 12,
+                name: "策略对比测试",
+                test: function() {
+                    // 确保有多个策略可供对比
+                    useNoteStrategy('问：A\n答：B', 'compare_1');
+                    useNoteStrategy('[Q] A\n[A] B', 'compare_2');
+                    
+                    const data = { question: "对比测试", answer: "成功" };
+                    const comparison = compareStrategies(data, ['compare_1', 'compare_2']);
+                    
+                    if (!comparison || Object.keys(comparison).length < 2) {
+                        throw new Error('策略对比失败');
+                    }
+                    
+                    return `✅ 策略对比成功，对比了 ${Object.keys(comparison).length} 个策略`;
+                }
+            },
+            
+            // 兼容性测试
+            {
+                id: 13,
+                name: "版本检测测试",
+                test: function() {
+                    const toolkit = new NoteToolkit();
+                    const adapter = toolkit.pluggableGenerator.adapter;
+                    
+                    const sampleV1 = '问：测试\n答：成功';
+                    const sampleV2 = '【问题】测试\n└─【答案】成功';
+                    
+                    const versionV1 = adapter.detectVersion(sampleV1);
+                    const versionV2 = adapter.detectVersion(sampleV2);
+                    
+                    if (versionV1 === versionV2) {
+                        throw new Error('版本检测无效，不同格式被识别为相同版本');
+                    }
+                    
+                    return `✅ 版本检测成功: v${versionV1} vs v${versionV2}`;
+                }
+            },
+            {
+                id: 14,
+                name: "格式转换测试",
+                test: function() {
+                    const toolkit = new NoteToolkit();
+                    const adapter = toolkit.pluggableGenerator.adapter;
+                    
+                    const oldFormat = '问：什么是转换？\n答：格式改变';
+                    const converted = adapter.convert(oldFormat, '1.0', '2.0');
+                    
+                    if (converted === oldFormat) {
+                        throw new Error('格式转换失败，内容未改变');
+                    }
+                    
+                    return "✅ 格式转换成功";
+                }
+            },
+            {
+                id: 15,
+                name: "错误处理测试",
+                test: function() {
+                    // 测试无效样例
+                    try {
+                        useNoteStrategy('', 'invalid_empty');
+                        throw new Error('应该拒绝空样例');
+                    } catch (error) {
+                        if (error.message === '应该拒绝空样例') {
+                            throw error;
+                        }
+                    }
+                    
+                    // 测试无效策略切换
+                    try {
+                        switchToStrategy('non_existent_strategy');
+                        throw new Error('应该拒绝不存在的策略');
+                    } catch (error) {
+                        if (error.message === '应该拒绝不存在的策略') {
+                            throw error;
+                        }
+                    }
+                    
+                    return "✅ 错误处理正常";
+                }
+            }
+        ];
+        
+        // 运行单个测试
+        function runTest(testCase) {
+            const resultDiv = document.getElementById(`test-${testCase.id}-result`);
+            
+            try {
+                const result = testCase.test();
+                resultDiv.className = 'test-result test-pass';
+                resultDiv.textContent = result;
+                testResults[testCase.id - 1] = true;
+            } catch (error) {
+                resultDiv.className = 'test-result test-fail';
+                resultDiv.textContent = `❌ 测试失败: ${error.message}`;
+                testResults[testCase.id - 1] = false;
+            }
+            
+            updateProgress();
+        }
+        
+        // 运行所有测试
+        function runAllTests() {
+            testResults = new Array(totalTests).fill(null);
+            
+            testCases.forEach((testCase, index) => {
+                setTimeout(() => {
+                    runTest(testCase);
+                }, index * 100); // 延迟执行，避免界面卡顿
+            });
+        }
+        
+        // 运行快速测试（只测试核心功能）
+        function runQuickTests() {
+            testResults = new Array(totalTests).fill(null);
+            
+            // 只运行前6个测试
+            testCases.slice(0, 6).forEach((testCase, index) => {
+                setTimeout(() => {
+                    runTest(testCase);
+                }, index * 100);
+            });
+        }
+        
+        // 更新进度
+        function updateProgress() {
+            const completed = testResults.filter(r => r !== null).length;
+            const passed = testResults.filter(r => r === true).length;
+            
+            document.getElementById('progress-text').textContent = 
+                `${completed}/${totalTests} (通过: ${passed})`;
+            
+            const percentage = (completed / totalTests) * 100;
+            document.getElementById('progress-fill').style.width = percentage + '%';
+            
+            // 如果全部完成，显示总结
+            if (completed === totalTests) {
+                setTimeout(showSummary, 500);
+            }
+        }
+        
+        // 显示测试总结
+        function showSummary() {
+            const passed = testResults.filter(r => r === true).length;
+            const failed = testResults.filter(r => r === false).length;
+            
+            const summaryDiv = document.querySelector('.test-summary');
+            const originalContent = summaryDiv.innerHTML;
+            
+            summaryDiv.innerHTML = `
+                <h2>🎯 测试完成！</h2>
+                <div style="font-size: 1.5em; margin: 20px 0;">
+                    <span style="color: #27ae60;">✅ 通过: ${passed}</span> |
+                    <span style="color: #e74c3c;">❌ 失败: ${failed}</span>
+                </div>
+                <div style="margin: 20px 0;">
+                    测试覆盖率: ${((passed / totalTests) * 100).toFixed(1)}%
+                </div>
+                ${originalContent}
+            `;
+        }
+        
+        // 清空结果
+        function clearResults() {
+            testResults = [];
+            for (let i = 1; i <= totalTests; i++) {
+                const resultDiv = document.getElementById(`test-${i}-result`);
+                resultDiv.className = 'test-result';
+                resultDiv.textContent = '';
+            }
+            
+            document.getElementById('progress-text').textContent = '0/0';
+            document.getElementById('progress-fill').style.width = '0%';
+            
+            // 恢复原始摘要内容
+            location.reload();
+        }
+        
+        // 页面加载完成后的初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 检查系统是否正确加载
+            if (typeof NoteToolkit === 'undefined') {
+                document.querySelector('.test-summary').innerHTML = 
+                    '<div style="color: #e74c3c;">❌ 系统未正确加载，请检查文件路径</div>';
+            } else {
+                document.querySelector('.test-summary').innerHTML += 
+                    '<div style="color: #27ae60; margin-top: 10px;">✅ 系统加载正常，可以开始测试</div>';
+            }
+        });
+    </script>
+</body>
+</html> 
