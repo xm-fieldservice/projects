@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QA Note Toolkit v3.0 演示</title>
+    
+    <!-- 引入现有的CSS文件 -->
+    <link rel="stylesheet" href="../../qa-note-block/qa-note.css">
+    
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .demo-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .demo-header {
+            background: linear-gradient(45deg, #4CAF50, #2196F3);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .demo-header h1 {
+            margin: 0 0 10px 0;
+            font-size: 2.5em;
+            font-weight: 600;
+        }
+        
+        .demo-header p {
+            margin: 0;
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .demo-content {
+            display: flex;
+            min-height: 600px;
+        }
+        
+        .demo-sidebar {
+            width: 300px;
+            background: #f8f9fa;
+            border-right: 1px solid #e0e0e0;
+            padding: 20px;
+        }
+        
+        .demo-main {
+            flex: 1;
+            padding: 20px;
+        }
+        
+        .config-section {
+            margin-bottom: 25px;
+        }
+        
+        .config-section h3 {
+            margin: 0 0 15px 0;
+            color: #333;
+            font-size: 1.1em;
+            border-bottom: 2px solid #4CAF50;
+            padding-bottom: 5px;
+        }
+        
+        .config-group {
+            margin-bottom: 15px;
+        }
+        
+        .config-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #555;
+        }
+        
+        .config-group select,
+        .config-group input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+        
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
+        }
+        
+        .demo-actions {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #e0e0e0;
+        }
+        
+        .demo-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 5px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        .demo-btn:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+        }
+        
+        .demo-btn.secondary {
+            background: #2196F3;
+        }
+        
+        .demo-btn.secondary:hover {
+            background: #1976D2;
+        }
+        
+        .demo-btn.danger {
+            background: #f44336;
+        }
+        
+        .demo-btn.danger:hover {
+            background: #d32f2f;
+        }
+        
+        .status-panel {
+            background: #e8f5e8;
+            border: 1px solid #4CAF50;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .status-panel h4 {
+            margin: 0 0 10px 0;
+            color: #2e7d32;
+        }
+        
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+        
+        .status-value {
+            font-weight: 600;
+            color: #1565c0;
+        }
+        
+        #qa-note-container {
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            min-height: 500px;
+            background: #fafafa;
+        }
+        
+        .demo-footer {
+            background: #f0f0f0;
+            padding: 20px;
+            text-align: center;
+            color: #666;
+            border-top: 1px solid #e0e0e0;
+        }
+        
+        .event-log {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            height: 150px;
+            overflow-y: auto;
+            padding: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            margin-top: 15px;
+        }
+        
+        .event-item {
+            margin-bottom: 5px;
+            padding: 2px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .event-time {
+            color: #666;
+            margin-right: 10px;
+        }
+        
+        .event-type {
+            color: #4CAF50;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        
+        .loading-content {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+        }
+        
+        .loading-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #4CAF50;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        @media (max-width: 768px) {
+            .demo-content {
+                flex-direction: column;
+            }
+            
+            .demo-sidebar {
+                width: 100%;
+            }
+            
+            .demo-header h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-container">
+        <!-- 演示头部 -->
+        <div class="demo-header">
+            <h1>🚀 QA Note Toolkit v3.0</h1>
+            <p>智能笔记问答工具包演示 - 体验现代化的AI问答系统</p>
+        </div>
+        
+        <!-- 演示内容 -->
+        <div class="demo-content">
+            <!-- 左侧配置面板 -->
+            <div class="demo-sidebar">
+                <!-- 状态面板 -->
+                <div class="status-panel">
+                    <h4>📊 系统状态</h4>
+                    <div class="status-item">
+                        <span>工具包状态:</span>
+                        <span class="status-value" id="toolkit-status">未初始化</span>
+                    </div>
+                    <div class="status-item">
+                        <span>当前智能体:</span>
+                        <span class="status-value" id="current-agent">无</span>
+                    </div>
+                    <div class="status-item">
+                        <span>连接状态:</span>
+                        <span class="status-value" id="connection-status">离线</span>
+                    </div>
+                    <div class="status-item">
+                        <span>当前模式:</span>
+                        <span class="status-value" id="current-mode">问答</span>
+                    </div>
+                </div>
+                
+                <!-- 智能体配置 -->
+                <div class="config-section">
+                    <h3>🤖 智能体配置</h3>
+                    <div class="config-group">
+                        <label for="agent-select">选择智能体:</label>
+                        <select id="agent-select">
+                            <option value="general">通用助手</option>
+                            <option value="rag_single">RAG知识助手</option>
+                            <option value="rag_team">RAG团队协作</option>
+                            <option value="code_assistant">代码助手</option>
+                            <option value="writing_assistant">写作助手</option>
+                        </select>
+                    </div>
+                    <div class="config-group">
+                        <label for="api-url">API地址:</label>
+                        <input type="text" id="api-url" value="http://localhost:8001" placeholder="智能体API地址">
+                    </div>
+                </div>
+                
+                <!-- UI配置 -->
+                <div class="config-section">
+                    <h3>🎨 界面配置</h3>
+                    <div class="config-group">
+                        <label for="theme-select">主题:</label>
+                        <select id="theme-select">
+                            <option value="modern">现代风格</option>
+                            <option value="classic">经典风格</option>
+                            <option value="dark">深色主题</option>
+                        </select>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="responsive-check" checked>
+                        <label for="responsive-check">响应式设计</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="animations-check" checked>
+                        <label for="animations-check">动画效果</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="debug-check">
+                        <label for="debug-check">显示调试信息</label>
+                    </div>
+                </div>
+                
+                <!-- 功能配置 -->
+                <div class="config-section">
+                    <h3>⚙️ 功能配置</h3>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="file-upload-check" checked>
+                        <label for="file-upload-check">文件上传</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="image-capture-check" checked>
+                        <label for="image-capture-check">图片捕获</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="voice-input-check">
+                        <label for="voice-input-check">语音输入</label>
+                    </div>
+                </div>
+                
+                <!-- 操作按钮 -->
+                <div class="demo-actions">
+                    <button class="demo-btn" onclick="initializeToolkit()">🚀 初始化工具包</button>
+                    <button class="demo-btn secondary" onclick="testQuestion()">❓ 测试问答</button>
+                    <button class="demo-btn secondary" onclick="testNote()">📝 测试笔记</button>
+                    <button class="demo-btn secondary" onclick="switchMode()">🔄 切换模式</button>
+                    <button class="demo-btn danger" onclick="destroyToolkit()">🗑️ 销毁工具包</button>
+                </div>
+                
+                <!-- 事件日志 -->
+                <div class="config-section">
+                    <h3>📋 事件日志</h3>
+                    <div class="event-log" id="event-log">
+                        <div class="event-item">
+                            <span class="event-time">00:00:00</span>
+                            <span class="event-type">INIT</span>
+                            <span>等待初始化...</span>
+                        </div>
+                    </div>
+                    <button class="demo-btn" onclick="clearEventLog()" style="margin-top: 10px; font-size: 12px; padding: 5px 10px;">清空日志</button>
+                </div>
+            </div>
+            
+            <!-- 右侧主要内容区 -->
+            <div class="demo-main">
+                <div id="qa-note-container">
+                    <!-- 工具包将在这里加载 -->
+                    <div style="padding: 60px 20px; text-align: center; color: #666;">
+                        <h3>🎯 QA Note Toolkit 演示区</h3>
+                        <p>点击左侧的"初始化工具包"按钮开始体验</p>
+                        <div style="margin-top: 30px;">
+                            <div style="font-size: 2em; margin-bottom: 10px;">📝</div>
+                            <p style="color: #999; font-size: 14px;">功能完整的智能问答和笔记管理系统正在等待您的使用</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 演示底部 -->
+        <div class="demo-footer">
+            <p><strong>QA Note Toolkit v3.0</strong> - 基于现有成熟问答系统封装的独立工具包</p>
+            <p>支持多种智能体、本地文件保存、响应式设计、高度可配置</p>
+        </div>
+    </div>
+    
+    <!-- 加载遮罩 -->
+    <div class="loading-overlay hidden" id="loading-overlay">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <div>正在初始化工具包...</div>
+        </div>
+    </div>
+    
+    <!-- 引入依赖文件 -->
+    <script src="../../shared/utils.js"></script>
+    <script src="../../shared/notebook.js"></script>
+    <script src="../../shared/api.js"></script>
+    <script src="../../shared/agent-connector.js"></script>
+    <script src="../../qa-note-block/local-note-saver.js"></script>
+    <script src="../../qa-note-block/qa-note-saver.js"></script>
+    <script src="../../qa-note-block/qa-note.js"></script>
+    
+    <!-- 引入工具包主文件 -->
+    <script src="../src/qa-note-toolkit.js"></script>
+    
+    <script>
+        // 全局变量
+        let qaToolkit = null;
+        let eventCount = 0;
+        
+        // 初始化工具包
+        async function initializeToolkit() {
+            try {
+                showLoading();
+                logEvent('INIT', '开始初始化工具包...');
+                
+                // 获取配置
+                const config = getConfigFromUI();
+                
+                // 创建工具包实例
+                qaToolkit = new QANoteToolkit(config);
+                
+                // 设置事件监听
+                setupEventListeners();
+                
+                // 初始化
+                await qaToolkit.init();
+                
+                updateStatus('toolkit-status', '已初始化');
+                updateStatus('current-agent', qaToolkit.getCurrentAgent()?.name || '通用助手');
+                
+                logEvent('SUCCESS', '工具包初始化成功');
+                
+            } catch (error) {
+                logEvent('ERROR', '初始化失败: ' + error.message);
+                alert('初始化失败: ' + error.message);
+            } finally {
+                hideLoading();
+            }
+        }
+        
+        // 从UI获取配置
+        function getConfigFromUI() {
+            return {
+                container: '#qa-note-container',
+                agents: {
+                    default: document.getElementById('agent-select').value,
+                    apiUrl: document.getElementById('api-url').value
+                },
+                ui: {
+                    theme: document.getElementById('theme-select').value,
+                    responsive: document.getElementById('responsive-check').checked,
+                    animations: document.getElementById('animations-check').checked,
+                    showDebugInfo: document.getElementById('debug-check').checked
+                },
+                features: {
+                    fileUpload: document.getElementById('file-upload-check').checked,
+                    imageCapture: document.getElementById('image-capture-check').checked,
+                    voiceInput: document.getElementById('voice-input-check').checked
+                }
+            };
+        }
+        
+        // 设置事件监听
+        function setupEventListeners() {
+            if (!qaToolkit) return;
+            
+            qaToolkit.on('initialized', (data) => {
+                logEvent('INIT', '工具包初始化完成');
+            });
+            
+            qaToolkit.on('questionAnswered', (data) => {
+                logEvent('QA', '问答完成');
+                updateStatus('current-mode', '问答');
+            });
+            
+            qaToolkit.on('noteSaved', (data) => {
+                logEvent('NOTE', '笔记已保存');
+                updateStatus('current-mode', '笔记');
+            });
+            
+            qaToolkit.on('agentSwitched', (data) => {
+                logEvent('AGENT', '智能体切换: ' + data.agentConfig.name);
+                updateStatus('current-agent', data.agentConfig.name);
+            });
+            
+            qaToolkit.on('connectionStatusChanged', (data) => {
+                logEvent('CONN', '连接状态: ' + data.status);
+                updateStatus('connection-status', data.status === 'online' ? '在线' : '离线');
+            });
+            
+            qaToolkit.on('error', (data) => {
+                logEvent('ERROR', data.type + ': ' + data.error);
+            });
+        }
+        
+        // 测试问答功能
+        async function testQuestion() {
+            if (!qaToolkit) {
+                alert('请先初始化工具包');
+                return;
+            }
+            
+            try {
+                logEvent('TEST', '开始测试问答功能...');
+                
+                await qaToolkit.askQuestion({
+                    title: '测试问题',
+                    content: '你好！这是一个测试问题，请简单回答一下。',
+                    agent: document.getElementById('agent-select').value
+                });
+                
+                logEvent('TEST', '问答测试完成');
+                
+            } catch (error) {
+                logEvent('ERROR', '问答测试失败: ' + error.message);
+                alert('问答测试失败: ' + error.message);
+            }
+        }
+        
+        // 测试笔记功能
+        async function testNote() {
+            if (!qaToolkit) {
+                alert('请先初始化工具包');
+                return;
+            }
+            
+            try {
+                logEvent('TEST', '开始测试笔记功能...');
+                
+                await qaToolkit.saveNote({
+                    title: '测试笔记 - ' + new Date().toLocaleString(),
+                    content: '这是一个测试笔记，包含当前时间戳。\n\n功能测试内容：\n- 笔记保存\n- 内容格式化\n- 时间记录'
+                });
+                
+                logEvent('TEST', '笔记测试完成');
+                
+            } catch (error) {
+                logEvent('ERROR', '笔记测试失败: ' + error.message);
+                alert('笔记测试失败: ' + error.message);
+            }
+        }
+        
+        // 切换模式
+        function switchMode() {
+            if (!qaToolkit) {
+                alert('请先初始化工具包');
+                return;
+            }
+            
+            const currentMode = document.getElementById('current-mode').textContent;
+            const newMode = currentMode === '问答' ? 'note' : 'qa';
+            
+            qaToolkit.switchMode(newMode);
+            logEvent('MODE', '切换到 ' + (newMode === 'qa' ? '问答' : '笔记') + ' 模式');
+            updateStatus('current-mode', newMode === 'qa' ? '问答' : '笔记');
+        }
+        
+        // 销毁工具包
+        function destroyToolkit() {
+            if (!qaToolkit) {
+                alert('工具包未初始化');
+                return;
+            }
+            
+            if (confirm('确定要销毁工具包吗？这将清除所有数据。')) {
+                qaToolkit.destroy();
+                qaToolkit = null;
+                
+                updateStatus('toolkit-status', '已销毁');
+                updateStatus('current-agent', '无');
+                updateStatus('connection-status', '离线');
+                updateStatus('current-mode', '无');
+                
+                logEvent('DESTROY', '工具包已销毁');
+                
+                // 清空容器
+                document.getElementById('qa-note-container').innerHTML = `
+                    <div style="padding: 60px 20px; text-align: center; color: #666;">
+                        <h3>🎯 QA Note Toolkit 演示区</h3>
+                        <p>工具包已销毁，点击"初始化工具包"重新开始</p>
+                    </div>
+                `;
+            }
+        }
+        
+        // 更新状态显示
+        function updateStatus(elementId, value) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.textContent = value;
+            }
+        }
+        
+        // 记录事件日志
+        function logEvent(type, message) {
+            const eventLog = document.getElementById('event-log');
+            const time = new Date().toLocaleTimeString();
+            
+            const eventItem = document.createElement('div');
+            eventItem.className = 'event-item';
+            eventItem.innerHTML = `
+                <span class="event-time">${time}</span>
+                <span class="event-type">${type}</span>
+                <span>${message}</span>
+            `;
+            
+            eventLog.appendChild(eventItem);
+            eventLog.scrollTop = eventLog.scrollHeight;
+            
+            eventCount++;
+            if (eventCount > 50) {
+                // 保持日志条数在合理范围内
+                eventLog.removeChild(eventLog.firstChild);
+                eventCount--;
+            }
+        }
+        
+        // 清空事件日志
+        function clearEventLog() {
+            const eventLog = document.getElementById('event-log');
+            eventLog.innerHTML = '';
+            eventCount = 0;
+            logEvent('SYSTEM', '日志已清空');
+        }
+        
+        // 显示加载遮罩
+        function showLoading() {
+            document.getElementById('loading-overlay').classList.remove('hidden');
+        }
+        
+        // 隐藏加载遮罩
+        function hideLoading() {
+            document.getElementById('loading-overlay').classList.add('hidden');
+        }
+        
+        // 配置变化监听
+        document.getElementById('agent-select').addEventListener('change', function() {
+            if (qaToolkit) {
+                qaToolkit.switchAgent(this.value);
+            }
+        });
+        
+        document.getElementById('theme-select').addEventListener('change', function() {
+            if (qaToolkit) {
+                qaToolkit.updateConfig({ ui: { theme: this.value } });
+                logEvent('CONFIG', '主题已更改: ' + this.value);
+            }
+        });
+        
+        // 页面加载完成后的初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            logEvent('SYSTEM', '演示页面加载完成');
+            logEvent('INFO', '使用左侧配置面板自定义设置，然后点击"初始化工具包"开始');
+        });
+        
+        // 窗口大小变化监听
+        window.addEventListener('resize', function() {
+            if (qaToolkit) {
+                logEvent('UI', '窗口大小已调整: ' + window.innerWidth + 'x' + window.innerHeight);
+            }
+        });
+    </script>
+</body>
+</html> 
