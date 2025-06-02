@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QANoteBlock v3.0 - 问答笔记统一功能块</title>
+    <link rel="stylesheet" href="../ui-block/main.css">
+    <link rel="stylesheet" href="../ui-block/message.css">
+    <link rel="stylesheet" href="qa-note-block.css">
+</head>
+<body>
+    <!-- 顶部导航 -->
+    <header style="background: rgba(255,255,255,0.95); padding: 1rem; margin-bottom: 2rem; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
+        <div style="display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto;">
+            <h1 style="margin: 0; color: #495057;">
+                🤖📝 QANoteBlock v3.0 演示
+            </h1>
+            <div style="display: flex; gap: 1rem; align-items: center;">
+                <button id="demo-login" class="btn btn-primary" style="padding: 0.5rem 1rem;">
+                    👤 模拟登录
+                </button>
+                <button id="toggle-mode" class="btn btn-secondary" style="padding: 0.5rem 1rem;">
+                    🔄 切换模式
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- QANoteBlock 容器（由JavaScript动态生成） -->
+    <div id="qa-note-container"></div>
+
+    <!-- 底部信息 -->
+    <footer style="margin-top: 3rem; padding: 2rem; text-align: center; color: rgba(255,255,255,0.8);">
+        <p>🚀 智能问答系统 v3.0 完整解耦版 - QANoteBlock 功能演示</p>
+        <p style="font-size: 0.9rem; margin-top: 1rem;">
+            <strong>功能特性:</strong> 
+            问答模式 | 笔记模式 | 智能存储 | 离线支持 | 自动保存 | 模式切换
+        </p>
+    </footer>
+
+    <!-- 脚本引入 -->
+    <script src="../shared/utils.js"></script>
+    <script src="../shared/api.js"></script>
+    <script src="../shared/notebook.js"></script>
+    <script src="../auth-block/auth.js"></script>
+    <script src="../ui-block/main.js"></script>
+    <script src="qa-note-block.js"></script>
+
+    <script>
+        // 模拟演示功能
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🎯 QANoteBlock演示页面加载完成');
+            
+            // 初始化模拟认证
+            initMockAuth();
+            
+            // 绑定演示按钮
+            bindDemoButtons();
+            
+            // 显示欢迎消息
+            setTimeout(() => {
+                if (window.UIBlock && UIBlock.showMessage) {
+                    UIBlock.showMessage('欢迎使用 QANoteBlock v3.0 演示！', 'success', { duration: 3000 });
+                }
+            }, 1000);
+        });
+
+        // 初始化模拟认证
+        function initMockAuth() {
+            if (!window.AuthBlock) {
+                // 创建模拟AuthBlock
+                window.AuthBlock = {
+                    currentUser: null,
+                    
+                    getCurrentUser() {
+                        return this.currentUser;
+                    },
+                    
+                    login(username, password) {
+                        this.currentUser = {
+                            id: 1,
+                            username: username,
+                            displayName: username === 'admin' ? '管理员' : '演示用户',
+                            role: username === 'admin' ? 'admin' : 'demo'
+                        };
+                        return { success: true, user: this.currentUser };
+                    },
+                    
+                    logout() {
+                        this.currentUser = null;
+                    }
+                };
+            }
+
+            // 默认登录演示用户
+            AuthBlock.login('demo', 'demo123');
+        }
+
+        // 绑定演示按钮事件
+        function bindDemoButtons() {
+            // 模拟登录按钮
+            const loginBtn = document.getElementById('demo-login');
+            if (loginBtn) {
+                loginBtn.addEventListener('click', () => {
+                    const currentUser = AuthBlock.getCurrentUser();
+                    if (currentUser && currentUser.username === 'demo') {
+                        // 切换到管理员
+                        AuthBlock.login('admin', 'admin123');
+                        loginBtn.textContent = '👤 管理员';
+                        if (window.QANoteBlock) {
+                            QANoteBlock.initAuthStatus();
+                        }
+                        showDemoMessage('已切换到管理员账户', 'success');
+                    } else {
+                        // 切换到演示用户
+                        AuthBlock.login('demo', 'demo123');
+                        loginBtn.textContent = '👤 演示用户';
+                        if (window.QANoteBlock) {
+                            QANoteBlock.initAuthStatus();
+                        }
+                        showDemoMessage('已切换到演示账户', 'info');
+                    }
+                });
+            }
+
+            // 模式切换按钮
+            const toggleBtn = document.getElementById('toggle-mode');
+            if (toggleBtn) {
+                toggleBtn.addEventListener('click', () => {
+                    if (window.QANoteBlock) {
+                        const newMode = QANoteBlock.currentMode === 'qa' ? 'note' : 'qa';
+                        QANoteBlock.switchMode(newMode);
+                        toggleBtn.textContent = `🔄 切换到${newMode === 'qa' ? '笔记' : '问答'}模式`;
+                    }
+                });
+            }
+        }
+
+        // 显示演示消息
+        function showDemoMessage(text, type = 'info') {
+            if (window.UIBlock && UIBlock.showMessage) {
+                UIBlock.showMessage(text, type, { duration: 2000 });
+            } else {
+                alert(text);
+            }
+        }
+
+        // 创建模拟NotebookManager（如果不存在）
+        if (!window.NotebookManager) {
+            window.NotebookManager = {
+                data: JSON.parse(localStorage.getItem('qa-note-demo-data') || '{}'),
+                
+                async init() {
+                    console.log('📚 NotebookManager演示版已初始化');
+                    return { success: true };
+                },
+                
+                async save(data) {
+                    const timestamp = new Date().toISOString();
+                    const id = 'item_' + Date.now();
+                    
+                    this.data[id] = {
+                        ...data,
+                        id: id,
+                        timestamp: timestamp
+                    };
+                    
+                    localStorage.setItem('qa-note-demo-data', JSON.stringify(this.data));
+                    console.log('💾 数据已保存:', data.title || data.type);
+                    
+                    return { success: true, id: id };
+                },
+                
+                async load(options = {}) {
+                    const items = Object.values(this.data);
+                    
+                    if (options.type) {
+                        return items.filter(item => item.type === options.type);
+                    }
+                    
+                    return items;
+                }
+            };
+        }
+
+        // 创建模拟APIClient（如果不存在）
+        if (!window.APIClient) {
+            window.APIClient = {
+                async post(url, data) {
+                    // 模拟网络延迟
+                    await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 2000));
+                    
+                    // 模拟API响应
+                    if (url.includes('/qa/ask')) {
+                        const responses = {
+                            general: `基于您的问题"${data.question}"，我认为您可以考虑以下几个方面：
+
+**主要建议：**
+1. 分析问题的核心要素
+2. 寻找相关的解决方案
+3. 制定具体的行动计划
+
+**详细说明：**
+这是一个很好的问题，需要我们从多个角度来思考。根据当前的情况和最佳实践，我建议您首先明确目标，然后逐步实施。
+
+希望这个回答对您有帮助！如果需要更多详细信息，请随时询问。`,
+
+                            code: `根据您的编程问题，这里是一个解决方案：
+
+\`\`\`javascript
+// 解决方案示例
+function solutionExample(input) {
+    // 处理输入数据
+    const processed = input.map(item => {
+        return {
+            ...item,
+            processed: true,
+            timestamp: new Date().toISOString()
+        };
+    });
+    
+    // 返回处理结果
+    return processed;
+}
+
+// 使用示例
+const result = solutionExample([
+    { name: 'test1', value: 100 },
+    { name: 'test2', value: 200 }
+]);
+
+console.log(result);
+\`\`\`
+
+**关键要点：**
+- 使用现代JavaScript语法
+- 确保代码可读性和维护性
+- 添加适当的错误处理
+- 考虑性能优化`,
+
+                            writing: `关于写作技巧，我为您总结了以下要点：
+
+**结构化写作框架：**
+1. **开头** - 吸引读者注意，明确主题
+2. **主体** - 逻辑清晰，层次分明
+3. **结尾** - 总结要点，呼应开头
+
+**写作技巧建议：**
+- **简洁明了**：避免冗长复杂的句子
+- **逻辑连贯**：确保段落之间的衔接自然
+- **具体生动**：使用具体例子和生动描述
+- **读者导向**：始终考虑读者的需求和理解水平
+
+**改进建议：**
+定期练习、多读优秀作品、寻求反馈、持续改进。
+
+记住，好的写作需要时间和练习来培养！`,
+
+                            analysis: `基于数据分析，我为您提供以下洞察：
+
+**数据概览：**
+📊 总体趋势：呈现上升态势
+📈 增长率：月环比增长15.2%
+🎯 关键指标：用户参与度提升显著
+
+**深度分析：**
+
+**1. 趋势分析**
+- 用户活跃度持续增长
+- 核心功能使用率稳定
+- 新用户留存率改善
+
+**2. 关键发现**
+- 移动端使用占比65%
+- 高峰时段：19:00-22:00
+- 主要用户群体：25-35岁
+
+**3. 行动建议**
+- 优化移动端体验
+- 加强晚间时段运营
+- 针对目标用户群制定策略
+
+这些数据表明您的策略方向是正确的，建议继续优化并监控关键指标。`
+                        };
+                        
+                        const agent = data.agent || 'general';
+                        const answer = responses[agent] || responses.general;
+                        
+                        return { answer: answer };
+                    }
+                    
+                    throw new Error('模拟API错误');
+                }
+            };
+        }
+
+        // 页面加载完成后的额外提示
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                console.log(`
+🎉 QANoteBlock v3.0 演示环境已就绪！
+
+📋 演示功能：
+• 🤖 AI问答（4种助手类型）
+• 📝 笔记编辑和保存
+• 🔄 问答/笔记模式切换
+• 💾 本地数据存储
+• 🌐 网络状态监控
+• 👤 用户身份切换
+
+🚀 快速体验：
+1. 在问答模式下输入问题并提问
+2. 将AI回答保存为笔记
+3. 切换到笔记模式编辑内容
+4. 尝试不同的助手类型
+
+💡 提示：所有数据保存在本地，页面刷新后仍然保留。
+                `);
+            }, 2000);
+        });
+    </script>
+</body>
+</html> 

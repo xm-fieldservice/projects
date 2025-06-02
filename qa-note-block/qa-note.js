@@ -369,39 +369,33 @@ window.QANoteBlock = {
      * 显示本地状态
      */
     showLocalStatus(message, type = 'info') {
-        const statusOverlay = document.getElementById('status-overlay');
-        const statusMessage = document.getElementById('status-message');
-        const statusIcon = document.getElementById('status-icon');
-        const statusText = document.getElementById('status-text');
-
-        // 设置图标
-        const icons = {
-            success: '✅',
-            error: '❌',
-            warning: '⚠️',
-            info: 'ℹ️'
-        };
-
-        statusIcon.textContent = icons[type] || icons.info;
-        statusText.textContent = message;
-        
-        // 设置样式
-        statusMessage.className = `status-message ${type}`;
-        
-        // 更新文件状态显示
+        // 只更新文件状态显示，不显示弹窗
         const fileStatus = document.getElementById('file-status');
         if (this.localNoteSaver && this.localNoteSaver.currentFileName) {
             fileStatus.textContent = `已选择: ${this.localNoteSaver.currentFileName}`;
             fileStatus.className = 'file-status success';
+            
+            // 🔧 修复：文件选择成功后自动切换到文件存储模式
+            if (message.includes('File selected') || message.includes('文件选择成功')) {
+                const storageSelect = document.getElementById('storage-select');
+                if (storageSelect && storageSelect.value !== 'file') {
+                    console.log('🔄 [AUTO] 文件选择成功，自动切换到本地文件存储模式');
+                    storageSelect.value = 'file';
+                    this.setStorageMode('file');
+                }
+            }
         }
-
-        // 显示状态
-        statusOverlay.style.display = 'block';
         
-        // 3秒后自动隐藏
-        setTimeout(() => {
-            statusOverlay.style.display = 'none';
-        }, 3000);
+        // 在控制台显示状态信息，但不显示弹窗
+        console.log('📁 [本地文件状态]', message, `(${type})`);
+        
+        // 如果是错误类型，使用showMessage显示
+        if (type === 'error') {
+            this.showMessage(message, 'error');
+        } else if (type === 'success' && message.includes('File selected')) {
+            // 文件选择成功时显示简单提示
+            this.showMessage('文件选择成功，已切换到本地文件存储模式', 'success');
+        }
     },
 
     /**
@@ -855,22 +849,48 @@ window.QANoteBlock = {
             return;
         }
 
+        const storageMode = this.getStorageMode();
+        
         try {
             this.isProcessing = true;
             this.showLoading('正在保存笔记...');
 
-            const result = await this.qaSaver.saveContent({
-                title: noteData.title,
-                content: noteData.content,
-                type: 'note',
-                tags: noteData.tags || []
-            });
+            let result;
 
-            if (result.success) {
+            // 🔧 修复：根据存储模式和文件选择状态决定保存方式
+            if (storageMode === 'file' && this.localNoteSaver && this.localNoteSaver.selectedFileHandle) {
+                // 本地文件直接读写模式，且已选择文件
+                console.log('🔍 [DEBUG] 使用本地文件直接保存模式');
+                result = await this.localNoteSaver.saveNote();
+                
+                // 格式化结果以匹配其他保存方式
+                if (result && result.success) {
+                    result = {
+                        success: true,
+                        data: {
+                            noteId: `local_file_${Date.now()}`,
+                            savedAt: new Date().toISOString(),
+                            fileName: result.fileName,
+                            method: result.method
+                        }
+                    };
+                }
+            } else {
+                // 使用 QANoteSaver（混合模式、服务器模式等）
+                console.log('🔍 [DEBUG] 使用QANoteSaver保存模式, 存储模式:', storageMode);
+                result = await this.qaSaver.saveContent({
+                    title: noteData.title,
+                    content: noteData.content,
+                    type: 'note',
+                    tags: noteData.tags || []
+                });
+            }
+
+            if (result && result.success) {
                 this.showMessage('笔记保存成功！', 'success');
                 this.clearInputs();
             } else {
-                throw new Error(result.error || '保存失败');
+                throw new Error(result?.error || '保存失败');
             }
 
             return this.formatSaveResult(result);
