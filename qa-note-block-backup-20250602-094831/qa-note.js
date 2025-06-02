@@ -9,24 +9,11 @@ window.QANoteBlock = {
     lastResponse: null,
     qaSaver: null,
     localNoteSaver: null,
-    
-    // 新增：网络状态监控
-    networkStatus: {
-        online: navigator.onLine,
-        lastCheck: Date.now(),
-        checkInterval: null
-    },
 
     /**
      * 初始化
      */
     init() {
-        // 初始化网络监控
-        this.initNetworkMonitoring();
-        
-        // 初始化人员选择功能
-        this.initPeopleSelection();
-        
         // 初始化智能存储器
         this.qaSaver = new QANoteSaver({
             mode: this.getStorageMode(),
@@ -42,229 +29,9 @@ window.QANoteBlock = {
         // 初始化界面
         this.initializeUI();
         this.bindEvents();
-        this.bindMenuEvents(); // 新增：绑定菜单事件
         this.loadUserInfo();
         this.switchMode('qa'); // 默认问答模式
         this.checkFileSystemSupport();
-    },
-
-    /**
-     * 新增：初始化网络监控
-     */
-    initNetworkMonitoring() {
-        // 更新初始状态
-        this.updateNetworkStatus();
-        
-        // 监听网络状态变化
-        window.addEventListener('online', () => {
-            this.networkStatus.online = true;
-            this.networkStatus.lastCheck = Date.now();
-            this.updateNetworkStatus();
-            this.showMessage('网络已连接', 'success');
-        });
-        
-        window.addEventListener('offline', () => {
-            this.networkStatus.online = false;
-            this.networkStatus.lastCheck = Date.now();
-            this.updateNetworkStatus();
-            this.showMessage('网络已断开', 'warning');
-        });
-        
-        // 定期检查网络状态
-        this.networkStatus.checkInterval = setInterval(() => {
-            const wasOnline = this.networkStatus.online;
-            this.networkStatus.online = navigator.onLine;
-            this.networkStatus.lastCheck = Date.now();
-            
-            if (wasOnline !== this.networkStatus.online) {
-                this.updateNetworkStatus();
-            }
-        }, 30000); // 每30秒检查一次
-    },
-
-    /**
-     * 更新网络状态显示
-     */
-    updateNetworkStatus() {
-        const indicator = document.getElementById('status-indicator');
-        if (!indicator) return;
-        
-        if (this.networkStatus.online) {
-            indicator.textContent = '🌐 已联网';
-            indicator.className = 'status-indicator online';
-            indicator.title = `网络正常 - 最后检查: ${new Date(this.networkStatus.lastCheck).toLocaleTimeString()}`;
-        } else {
-            indicator.textContent = '❌ 离线';
-            indicator.className = 'status-indicator offline';
-            indicator.title = `网络断开 - 最后检查: ${new Date(this.networkStatus.lastCheck).toLocaleTimeString()}`;
-        }
-    },
-
-    /**
-     * 新增：绑定菜单事件
-     */
-    bindMenuEvents() {
-        // 汉堡菜单按钮
-        const hamburgerMenu = document.getElementById('hamburger-menu');
-        if (hamburgerMenu) {
-            hamburgerMenu.addEventListener('click', () => this.toggleSidebar());
-        }
-
-        // 关闭侧边栏
-        const closeSidebar = document.getElementById('close-sidebar');
-        if (closeSidebar) {
-            closeSidebar.addEventListener('click', () => this.closeSidebar());
-        }
-
-        // 侧边栏菜单项
-        const menuLinks = document.querySelectorAll('.menu-link');
-        menuLinks.forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                const action = link.dataset.action;
-                this.handleMenuAction(action);
-            });
-        });
-
-        // 背景遮罩点击
-        const backdrop = document.getElementById('backdrop');
-        if (backdrop) {
-            backdrop.addEventListener('click', () => this.closeSidebar());
-        }
-
-        // ESC键关闭侧边栏
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                this.closeSidebar();
-            }
-        });
-    },
-
-    /**
-     * 新增：切换侧边栏
-     */
-    toggleSidebar() {
-        const sidebar = document.getElementById('left-sidebar');
-        const hamburger = document.getElementById('hamburger-menu');
-        const backdrop = document.getElementById('backdrop');
-
-        if (sidebar && hamburger && backdrop) {
-            const isOpen = sidebar.classList.contains('open');
-            
-            if (isOpen) {
-                this.closeSidebar();
-            } else {
-                sidebar.classList.add('open');
-                hamburger.classList.add('active');
-                backdrop.classList.add('show');
-            }
-        }
-    },
-
-    /**
-     * 新增：关闭侧边栏
-     */
-    closeSidebar() {
-        const sidebar = document.getElementById('left-sidebar');
-        const hamburger = document.getElementById('hamburger-menu');
-        const backdrop = document.getElementById('backdrop');
-
-        if (sidebar && hamburger && backdrop) {
-            sidebar.classList.remove('open');
-            hamburger.classList.remove('active');
-            backdrop.classList.remove('show');
-        }
-    },
-
-    /**
-     * 新增：处理菜单操作
-     */
-    handleMenuAction(action) {
-        // 关闭侧边栏
-        this.closeSidebar();
-        
-        // 更新菜单激活状态
-        this.updateMenuActiveState(action);
-
-        switch (action) {
-            case 'switch-qa':
-                document.getElementById('mode-switch').checked = true;
-                this.switchMode('qa');
-                this.showMessage('已切换到问答模式', 'info');
-                break;
-                
-            case 'switch-note':
-                document.getElementById('mode-switch').checked = false;
-                this.switchMode('note');
-                this.showMessage('已切换到笔记模式', 'info');
-                break;
-                
-            case 'export-data':
-                this.exportNotebook();
-                break;
-                
-            case 'clear-all':
-                if (confirm('确定要清空所有数据吗？此操作不可恢复。')) {
-                    this.clearNotebook();
-                    this.clearInputs();
-                    this.showMessage('数据已清空', 'success');
-                }
-                break;
-                
-            case 'settings':
-                this.showSettings();
-                break;
-                
-            default:
-                console.warn('未知的菜单操作:', action);
-        }
-    },
-
-    /**
-     * 新增：更新菜单激活状态
-     */
-    updateMenuActiveState(action) {
-        const menuItems = document.querySelectorAll('.menu-item');
-        menuItems.forEach(item => {
-            const link = item.querySelector('.menu-link');
-            if (link) {
-                const linkAction = link.dataset.action;
-                if (linkAction === action) {
-                    item.classList.add('active');
-                } else {
-                    item.classList.remove('active');
-                }
-            }
-        });
-    },
-
-    /**
-     * 新增：显示设置
-     */
-    showSettings() {
-        this.showMessage('设置功能开发中，敬请期待！', 'info');
-    },
-
-    /**
-     * 新增：更新系统状态显示
-     */
-    updateSystemStatus() {
-        const storageModeDisplay = document.getElementById('storage-mode-display');
-        const syncStatusDisplay = document.getElementById('sync-status-display');
-        const dataCountDisplay = document.getElementById('data-count-display');
-
-        if (storageModeDisplay) {
-            storageModeDisplay.textContent = this.getStorageModeDisplay(this.getStorageMode());
-        }
-
-        if (syncStatusDisplay) {
-            syncStatusDisplay.textContent = this.networkStatus.online ? '已同步' : '离线模式';
-        }
-
-        if (dataCountDisplay) {
-            // 这里可以统计实际的数据量
-            dataCountDisplay.textContent = '0 条记录';
-        }
     },
 
     /**
@@ -389,9 +156,6 @@ window.QANoteBlock = {
 
         // 加载笔记本预览
         this.loadNotebookPreview();
-        
-        // 新增：更新网络状态显示
-        this.updateNetworkStatus();
     },
 
     /**
@@ -620,28 +384,36 @@ window.QANoteBlock = {
     },
 
     /**
-     * 模式切换
+     * 切换模式（核心功能）
      */
     switchMode(mode) {
-        this.currentMode = mode;
-        
-        // 更新界面显示
-        if (mode === 'qa') {
-            this.updateUIForQAMode();
-        } else {
-            this.updateUIForNoteMode();
+        if (!['qa', 'note'].includes(mode)) {
+            this.showMessage('无效的模式', 'error');
+            return { success: false, error: '无效的模式' };
         }
+
+        this.currentMode = mode;
 
         // 更新开关状态
         const modeSwitch = document.getElementById('mode-switch');
-        if (modeSwitch) {
-            modeSwitch.checked = (mode === 'qa');
+        modeSwitch.checked = (mode === 'qa');
+
+        if (mode === 'qa') {
+            // 问答模式界面
+            this.updateUIForQAMode();
+        } else {
+            // 笔记模式界面
+            this.updateUIForNoteMode();
         }
 
-        // 新增：更新系统状态显示
-        this.updateNetworkStatus();
-        
-        this.showMessage(`已切换到${mode === 'qa' ? '问答' : '笔记'}模式`, 'info');
+        return {
+            success: true,
+            data: {
+                previousMode: this.currentMode,
+                newMode: mode,
+                switchedAt: new Date().toISOString()
+            }
+        };
     },
 
     /**
@@ -1105,29 +877,25 @@ window.QANoteBlock = {
      * 设置存储模式
      */
     setStorageMode(mode) {
-        localStorage.setItem('qa-storage-mode', mode);
-        
-        // 重新初始化QANoteSaver
-        if (this.qaSaver) {
-            this.qaSaver = new QANoteSaver({
-                mode: mode,
-                apiUrl: 'http://localhost:8000/api/v1',
-                debugMode: false,
-                onSaveSuccess: this.handleSaveSuccess.bind(this),
-                onSaveError: this.handleSaveError.bind(this)
-            });
+        if (mode === 'file') {
+            // 文件直接读写模式
+            this.showMessage('已切换到本地文件直接读写模式', 'info');
+            return { success: true };
         }
-        
-        // 更新界面显示
-        this.updateNetworkStatus();
-        this.showMessage(`存储模式已切换为: ${this.getStorageModeName(mode)}`, 'info');
+
+        const result = this.qaSaver.switchMode(mode);
+        if (result.success) {
+            localStorage.setItem('qa_storage_mode', mode);
+            this.showMessage(`存储模式已切换为: ${this.getStorageModeDisplay(mode)}`, 'info');
+        }
+        return result;
     },
 
     /**
      * 获取存储模式
      */
     getStorageMode() {
-        return localStorage.getItem('qa-storage-mode') || 'hybrid';
+        return localStorage.getItem('qa_storage_mode') || 'hybrid';
     },
 
     /**
@@ -1325,231 +1093,6 @@ window.QANoteBlock = {
 
     handleSaveError(error) {
         console.error('保存失败:', error);
-    },
-
-    /**
-     * 初始化人员选择功能
-     */
-    initPeopleSelection() {
-        this.selectedPeople = new Set();
-        
-        // 人员选择按钮事件
-        const peopleMenuBtn = document.getElementById('people-menu');
-        if (peopleMenuBtn) {
-            peopleMenuBtn.addEventListener('click', () => this.togglePeopleSidebar());
-        }
-        
-        // 关闭按钮事件
-        const closePeopleBtn = document.getElementById('close-people-sidebar');
-        if (closePeopleBtn) {
-            closePeopleBtn.addEventListener('click', () => this.closePeopleSidebar());
-        }
-        
-        // 分组选择事件
-        document.addEventListener('click', (e) => {
-            if (e.target.classList.contains('group-label') || e.target.closest('.group-label')) {
-                const groupHeader = e.target.closest('.group-header');
-                const groupItem = groupHeader.closest('.group-item');
-                this.toggleGroupExpansion(groupItem);
-            }
-        });
-        
-        // 分组复选框事件
-        document.addEventListener('change', (e) => {
-            if (e.target.classList.contains('group-checkbox')) {
-                this.handleGroupSelection(e.target);
-            } else if (e.target.classList.contains('member-checkbox')) {
-                this.handleMemberSelection(e.target);
-            }
-        });
-        
-        // 选择操作按钮事件
-        const clearSelectionBtn = document.getElementById('clear-selection');
-        if (clearSelectionBtn) {
-            clearSelectionBtn.addEventListener('click', () => this.clearPeopleSelection());
-        }
-        
-        const applySelectionBtn = document.getElementById('apply-selection');
-        if (applySelectionBtn) {
-            applySelectionBtn.addEventListener('click', () => this.applyPeopleSelection());
-        }
-    },
-
-    /**
-     * 切换人员侧边栏
-     */
-    togglePeopleSidebar() {
-        const sidebar = document.getElementById('right-sidebar');
-        const backdrop = document.getElementById('backdrop');
-        
-        if (sidebar && backdrop) {
-            sidebar.classList.toggle('active');
-            backdrop.classList.toggle('active');
-            
-            // 关闭左侧栏（如果开着）
-            const leftSidebar = document.getElementById('left-sidebar');
-            if (leftSidebar && leftSidebar.classList.contains('active')) {
-                leftSidebar.classList.remove('active');
-            }
-        }
-    },
-
-    /**
-     * 关闭人员侧边栏
-     */
-    closePeopleSidebar() {
-        const sidebar = document.getElementById('right-sidebar');
-        const backdrop = document.getElementById('backdrop');
-        
-        if (sidebar) sidebar.classList.remove('active');
-        if (backdrop) backdrop.classList.remove('active');
-    },
-
-    /**
-     * 切换分组展开/收起
-     */
-    toggleGroupExpansion(groupItem) {
-        if (groupItem) {
-            groupItem.classList.toggle('expanded');
-        }
-    },
-
-    /**
-     * 处理分组选择
-     */
-    handleGroupSelection(checkbox) {
-        const groupName = checkbox.id.replace('group-', '');
-        const groupData = checkbox.closest('.group-item').dataset.group || groupName;
-        const memberCheckboxes = document.querySelectorAll(`.member-checkbox[data-group="${groupData}"]`);
-        
-        // 全选/取消全选该分组的成员
-        memberCheckboxes.forEach(memberCheckbox => {
-            memberCheckbox.checked = checkbox.checked;
-            if (checkbox.checked) {
-                this.selectedPeople.add(memberCheckbox.dataset.member);
-            } else {
-                this.selectedPeople.delete(memberCheckbox.dataset.member);
-            }
-        });
-        
-        this.updateSelectedPeopleDisplay();
-    },
-
-    /**
-     * 处理成员选择
-     */
-    handleMemberSelection(checkbox) {
-        const memberName = checkbox.dataset.member;
-        const groupName = checkbox.dataset.group;
-        
-        if (checkbox.checked) {
-            this.selectedPeople.add(memberName);
-        } else {
-            this.selectedPeople.delete(memberName);
-            
-            // 如果取消选择成员，同时取消分组选择
-            const groupCheckbox = document.querySelector(`#group-${groupName.replace('-team', '')}`);
-            if (groupCheckbox) {
-                groupCheckbox.checked = false;
-            }
-        }
-        
-        // 检查是否所有成员都被选中，更新分组复选框状态
-        const allMembersInGroup = document.querySelectorAll(`.member-checkbox[data-group="${groupName}"]`);
-        const selectedMembersInGroup = document.querySelectorAll(`.member-checkbox[data-group="${groupName}"]:checked`);
-        const groupCheckbox = document.querySelector(`#group-${groupName.replace('-team', '')}`);
-        
-        if (groupCheckbox) {
-            groupCheckbox.checked = (allMembersInGroup.length === selectedMembersInGroup.length && allMembersInGroup.length > 0);
-        }
-        
-        this.updateSelectedPeopleDisplay();
-    },
-
-    /**
-     * 更新已选人员显示
-     */
-    updateSelectedPeopleDisplay() {
-        const container = document.getElementById('selected-people-list');
-        if (!container) return;
-        
-        if (this.selectedPeople.size === 0) {
-            container.innerHTML = '<span class="empty-state">暂未选择人员</span>';
-        } else {
-            const tags = Array.from(this.selectedPeople).map(person => `
-                <span class="selected-person-tag">
-                    ${person}
-                    <button class="remove-btn" onclick="QANoteBlock.removePerson('${person}')">&times;</button>
-                </span>
-            `).join('');
-            container.innerHTML = tags;
-        }
-    },
-
-    /**
-     * 移除已选人员
-     */
-    removePerson(personName) {
-        this.selectedPeople.delete(personName);
-        
-        // 取消对应的复选框选择
-        const memberCheckbox = document.querySelector(`.member-checkbox[data-member="${personName}"]`);
-        if (memberCheckbox) {
-            memberCheckbox.checked = false;
-            // 触发change事件更新分组状态
-            memberCheckbox.dispatchEvent(new Event('change'));
-        }
-        
-        this.updateSelectedPeopleDisplay();
-    },
-
-    /**
-     * 清空人员选择
-     */
-    clearPeopleSelection() {
-        this.selectedPeople.clear();
-        
-        // 取消所有复选框选择
-        document.querySelectorAll('.group-checkbox, .member-checkbox').forEach(checkbox => {
-            checkbox.checked = false;
-        });
-        
-        this.updateSelectedPeopleDisplay();
-        this.showMessage('已清空人员选择', 'info');
-    },
-
-    /**
-     * 应用人员选择到输入框
-     */
-    applyPeopleSelection() {
-        if (this.selectedPeople.size === 0) {
-            this.showMessage('请先选择人员', 'warning');
-            return;
-        }
-        
-        const titleInput = document.getElementById('title-input');
-        const contentInput = document.getElementById('content-input');
-        
-        const peopleList = Array.from(this.selectedPeople).map(name => `@${name}`).join(' ');
-        const prefix = `发送给: ${peopleList}\n\n`;
-        
-        if (titleInput && contentInput) {
-            // 在内容前添加人员信息
-            const currentContent = contentInput.value;
-            if (currentContent && !currentContent.startsWith('发送给:')) {
-                contentInput.value = prefix + currentContent;
-            } else if (!currentContent) {
-                contentInput.value = prefix;
-            }
-            
-            // 如果标题为空，自动设置为私信标题
-            if (!titleInput.value.trim()) {
-                titleInput.value = `私信 - ${Array.from(this.selectedPeople).join(', ')}`;
-            }
-        }
-        
-        this.closePeopleSidebar();
-        this.showMessage(`已添加 ${this.selectedPeople.size} 位收件人`, 'success');
     }
 };
 

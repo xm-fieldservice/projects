@@ -9,141 +9,107 @@
 </head>
 <body>
     <div class="auth-container">
-        <!-- 背景动画 -->
-        <div class="background-animation">
-            <div class="floating-shapes">
-                <div class="shape shape-1"></div>
-                <div class="shape shape-2"></div>
-                <div class="shape shape-3"></div>
-                <div class="shape shape-4"></div>
-                <div class="shape shape-5"></div>
-            </div>
-        </div>
-        
-        <!-- 主登录卡片 -->
         <div class="auth-card">
-            <!-- 系统Logo和标题 -->
             <div class="auth-header">
-                <div class="logo">
-                    <i class="fas fa-robot"></i>
+                <div class="auth-logo">
+                    <span class="logo-icon">🧠</span>
+                    <span class="logo-text">智能问答系统</span>
                 </div>
-                <h1 class="system-title">智能问答系统</h1>
-                <p class="system-subtitle">AI驱动的个人知识管理平台</p>
+                <p class="auth-subtitle">v3.0 完整解耦版</p>
             </div>
-            
-            <!-- 登录表单 -->
-            <form class="auth-form" id="loginForm">
-                <div class="form-group">
-                    <label for="username" class="form-label">
-                        <i class="fas fa-user"></i>
-                        用户名
-                    </label>
-                    <input 
-                        type="text" 
-                        id="username" 
-                        name="username" 
-                        class="form-input" 
-                        placeholder="请输入用户名"
-                        required
-                        autocomplete="username"
-                    >
-                    <div class="input-error" id="usernameError"></div>
-                </div>
-                
-                <div class="form-group">
-                    <label for="password" class="form-label">
-                        <i class="fas fa-lock"></i>
-                        密码
-                    </label>
-                    <div class="password-input-wrapper">
+
+            <div class="auth-content">
+                <!-- 登录表单 -->
+                <form class="auth-form" id="login-form">
+                    <div class="form-group">
+                        <label for="username" class="form-label">用户名</label>
+                        <input 
+                            type="text" 
+                            id="username" 
+                            name="username" 
+                            class="form-input"
+                            placeholder="请输入用户名"
+                            required
+                            autocomplete="username"
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password" class="form-label">密码</label>
                         <input 
                             type="password" 
                             id="password" 
                             name="password" 
-                            class="form-input" 
+                            class="form-input"
                             placeholder="请输入密码"
                             required
                             autocomplete="current-password"
                         >
-                        <button type="button" class="password-toggle" id="passwordToggle">
-                            <i class="fas fa-eye"></i>
+                    </div>
+
+                    <div class="form-options">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="remember-me" name="remember">
+                            <span class="checkmark"></span>
+                            <span class="checkbox-text">记住登录状态</span>
+                        </label>
+                    </div>
+
+                    <button type="submit" class="auth-btn primary" id="login-btn">
+                        <span class="btn-text">登录</span>
+                        <span class="btn-loading" style="display: none;">
+                            <span class="loading-spinner"></span>
+                            登录中...
+                        </span>
+                    </button>
+                </form>
+
+                <!-- 快速登录选项 -->
+                <div class="quick-login">
+                    <div class="divider">
+                        <span class="divider-text">或者</span>
+                    </div>
+
+                    <div class="quick-options">
+                        <button type="button" class="auth-btn secondary" id="demo-login-btn">
+                            <span class="btn-icon">👤</span>
+                            <span class="btn-text">演示模式登录</span>
                         </button>
                     </div>
-                    <div class="input-error" id="passwordError"></div>
                 </div>
-                
-                <!-- 记住我 -->
-                <div class="form-options">
-                    <label class="checkbox-container">
-                        <input type="checkbox" id="rememberMe" name="rememberMe">
-                        <span class="checkmark"></span>
-                        记住我
-                    </label>
-                    <a href="#" class="forgot-password">忘记密码？</a>
+
+                <!-- 帮助信息 -->
+                <div class="auth-help">
+                    <div class="help-card">
+                        <h4 class="help-title">💡 快速开始</h4>
+                        <ul class="help-list">
+                            <li><strong>演示账号：</strong>demo / demo123</li>
+                            <li><strong>管理员：</strong>admin / admin123</li>
+                            <li><strong>普通用户：</strong>user / user123</li>
+                        </ul>
+                    </div>
                 </div>
-                
-                <!-- 登录按钮 -->
-                <button type="submit" class="btn btn-primary btn-login" id="loginBtn">
-                    <span class="btn-text">登录</span>
-                    <span class="btn-spinner" style="display: none;">
-                        <i class="fas fa-spinner fa-spin"></i>
-                    </span>
-                </button>
-                
-                <!-- 登录错误提示 -->
-                <div class="auth-error" id="authError" style="display: none;">
-                    <i class="fas fa-exclamation-triangle"></i>
-                    <span id="authErrorText"></span>
-                </div>
-            </form>
-            
-            <!-- 分割线 -->
-            <div class="divider">
-                <span>或者</span>
             </div>
-            
-            <!-- 演示模式 -->
-            <div class="demo-section">
-                <button type="button" class="btn btn-demo" id="demoBtn">
-                    <i class="fas fa-play-circle"></i>
-                    演示模式
-                </button>
-                <p class="demo-description">
-                    无需注册，立即体验系统功能
+
+            <div class="auth-footer">
+                <p class="footer-text">
+                    © 2024 智能问答系统 v3.0 - 完整解耦版
                 </p>
-            </div>
-            
-            <!-- 快速登录提示 -->
-            <div class="quick-login-tips">
-                <div class="tips-header">
-                    <i class="fas fa-lightbulb"></i>
-                    快速开始
-                </div>
-                <div class="tips-content">
-                    <div class="tip-item">
-                        <strong>管理员：</strong> admin / admin123
-                    </div>
-                    <div class="tip-item">
-                        <strong>普通用户：</strong> user / user123
-                    </div>
+                <div class="footer-links">
+                    <a href="#" class="footer-link">使用帮助</a>
+                    <a href="#" class="footer-link">隐私政策</a>
                 </div>
             </div>
         </div>
-        
-        <!-- 系统信息 -->
-        <div class="system-info">
-            <div class="version-info">
-                <span>版本 v3.0</span>
-                <span>•</span>
-                <span>完整解耦版</span>
+
+        <!-- 版本信息 -->
+        <div class="version-info">
+            <div class="version-badge">
+                <span class="version-label">版本</span>
+                <span class="version-number">v3.0.0</span>
             </div>
-            <div class="tech-stack">
-                <span>基于</span>
-                <span class="tech-item">HTML5</span>
-                <span>•</span>
-                <span class="tech-item">CSS3</span>
-                <span>•</span>
-                <span class="tech-item">JavaScript</span>
+            <div class="build-info">
+                <span class="build-date" id="build-date">构建时间：加载中...</span>
             </div>
         </div>
     </div>
@@ -174,7 +140,7 @@
             const rememberedUser = QAUtils.storage.get('remembered_user');
             if (rememberedUser) {
                 document.getElementById('username').value = rememberedUser.username;
-                document.getElementById('rememberMe').checked = true;
+                document.getElementById('remember-me').checked = true;
             }
         });
     </script>

@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能问答系统 v3.0 - 完整解耦版</title>
+    <link rel="stylesheet" href="main.css">
+    <link rel="stylesheet" href="message.css">
+</head>
+<body>
+    <!-- 主应用容器 -->
+    <div id="app-container" class="app-container">
+        
+        <!-- 顶部导航栏 -->
+        <header class="app-header">
+            <!-- 左侧：汉堡菜单 + 标题 -->
+            <div class="header-left">
+                <button id="hamburger-menu" class="menu-btn" title="展开功能菜单" aria-label="展开菜单">
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
+                </button>
+                <div class="app-title">
+                    <span class="title-icon">🧠</span>
+                    <span class="title-text">智能问答系统</span>
+                    <span class="version-badge">v3.0</span>
+                </div>
+            </div>
+
+            <!-- 中间：网络状态监控 -->
+            <div class="header-center">
+                <div class="network-status" id="network-status">
+                    <span class="status-icon" id="network-icon">🌐</span>
+                    <span class="status-text" id="network-text">检测中...</span>
+                    <div class="status-indicator" id="status-indicator"></div>
+                </div>
+            </div>
+
+            <!-- 右侧：功能按钮组 -->
+            <div class="header-right">
+                <!-- 全局搜索按钮 -->
+                <button id="search-toggle-btn" class="header-btn" title="全局搜索">
+                    <span class="btn-icon">🔍</span>
+                    <span class="btn-label">搜索</span>
+                </button>
+
+                <!-- 通知按钮 -->
+                <button id="notifications-btn" class="header-btn" title="通知中心">
+                    <span class="btn-icon">🔔</span>
+                    <span class="btn-label">通知</span>
+                    <span class="notification-badge" id="notification-count" style="display: none;">0</span>
+                </button>
+
+                <!-- 设置菜单按钮 -->
+                <button id="settings-menu-btn" class="header-btn" title="系统设置">
+                    <span class="btn-icon">⚙️</span>
+                    <span class="btn-label">设置</span>
+                </button>
+
+                <!-- 用户菜单 -->
+                <div class="user-menu">
+                    <button id="user-menu-btn" class="user-menu-trigger" title="用户菜单">
+                        <span class="user-avatar" id="user-avatar">👤</span>
+                        <span class="user-name" id="user-name">用户</span>
+                        <span class="dropdown-arrow">▼</span>
+                    </button>
+
+                    <!-- 用户下拉菜单 -->
+                    <div id="user-dropdown" class="dropdown-menu">
+                        <a href="#" class="dropdown-item" data-action="profile">
+                            <span class="item-icon">👤</span>
+                            <span class="item-text">个人资料</span>
+                        </a>
+                        <a href="#" class="dropdown-item" data-action="preferences">
+                            <span class="item-icon">⚙️</span>
+                            <span class="item-text">偏好设置</span>
+                        </a>
+                        <a href="#" class="dropdown-item" data-action="help">
+                            <span class="item-icon">❓</span>
+                            <span class="item-text">帮助中心</span>
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a href="#" class="dropdown-item" data-action="logout">
+                            <span class="item-icon">🚪</span>
+                            <span class="item-text">退出登录</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- 左侧滑出菜单 -->
+        <nav id="left-sidebar" class="left-sidebar">
+            <div class="sidebar-header">
+                <h3 class="sidebar-title">📚 功能菜单</h3>
+                <button id="close-sidebar" class="close-btn" aria-label="关闭菜单">&times;</button>
+            </div>
+            
+            <div class="sidebar-content">
+                <ul class="sidebar-menu">
+                    <li class="menu-item active">
+                        <a href="#" data-block="qa-note" data-mode="qa" class="menu-link">
+                            <span class="menu-icon">🤖</span>
+                            <span class="menu-text">智能问答</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="#" data-block="qa-note" data-mode="note" class="menu-link">
+                            <span class="menu-icon">📝</span>
+                            <span class="menu-text">笔记管理</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="#" data-block="history" class="menu-link">
+                            <span class="menu-icon">📜</span>
+                            <span class="menu-text">历史记录</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="#" data-block="export" class="menu-link">
+                            <span class="menu-icon">📤</span>
+                            <span class="menu-text">数据导出</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="#" data-block="settings" class="menu-link">
+                            <span class="menu-icon">⚙️</span>
+                            <span class="menu-text">系统设置</span>
+                        </a>
+                    </li>
+                </ul>
+
+                <!-- 系统状态面板 -->
+                <div class="system-status">
+                    <h4 class="status-title">📊 系统状态</h4>
+                    <div class="status-item">
+                        <span class="status-label">存储模式:</span>
+                        <span class="status-value" id="storage-mode-display">混合模式</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">同步状态:</span>
+                        <span class="status-value" id="sync-status-display">已同步</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">数据量:</span>
+                        <span class="status-value" id="data-count-display">0 条记录</span>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- 主要内容区域 -->
+        <main id="block-container" class="block-container">
+            <!-- 功能块将动态加载到这里 -->
+            <div class="loading-placeholder">
+                <div class="loading-spinner-container">
+                    <div class="loading-spinner"></div>
+                    <div class="loading-text">正在加载问答系统...</div>
+                </div>
+            </div>
+        </main>
+
+        <!-- 全局搜索覆盖层 -->
+        <div id="search-overlay" class="search-overlay">
+            <div class="search-container">
+                <div class="search-header">
+                    <input type="text" 
+                           id="global-search-input" 
+                           class="global-search-input"
+                           placeholder="搜索问答、笔记、标签..." 
+                           autocomplete="off"
+                           aria-label="全局搜索">
+                    <button id="close-search" class="close-search-btn" aria-label="关闭搜索">&times;</button>
+                </div>
+                
+                <!-- 搜索结果 -->
+                <div class="search-results" id="search-results">
+                    <div class="search-empty">
+                        <span class="empty-icon">🔍</span>
+                        <span class="empty-text">输入关键词开始搜索</span>
+                    </div>
+                </div>
+                
+                <!-- 搜索快捷键提示 -->
+                <div class="search-shortcuts">
+                    <span class="shortcut"><kbd>Enter</kbd> 确认选择</span>
+                    <span class="shortcut"><kbd>ESC</kbd> 关闭搜索</span>
+                    <span class="shortcut"><kbd>↑↓</kbd> 选择结果</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 底部状态栏 -->
+        <footer class="app-footer">
+            <div class="status-bar">
+                <!-- 左侧：当前状态 -->
+                <div class="status-left">
+                    <span class="current-block" id="current-block-indicator">🤖 问答模式</span>
+                    <span class="save-status" id="save-status-indicator">✅ 已保存</span>
+                </div>
+                
+                <!-- 中间：统计信息 -->
+                <div class="status-center">
+                    <span class="content-stats" id="content-stats">字数：0 | 标签：0</span>
+                </div>
+                
+                <!-- 右侧：网络和同步状态 -->
+                <div class="status-right">
+                    <span class="sync-status" id="footer-sync-status">🔄 同步中...</span>
+                    <span class="connection-status" id="footer-connection-status">🌐 在线</span>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- 背景遮罩 -->
+    <div id="backdrop" class="backdrop"></div>
+
+    <!-- 脚本引入 -->
+    <script src="../shared/utils.js"></script>
+    <script src="main.js"></script>
+</body>
+</html> 

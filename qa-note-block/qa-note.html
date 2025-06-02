@@ -10,23 +10,242 @@
     <!-- 顶部模式切换区域 -->
     <header class="mode-header">
         <div class="mode-container">
-            <div class="mode-switcher">
-                <!-- 开关样式的模式切换 -->
-                <div class="switch-container">
-                    <span class="switch-label">📝 笔记模式</span>
-                    <label class="switch">
-                        <input type="checkbox" id="mode-switch" checked>
-                        <span class="slider round"></span>
-                    </label>
-                    <span class="switch-label">🤖 问答模式</span>
+            <!-- 左侧：汉堡菜单 -->
+            <div class="header-left">
+                <button id="hamburger-menu" class="menu-btn" title="展开功能菜单" aria-label="展开菜单">
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
+                </button>
+            </div>
+
+            <!-- 中间：模式切换和网络状态 -->
+            <div class="header-center">
+                <div class="mode-switcher">
+                    <!-- 开关样式的模式切换 -->
+                    <div class="switch-container">
+                        <span class="switch-label">📝 笔记模式</span>
+                        <label class="switch">
+                            <input type="checkbox" id="mode-switch" checked>
+                            <span class="slider round"></span>
+                        </label>
+                        <span class="switch-label">🤖 问答模式</span>
+                    </div>
+                </div>
+                
+                <!-- 网络状态监控 -->
+                <div class="network-status" id="network-status">
+                    <span class="status-icon" id="network-icon">🌐</span>
+                    <span class="status-text" id="network-text">检测中...</span>
+                    <div class="status-indicator" id="status-indicator"></div>
                 </div>
             </div>
-            <div class="current-user">
-                <span id="user-display">用户</span>
-                <button id="logout-btn" class="logout-btn">退出</button>
+
+            <!-- 右侧：用户信息和功能按钮 -->
+            <div class="header-right">
+                <!-- 人员选择按钮 -->
+                <button id="people-menu" class="menu-btn" title="人员选择" aria-label="展开人员菜单">
+                    <span class="menu-icon">👥</span>
+                </button>
+                
+                <div class="current-user">
+                    <span id="user-display">用户</span>
+                    <button id="logout-btn" class="logout-btn">退出</button>
+                </div>
             </div>
         </div>
     </header>
+
+    <!-- 左侧滑出菜单 -->
+    <nav id="left-sidebar" class="left-sidebar">
+        <div class="sidebar-header">
+            <h3 class="sidebar-title">📚 功能菜单</h3>
+            <button id="close-sidebar" class="close-btn" aria-label="关闭菜单">&times;</button>
+        </div>
+        
+        <div class="sidebar-content">
+            <ul class="sidebar-menu">
+                <li class="menu-item active">
+                    <a href="#" data-action="switch-qa" class="menu-link">
+                        <span class="menu-icon">🤖</span>
+                        <span class="menu-text">智能问答</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="#" data-action="switch-note" class="menu-link">
+                        <span class="menu-icon">📝</span>
+                        <span class="menu-text">笔记管理</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="#" data-action="export-data" class="menu-link">
+                        <span class="menu-icon">📤</span>
+                        <span class="menu-text">数据导出</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="#" data-action="clear-all" class="menu-link">
+                        <span class="menu-icon">🗑️</span>
+                        <span class="menu-text">清空数据</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="#" data-action="settings" class="menu-link">
+                        <span class="menu-icon">⚙️</span>
+                        <span class="menu-text">系统设置</span>
+                    </a>
+                </li>
+            </ul>
+
+            <!-- 系统状态面板 -->
+            <div class="system-status">
+                <h4 class="status-title">📊 系统状态</h4>
+                <div class="status-item">
+                    <span class="status-label">存储模式:</span>
+                    <span class="status-value" id="storage-mode-display">混合模式</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-label">同步状态:</span>
+                    <span class="status-value" id="sync-status-display">已同步</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-label">数据量:</span>
+                    <span class="status-value" id="data-count-display">0 条记录</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 右侧人员栏 -->
+    <nav id="right-sidebar" class="right-sidebar">
+        <div class="sidebar-header">
+            <h3 class="sidebar-title">👥 人员选择</h3>
+            <button id="close-people-sidebar" class="close-btn" aria-label="关闭人员菜单">&times;</button>
+        </div>
+        
+        <div class="sidebar-content">
+            <!-- 已选人员显示 -->
+            <div class="selected-people">
+                <h4 class="section-title">已选人员</h4>
+                <div id="selected-people-list" class="selected-list">
+                    <span class="empty-state">暂未选择人员</span>
+                </div>
+                <div class="selection-actions">
+                    <button id="clear-selection" class="btn btn-sm btn-secondary">清空选择</button>
+                    <button id="apply-selection" class="btn btn-sm btn-primary">应用到输入框</button>
+                </div>
+            </div>
+
+            <!-- 人员分组列表 -->
+            <div class="people-groups">
+                <h4 class="section-title">人员分组</h4>
+                
+                <!-- 开发团队分组 -->
+                <div class="group-item">
+                    <div class="group-header" data-group="dev-team">
+                        <input type="checkbox" id="group-dev" class="group-checkbox">
+                        <label for="group-dev" class="group-label">
+                            <span class="group-icon">👨‍💻</span>
+                            <span class="group-name">开发团队</span>
+                            <span class="group-count">(3人)</span>
+                            <span class="expand-icon">▼</span>
+                        </label>
+                    </div>
+                    <div class="group-members">
+                        <div class="member-item">
+                            <input type="checkbox" id="member-zhang" class="member-checkbox" data-group="dev-team" data-member="张开发">
+                            <label for="member-zhang" class="member-label">
+                                <span class="member-avatar">👨</span>
+                                <span class="member-name">张开发</span>
+                                <span class="member-status online">在线</span>
+                            </label>
+                        </div>
+                        <div class="member-item">
+                            <input type="checkbox" id="member-li" class="member-checkbox" data-group="dev-team" data-member="李程序">
+                            <label for="member-li" class="member-label">
+                                <span class="member-avatar">👩</span>
+                                <span class="member-name">李程序</span>
+                                <span class="member-status offline">离线</span>
+                            </label>
+                        </div>
+                        <div class="member-item">
+                            <input type="checkbox" id="member-wang" class="member-checkbox" data-group="dev-team" data-member="王前端">
+                            <label for="member-wang" class="member-label">
+                                <span class="member-avatar">👨</span>
+                                <span class="member-name">王前端</span>
+                                <span class="member-status online">在线</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 设计团队分组 -->
+                <div class="group-item">
+                    <div class="group-header" data-group="design-team">
+                        <input type="checkbox" id="group-design" class="group-checkbox">
+                        <label for="group-design" class="group-label">
+                            <span class="group-icon">🎨</span>
+                            <span class="group-name">设计团队</span>
+                            <span class="group-count">(2人)</span>
+                            <span class="expand-icon">▼</span>
+                        </label>
+                    </div>
+                    <div class="group-members">
+                        <div class="member-item">
+                            <input type="checkbox" id="member-liu" class="member-checkbox" data-group="design-team" data-member="刘设计">
+                            <label for="member-liu" class="member-label">
+                                <span class="member-avatar">👩</span>
+                                <span class="member-name">刘设计</span>
+                                <span class="member-status online">在线</span>
+                            </label>
+                        </div>
+                        <div class="member-item">
+                            <input type="checkbox" id="member-chen" class="member-checkbox" data-group="design-team" data-member="陈UI">
+                            <label for="member-chen" class="member-label">
+                                <span class="member-avatar">👨</span>
+                                <span class="member-name">陈UI</span>
+                                <span class="member-status online">在线</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 产品团队分组 -->
+                <div class="group-item">
+                    <div class="group-header" data-group="product-team">
+                        <input type="checkbox" id="group-product" class="group-checkbox">
+                        <label for="group-product" class="group-label">
+                            <span class="group-icon">📊</span>
+                            <span class="group-name">产品团队</span>
+                            <span class="group-count">(2人)</span>
+                            <span class="expand-icon">▼</span>
+                        </label>
+                    </div>
+                    <div class="group-members">
+                        <div class="member-item">
+                            <input type="checkbox" id="member-zhao" class="member-checkbox" data-group="product-team" data-member="赵产品">
+                            <label for="member-zhao" class="member-label">
+                                <span class="member-avatar">👩</span>
+                                <span class="member-name">赵产品</span>
+                                <span class="member-status online">在线</span>
+                            </label>
+                        </div>
+                        <div class="member-item">
+                            <input type="checkbox" id="member-sun" class="member-checkbox" data-group="product-team" data-member="孙运营">
+                            <label for="member-sun" class="member-label">
+                                <span class="member-avatar">👨</span>
+                                <span class="member-name">孙运营</span>
+                                <span class="member-status offline">离线</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 背景遮罩 -->
+    <div id="backdrop" class="backdrop"></div>
 
     <!-- 主要输入区域 -->
     <main class="main-container">
@@ -46,30 +265,30 @@
                 <!-- 标题输入 -->
                 <div class="field-group">
                     <label for="title-input" class="field-label">
-                        <span id="title-label">问题标题</span>
+                        <span id="title-label">标题</span>
                         <span class="required">*</span>
                     </label>
                     <input type="text" 
                            id="title-input" 
                            class="field-input" 
-                           placeholder="请输入问题标题..." 
+                           placeholder="请输入标题..." 
                            maxlength="200" 
                            required>
-                    <div class="field-hint" id="title-hint">简要描述您的问题</div>
+                    <div class="field-hint" id="title-hint">为您的内容起个标题</div>
                 </div>
 
                 <!-- 内容输入 -->
                 <div class="field-group">
                     <label for="content-input" class="field-label">
-                        <span id="content-label">问题内容</span>
+                        <span id="content-label">内容</span>
                         <span class="required">*</span>
                     </label>
                     <textarea id="content-input" 
                               class="field-textarea" 
-                              placeholder="请详细描述您的问题...（支持图片粘贴）" 
+                              placeholder="请输入内容...（支持图片粘贴）" 
                               rows="8" 
                               required></textarea>
-                    <div class="field-hint" id="content-hint">详细描述您的问题，以获得更准确的回答。支持Ctrl+V粘贴图片</div>
+                    <div class="field-hint" id="content-hint">详细描述您的内容。支持Ctrl+V粘贴图片</div>
                 </div>
 
                 <!-- 标签输入 -->
