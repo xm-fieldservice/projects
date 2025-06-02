@@ -27,10 +27,6 @@ window.QANoteBlock = {
         // 初始化人员选择功能
         this.initPeopleSelection();
         
-        // 初始化附件数组
-        this.attachments = [];
-        this.selectedAgent = 'general';
-        
         // 初始化智能存储器
         this.qaSaver = new QANoteSaver({
             mode: this.getStorageMode(),
@@ -90,20 +86,17 @@ window.QANoteBlock = {
      * 更新网络状态显示
      */
     updateNetworkStatus() {
-        const indicator = document.getElementById('network-status-compact');
-        const icon = document.getElementById('network-icon-compact');
-        const text = document.getElementById('network-text-compact');
-        
-        if (!indicator || !icon || !text) return;
+        const indicator = document.getElementById('status-indicator');
+        if (!indicator) return;
         
         if (this.networkStatus.online) {
-            indicator.className = 'network-status-compact online';
-            icon.textContent = '🌐';
-            text.textContent = '在线';
+            indicator.textContent = '🌐 已联网';
+            indicator.className = 'status-indicator online';
+            indicator.title = `网络正常 - 最后检查: ${new Date(this.networkStatus.lastCheck).toLocaleTimeString()}`;
         } else {
-            indicator.className = 'network-status-compact offline';
-            icon.textContent = '❌';
-            text.textContent = '离线';
+            indicator.textContent = '❌ 离线';
+            indicator.className = 'status-indicator offline';
+            indicator.title = `网络断开 - 最后检查: ${new Date(this.networkStatus.lastCheck).toLocaleTimeString()}`;
         }
     },
 
@@ -416,20 +409,6 @@ window.QANoteBlock = {
             this.handleSubmit();
         });
 
-        // 附件按钮和文件选择
-        document.getElementById('attachment-btn').addEventListener('click', () => {
-            document.getElementById('file-input').click();
-        });
-
-        document.getElementById('file-input').addEventListener('change', (e) => {
-            this.handleFileUpload(e);
-        });
-
-        // 顶部智能体选择器
-        document.getElementById('agent-select-header').addEventListener('change', (e) => {
-            this.setSelectedAgent(e.target.value);
-        });
-
         // 结果区域按钮
         document.getElementById('save-answer-btn').addEventListener('click', () => {
             this.saveLastResponse();
@@ -618,17 +597,13 @@ window.QANoteBlock = {
         
         // 只更新必要的差异元素
         const submitText = document.getElementById('submit-text');
+        const agentSelection = document.getElementById('agent-selection');
         const resultSection = document.getElementById('result-section');
-        const agentHeader = document.getElementById('agent-select-header');
 
         if (mode === 'qa') {
             // 问答模式
             submitText.textContent = '🚀 发送问题';
-            
-            // 显示智能体选择器
-            if (agentHeader) {
-                agentHeader.style.display = 'block';
-            }
+            agentSelection.style.display = 'block';
             
             // 显示AI回答结果（如果有）
             if (this.lastResponse) {
@@ -638,11 +613,7 @@ window.QANoteBlock = {
         } else {
             // 笔记模式  
             submitText.textContent = '💾 保存笔记';
-            
-            // 隐藏智能体选择器（笔记模式不需要选择智能体）
-            if (agentHeader) {
-                agentHeader.style.display = 'none';
-            }
+            agentSelection.style.display = 'none';
             
             // 隐藏AI回答结果
             resultSection.style.display = 'none';
@@ -923,7 +894,8 @@ window.QANoteBlock = {
      * 获取选中的AI智能体
      */
     getSelectedAgent() {
-        return this.selectedAgent || document.getElementById('agent-select-header')?.value || 'general';
+        const select = document.getElementById('agent-select');
+        return select ? select.value : 'general';
     },
 
     /**
@@ -1512,101 +1484,6 @@ window.QANoteBlock = {
         
         this.closePeopleSidebar();
         this.showMessage(`已添加 ${this.selectedPeople.size} 位收件人`, 'success');
-    },
-
-    /**
-     * 处理文件上传
-     */
-    handleFileUpload(event) {
-        const files = event.target.files;
-        if (!files || files.length === 0) return;
-
-        const file = files[0];
-        const maxSize = 10 * 1024 * 1024; // 10MB
-
-        // 检查文件大小
-        if (file.size > maxSize) {
-            this.showMessage('文件大小不能超过10MB', 'error');
-            return;
-        }
-
-        // 检查文件类型
-        const allowedTypes = ['.txt', '.md', '.pdf', '.doc', '.docx'];
-        const fileExtension = '.' + file.name.split('.').pop().toLowerCase();
-        
-        if (!allowedTypes.includes(fileExtension)) {
-            this.showMessage('仅支持 TXT、MD、PDF、DOC、DOCX 格式的文件', 'error');
-            return;
-        }
-
-        // 读取文件内容
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            this.addAttachment({
-                name: file.name,
-                size: file.size,
-                type: file.type,
-                content: e.target.result
-            });
-        };
-
-        // 根据文件类型选择读取方式
-        if (fileExtension === '.txt' || fileExtension === '.md') {
-            reader.readAsText(file);
-        } else {
-            reader.readAsDataURL(file);
-        }
-
-        // 清空input，允许重复选择同一文件
-        event.target.value = '';
-    },
-
-    /**
-     * 添加附件到问答中
-     */
-    addAttachment(attachment) {
-        if (!this.attachments) {
-            this.attachments = [];
-        }
-
-        this.attachments.push(attachment);
-        
-        // 更新内容输入框，添加附件信息
-        const contentInput = document.getElementById('content-input');
-        const currentContent = contentInput.value;
-        
-        let attachmentText = '';
-        if (attachment.type.startsWith('text/') || attachment.name.endsWith('.md')) {
-            // 文本文件直接显示内容
-            attachmentText = `\n\n📎 附件《${attachment.name}》内容：\n${attachment.content}\n`;
-        } else {
-            // 其他文件显示文件信息
-            attachmentText = `\n\n📎 附件：${attachment.name} (${this.formatFileSize(attachment.size)})\n`;
-        }
-        
-        contentInput.value = currentContent + attachmentText;
-        
-        this.showMessage(`已添加附件：${attachment.name}`, 'success');
-        this.validateInputs();
-    },
-
-    /**
-     * 格式化文件大小
-     */
-    formatFileSize(bytes) {
-        if (bytes === 0) return '0 Bytes';
-        const k = 1024;
-        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-        const i = Math.floor(Math.log(bytes) / Math.log(k));
-        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-    },
-
-    /**
-     * 设置选中的智能体
-     */
-    setSelectedAgent(agentId) {
-        this.selectedAgent = agentId;
-        this.showMessage(`已切换到${this.getAgentDisplayName(agentId)}`, 'info');
     }
 };
 
