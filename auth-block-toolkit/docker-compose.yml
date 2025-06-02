@@ -1,0 +1,71 @@
+version: '3.8'
+
+services:
+  # AuthBlock 权限服务
+  authblock:
+    build: .
+    container_name: authblock-service
+    ports:
+      - "${PORT:-3000}:3000"
+    environment:
+      - NODE_ENV=${NODE_ENV:-production}
+      - PORT=3000
+      - JWT_SECRET=${JWT_SECRET:-your-super-secret-key-change-in-production}
+      - SESSION_TIMEOUT=${SESSION_TIMEOUT:-7200000}
+      - STORAGE_TYPE=${STORAGE_TYPE:-file}
+      - CORS_ORIGIN=${CORS_ORIGIN:-*}
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+    volumes:
+      - authblock_data:/app/data
+      - ./config:/app/config:ro
+    restart: unless-stopped
+    networks:
+      - authblock-network
+    healthcheck:
+      test: ["CMD", "node", "./server/health-check.js"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Redis缓存（可选）
+  redis:
+    image: redis:7-alpine
+    container_name: authblock-redis
+    restart: unless-stopped
+    volumes:
+      - redis_data:/data
+    networks:
+      - authblock-network
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+
+  # Nginx反向代理（可选）
+  nginx:
+    image: nginx:alpine
+    container_name: authblock-nginx
+    ports:
+      - "${NGINX_PORT:-80}:80"
+      - "${NGINX_SSL_PORT:-443}:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - authblock
+    restart: unless-stopped
+    networks:
+      - authblock-network
+
+volumes:
+  authblock_data:
+    driver: local
+  redis_data:
+    driver: local
+
+networks:
+  authblock-network:
+    driver: bridge 

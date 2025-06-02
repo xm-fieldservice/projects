@@ -111,24 +111,32 @@ window.QANoteBlock = {
      * 新增：绑定菜单事件
      */
     bindMenuEvents() {
+        console.log('🔧 开始绑定菜单事件...');
+        
         // 汉堡菜单按钮
         const hamburgerMenu = document.getElementById('hamburger-menu');
         if (hamburgerMenu) {
             hamburgerMenu.addEventListener('click', () => this.toggleSidebar());
+            console.log('✅ 汉堡菜单按钮绑定成功');
+        } else {
+            console.error('❌ 找不到汉堡菜单按钮');
         }
 
         // 关闭侧边栏
         const closeSidebar = document.getElementById('close-sidebar');
         if (closeSidebar) {
             closeSidebar.addEventListener('click', () => this.closeSidebar());
+            console.log('✅ 关闭侧边栏按钮绑定成功');
         }
 
         // 侧边栏菜单项
         const menuLinks = document.querySelectorAll('.menu-link');
+        console.log(`🔍 找到 ${menuLinks.length} 个菜单项`);
         menuLinks.forEach(link => {
             link.addEventListener('click', (e) => {
                 e.preventDefault();
                 const action = link.dataset.action;
+                console.log(`🖱️ 菜单项被点击: ${action}`);
                 this.handleMenuAction(action);
             });
         });
@@ -137,6 +145,7 @@ window.QANoteBlock = {
         const backdrop = document.getElementById('backdrop');
         if (backdrop) {
             backdrop.addEventListener('click', () => this.closeSidebar());
+            console.log('✅ 背景遮罩绑定成功');
         }
 
         // ESC键关闭侧边栏
@@ -145,26 +154,37 @@ window.QANoteBlock = {
                 this.closeSidebar();
             }
         });
+        
+        console.log('🎉 菜单事件绑定完成');
     },
 
     /**
      * 新增：切换侧边栏
      */
     toggleSidebar() {
+        console.log('🔄 切换侧边栏状态...');
         const sidebar = document.getElementById('left-sidebar');
         const hamburger = document.getElementById('hamburger-menu');
         const backdrop = document.getElementById('backdrop');
 
         if (sidebar && hamburger && backdrop) {
-            const isOpen = sidebar.classList.contains('open');
+            const isOpen = sidebar.classList.contains('active');
+            console.log(`📋 当前状态: ${isOpen ? '已打开' : '已关闭'}`);
             
             if (isOpen) {
                 this.closeSidebar();
             } else {
-                sidebar.classList.add('open');
+                sidebar.classList.add('active');
                 hamburger.classList.add('active');
                 backdrop.classList.add('show');
+                console.log('✅ 侧边栏已打开');
             }
+        } else {
+            console.error('❌ 找不到侧边栏相关元素:', {
+                sidebar: !!sidebar,
+                hamburger: !!hamburger,
+                backdrop: !!backdrop
+            });
         }
     },
 
@@ -177,7 +197,7 @@ window.QANoteBlock = {
         const backdrop = document.getElementById('backdrop');
 
         if (sidebar && hamburger && backdrop) {
-            sidebar.classList.remove('open');
+            sidebar.classList.remove('active');
             hamburger.classList.remove('active');
             backdrop.classList.remove('show');
         }

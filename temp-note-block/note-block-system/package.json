@@ -1,0 +1,57 @@
+{
+  "name": "note-block-toolkit",
+  "version": "3.0.0",
+  "description": "个人智能问答系统的笔记块处理核心工具包，实现插拔式架构支持动态符号规则切换",
+  "main": "tools/note-toolkit.js",
+  "type": "module",
+  "keywords": [
+    "note-block",
+    "intelligent-qa",
+    "pluggable-architecture",
+    "symbol-rules",
+    "note-generator",
+    "ai-assistant",
+    "toolkit"
+  ],
+  "author": "个人智能问答系统开发组",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/note-block-toolkit.git"
+  },
+  "files": [
+    "core/",
+    "tools/",
+    "examples/",
+    "docs/",
+    "tests/",
+    "README.md",
+    "DEPLOY.md"
+  ],
+  "scripts": {
+    "test": "open tests/test-suite.html",
+    "dev": "open examples/quick-start.html",
+    "demo": "open examples/integration-example.html",
+    "build": "echo 'No build step required - pure JavaScript'",
+    "start": "echo 'Open examples/quick-start.html to get started'"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "browser": {
+    "main": "tools/note-toolkit.js"
+  },
+  "dependencies": {},
+  "devDependencies": {},
+  "peerDependencies": {},
+  "optionalDependencies": {},
+  "bundledDependencies": [],
+  "config": {
+    "defaultStrategy": "standard",
+    "debugMode": false
+  },
+  "homepage": "https://github.com/your-username/note-block-toolkit#readme",
+  "bugs": {
+    "url": "https://github.com/your-username/note-block-toolkit/issues"
+  }
+} 

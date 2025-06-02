@@ -1,7 +1,7 @@
 {
   "name": "qa-note-toolkit",
-  "version": "3.0.0",
-  "description": "智能笔记问答工具包 - 功能完整、开箱即用的智能问答和笔记管理系统",
+  "version": "3.0.1",
+  "description": "智能笔记问答工具包 - 功能完整、开箱即用的智能问答和笔记管理系统 (优化版)",
   "main": "dist/qa-note-toolkit.min.js",
   "module": "src/qa-note-toolkit.js",
   "unpkg": "dist/qa-note-toolkit.min.js",

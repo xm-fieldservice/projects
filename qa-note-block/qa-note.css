@@ -226,8 +226,10 @@ body {
     background: #fff;
     box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease;
-    z-index: 1000;
+    z-index: 1100;
     overflow-y: auto;
+    display: flex;
+    flex-direction: column;
 }
 
 .left-sidebar.active {
@@ -244,7 +246,7 @@ body {
     background: #fff;
     box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease;
-    z-index: 1000;
+    z-index: 1100;
     overflow-y: auto;
 }
 
@@ -1382,6 +1384,7 @@ input:checked + .slider:before {
     list-style: none;
     margin: 0;
     padding: 1rem;
+    flex: 1;
 }
 
 .menu-item {
@@ -1397,6 +1400,7 @@ input:checked + .slider:before {
     text-decoration: none;
     border-radius: 6px;
     transition: all 0.2s ease;
+    cursor: pointer;
 }
 
 .menu-link:hover {
@@ -1411,6 +1415,7 @@ input:checked + .slider:before {
 
 .menu-icon {
     font-size: 1rem;
+    min-width: 1rem;
 }
 
 .menu-text {

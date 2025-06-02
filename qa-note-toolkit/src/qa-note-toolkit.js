@@ -1,6 +1,12 @@
 /**
- * QA Note Toolkit v3.0 - 智能笔记问答工具包
+ * QA Note Toolkit v3.0.1 - 智能笔记问答工具包 (优化版)
  * 基于现有成熟的问答系统封装而成的独立工具包
+ * 
+ * 更新内容：
+ * - 修复汉堡菜单z-index层级问题
+ * - 优化侧边栏显示效果
+ * - 增强调试信息
+ * - 提升用户体验
  * 
  * 特性：
  * - 双模式设计（问答/笔记）
@@ -61,9 +67,16 @@ class QANoteToolkit {
         this.container = null;
         this.qaBlock = null;
         this.eventListeners = new Map();
+        this.version = '3.0.1'; // 版本更新
         
         // 绑定方法的this
         this.handleEvent = this.handleEvent.bind(this);
+        
+        // 调试信息
+        if (this.config.ui.showDebugInfo) {
+            console.log(`🚀 QA Note Toolkit v${this.version} 初始化中...`);
+            console.log('📋 配置信息:', this.config);
+        }
     }
 
     /**
@@ -76,6 +89,10 @@ class QANoteToolkit {
         }
 
         try {
+            if (this.config.ui.showDebugInfo) {
+                console.log('🔧 开始初始化工具包组件...');
+            }
+
             // 1. 验证容器
             this.container = document.querySelector(this.config.container);
             if (!this.container) {
@@ -95,9 +112,22 @@ class QANoteToolkit {
             this.setupEventListeners();
             
             this.isInitialized = true;
-            this.emit('initialized', { config: this.config });
+            this.emit('initialized', { 
+                config: this.config,
+                version: this.version,
+                features: {
+                    hamburgerMenuFixed: true, // 标记汉堡菜单已修复
+                    zIndexOptimized: true     // 标记z-index已优化
+                }
+            });
             
-            console.log('🚀 QA Note Toolkit 初始化完成');
+            if (this.config.ui.showDebugInfo) {
+                console.log(`🎉 QA Note Toolkit v${this.version} 初始化完成`);
+                console.log('✅ 汉堡菜单层级已修复');
+                console.log('✅ 侧边栏显示已优化');
+            } else {
+                console.log('🚀 QA Note Toolkit 初始化完成');
+            }
             
         } catch (error) {
             console.error('❌ QA Note Toolkit 初始化失败:', error);
@@ -566,7 +596,7 @@ class QANoteToolkit {
 }
 
 // 导出类和版本信息
-QANoteToolkit.version = '3.0.0';
+QANoteToolkit.version = '3.0.1';
 
 // 全局注册
 window.QANoteToolkit = QANoteToolkit;

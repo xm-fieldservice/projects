@@ -1,0 +1,379 @@
+/* QA Note Toolkit v3.0 - 优化版样式 */
+/* 基于成熟qa-note-block系统封装，包含最新修复 */
+
+/* 基础重置 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background: #f8fafc;
+}
+
+/* 工具包容器 */
+.qa-note-toolkit {
+    width: 100%;
+    height: 100%;
+    min-height: 600px;
+    background: #f8fafc;
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* 模式切换头部 */
+.mode-header {
+    background: #fff;
+    border-bottom: 1px solid #e2e8f0;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.mode-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* 头部布局 */
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.header-center {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+}
+
+/* 汉堡菜单按钮 */
+.menu-btn {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 40px;
+    height: 40px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    margin-right: 1rem;
+}
+
+.menu-btn:hover {
+    background: #f1f5f9;
+}
+
+.menu-btn:active {
+    background: #e2e8f0;
+}
+
+.hamburger-line {
+    width: 20px;
+    height: 2px;
+    background: #475569;
+    margin: 2px 0;
+    transition: all 0.3s ease;
+    border-radius: 1px;
+}
+
+.menu-btn.active .hamburger-line:nth-child(1) {
+    transform: rotate(-45deg) translate(-5px, 6px);
+}
+
+.menu-btn.active .hamburger-line:nth-child(2) {
+    opacity: 0;
+}
+
+.menu-btn.active .hamburger-line:nth-child(3) {
+    transform: rotate(45deg) translate(-5px, -6px);
+}
+
+/* 侧边栏 - 修复版本，z-index提升到1100 */
+.left-sidebar {
+    position: fixed;
+    top: 0;
+    left: -320px;
+    width: 320px;
+    height: 100vh;
+    background: #fff;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+    z-index: 1100;  /* 修复：提升层级，确保在背景遮罩之上 */
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.left-sidebar.active {
+    transform: translateX(320px);
+}
+
+/* 右侧人员栏 */
+.right-sidebar {
+    position: fixed;
+    top: 0;
+    right: -380px;
+    width: 380px;
+    height: 100vh;
+    background: #fff;
+    box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+    z-index: 1100;  /* 修复：统一层级 */
+    overflow-y: auto;
+}
+
+.right-sidebar.active {
+    transform: translateX(-380px);
+}
+
+/* 背景遮罩 */
+.backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.3);
+    z-index: 1050;  /* 保持在侧边栏之下 */
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.backdrop.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* 侧边栏通用样式 */
+.sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.sidebar-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #1e293b;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #6b7280;
+    transition: color 0.2s ease;
+}
+
+.close-btn:hover {
+    color: #374151;
+}
+
+.sidebar-content {
+    flex: 1;
+    overflow-y: auto;
+}
+
+/* 左侧菜单样式 - 优化版本 */
+.sidebar-menu {
+    list-style: none;
+    margin: 0;
+    padding: 1rem;
+    flex: 1;
+}
+
+.menu-item {
+    margin-bottom: 0.25rem;
+}
+
+.menu-link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    color: #6b7280;
+    text-decoration: none;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    cursor: pointer;  /* 确保指针样式 */
+}
+
+.menu-link:hover {
+    background: #f9fafb;
+    color: #374151;
+}
+
+.menu-item.active .menu-link {
+    background: #eff6ff;
+    color: #1e40af;
+}
+
+.menu-icon {
+    font-size: 1rem;
+    min-width: 1rem;
+}
+
+.menu-text {
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+/* 系统状态面板 */
+.system-status {
+    background: #f8fafc;
+    border-radius: 8px;
+    padding: 1rem;
+    border: 1px solid #e2e8f0;
+    margin: 1rem;
+}
+
+.status-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 0.75rem;
+}
+
+.status-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.status-item:last-child {
+    border-bottom: none;
+}
+
+.status-label {
+    font-size: 0.875rem;
+    color: #6b7280;
+}
+
+.status-value {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #374151;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .left-sidebar {
+        width: 280px;
+    }
+    
+    .right-sidebar {
+        width: 300px;
+    }
+}
+
+@media (max-width: 480px) {
+    .left-sidebar {
+        width: 100%;
+    }
+    
+    .menu-btn {
+        width: 36px;
+        height: 36px;
+    }
+    
+    .hamburger-line {
+        width: 16px;
+    }
+}
+
+/* 工具包主题支持 */
+.qa-note-toolkit[data-theme="modern"] {
+    --primary-color: #3b82f6;
+    --secondary-color: #6b7280;
+    --success-color: #10b981;
+    --warning-color: #f59e0b;
+    --error-color: #ef4444;
+}
+
+.qa-note-toolkit[data-theme="dark"] {
+    background: #1f2937;
+    color: #f9fafb;
+}
+
+.qa-note-toolkit[data-theme="dark"] .mode-header {
+    background: #374151;
+    border-bottom-color: #4b5563;
+}
+
+.qa-note-toolkit[data-theme="classic"] {
+    --primary-color: #2563eb;
+    border-radius: 4px;
+}
+
+/* 工具包加载状态 */
+.qa-note-toolkit.loading {
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+.qa-note-toolkit.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 40px;
+    height: 40px;
+    border: 4px solid #e5e7eb;
+    border-top: 4px solid #3b82f6;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    transform: translate(-50%, -50%);
+}
+
+@keyframes spin {
+    0% { transform: translate(-50%, -50%) rotate(0deg); }
+    100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* 工具包无动画模式 */
+.qa-note-toolkit.no-animations * {
+    transition: none !important;
+    animation: none !important;
+}
+
+/* 工具包调试模式 */
+.qa-note-toolkit.show-debug-info::before {
+    content: 'QA Note Toolkit v3.0 - Debug Mode';
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: #ef4444;
+    color: white;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+    z-index: 9999;
+} 
