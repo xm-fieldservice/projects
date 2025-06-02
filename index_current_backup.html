@@ -1,0 +1,1606 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NodeMind 脑图组件</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .btn-primary:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .main-content {
+            display: flex;
+            height: calc(100vh - 140px);
+        }
+
+        .sidebar {
+            width: 300px;
+            background: #f8f9fa;
+            border-right: 1px solid #e9ecef;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .sidebar h3 {
+            margin-bottom: 15px;
+            color: #495057;
+            font-size: 16px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #495057;
+        }
+
+        .textarea {
+            width: 100%;
+            min-height: 350px;
+            padding: 12px;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            resize: vertical;
+        }
+
+        .node-content-editor {
+            margin-top: 15px;
+            padding: 15px;
+            border: 2px solid #ff6b35;
+            border-radius: 8px;
+            background: #fff8f5;
+        }
+
+        .node-content-editor h4 {
+            margin: 0 0 10px 0;
+            color: #ff6b35;
+            font-size: 14px;
+        }
+
+        .node-content-editor textarea {
+            width: 100%;
+            min-height: 200px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            resize: vertical;
+        }
+
+        .node-content-editor .btn-group {
+            margin-top: 10px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .node-content-editor .btn-small {
+            padding: 6px 12px;
+            font-size: 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .btn-save {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-save:hover {
+            background: #218838;
+        }
+
+        .btn-cancel {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-cancel:hover {
+            background: #5a6268;
+        }
+
+        .mindmap-container {
+            flex: 1;
+            position: relative;
+            background: white;
+        }
+
+        .mindmap-svg {
+            width: 100%;
+            height: 100%;
+            cursor: grab;
+        }
+
+        .mindmap-svg:active {
+            cursor: grabbing;
+        }
+
+        .node {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .node rect {
+            fill: #4facfe;
+            stroke: #0288d1;
+            stroke-width: 2;
+            rx: 8;
+            ry: 8;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+        }
+
+        .node:hover rect {
+            fill: #29b6f6;
+            stroke: #0277bd;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.15));
+        }
+
+        .node.selected rect {
+            fill: #ff6b35;
+            stroke: #e55a2b;
+            stroke-width: 3;
+            filter: drop-shadow(0 4px 12px rgba(255,107,53,0.3));
+        }
+
+        .node text {
+            fill: white;
+            text-anchor: middle;
+            dominant-baseline: middle;
+            font-size: 14px;
+            font-weight: 500;
+            pointer-events: none;
+        }
+
+        .node-editor {
+            position: absolute;
+            background: white;
+            border: 2px solid #4facfe;
+            border-radius: 6px;
+            padding: 8px;
+            min-width: 120px;
+            font-size: 14px;
+            font-family: inherit;
+            text-align: center;
+            outline: none;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 1000;
+        }
+
+        .link {
+            fill: none;
+            stroke: #90a4ae;
+            stroke-width: 2;
+            opacity: 0.8;
+        }
+
+        .relationship-link {
+            fill: none;
+            stroke-width: 2;
+            opacity: 0.7;
+            stroke-dasharray: 5,5;
+        }
+
+        .relationship-link.reference {
+            stroke: #ff7043;
+        }
+
+        .relationship-link.dependency {
+            stroke: #ab47bc;
+        }
+
+        .relationship-link.association {
+            stroke: #26a69a;
+        }
+
+        .status-bar {
+            background: #f8f9fa;
+            border-top: 1px solid #e9ecef;
+            padding: 10px 20px;
+            font-size: 12px;
+            color: #6c757d;
+        }
+
+        .example-data {
+            margin-bottom: 15px;
+        }
+
+        .example-btn {
+            background: #17a2b8;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-right: 8px;
+            margin-bottom: 8px;
+        }
+
+        .example-btn:hover {
+            background: #138496;
+        }
+
+        .zoom-controls {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .zoom-btn {
+            width: 40px;
+            height: 40px;
+            border: none;
+            border-radius: 50%;
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: bold;
+            color: #495057;
+        }
+
+        .zoom-btn:hover {
+            background: #f8f9fa;
+        }
+
+        .shortcuts-info {
+            background: #e3f2fd;
+            border: 1px solid #bbdefb;
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 20px;
+            font-size: 12px;
+        }
+
+        .shortcuts-info h4 {
+            margin-bottom: 8px;
+            color: #1976d2;
+        }
+
+        .shortcuts-info ul {
+            margin: 0;
+            padding-left: 16px;
+        }
+
+        .shortcuts-info li {
+            margin-bottom: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧠 NodeMind 脑图组件</h1>
+            <div class="controls">
+                <button class="btn btn-primary" onclick="mindMap.fitToView()">适应视图</button>
+                <button class="btn btn-primary" onclick="mindMap.exportData()">导出数据</button>
+                <button class="btn btn-primary" onclick="location.reload()">重置</button>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="sidebar">
+                <h3>📝 Markdown 输入</h3>
+                
+                <div class="shortcuts-info">
+                    <h4>⌨️ 快捷键操作</h4>
+                    <ul>
+                        <li><strong>Enter</strong>：添加同级节点</li>
+                        <li><strong>Ctrl+Enter</strong>：添加子节点</li>
+                        <li><strong>双击</strong>：编辑节点文本</li>
+                        <li><strong>Del</strong>：删除选中节点</li>
+                        <li><strong>Esc</strong>：取消选择</li>
+                    </ul>
+                </div>
+                
+                <div class="example-data">
+                    <button class="example-btn" onclick="loadExample('project')">项目管理</button>
+                    <button class="example-btn" onclick="loadExample('knowledge')">知识体系</button>
+                    <button class="example-btn" onclick="loadExample('learning')">学习笔记</button>
+                </div>
+
+                <div class="input-group">
+                    <label for="markdown-input">MD文档内容：</label>
+                    <textarea id="markdown-input" class="textarea" 
+                              placeholder="输入符合笔记块格式的Markdown内容..."
+                              oninput="updateMindMap()">编号：{#N001}
+标题：NodeMind 脑图系统
+时间：2025-01-17 | 2025-01-17
+作者：开发团队
+
+这是NodeMind脑图系统的核心模块，负责处理笔记块的可视化展示。
+
+主要功能：
+- 解析MD文档中的笔记块
+- 构建节点关系图
+- 提供交互式编辑功能
+
+---
+【标记族】
+分类标签：@系统.核心.可视化
+技术标签：@前端.JavaScript.D3
+状态标签：@开发中
+
+编号：{#N002}
+标题：数据解析引擎
+时间：2025-01-17 | 2025-01-17
+作者：开发团队
+
+负责解析Markdown文档，提取笔记块和关系信息。
+
+核心能力：
+- 笔记块提取
+- 关系符号解析
+- 标记族解析
+
+---
+【标记族】
+父子关系：^N001
+分类标签：@系统.核心.解析
+技术标签：@前端.JavaScript.正则表达式
+
+编号：{#N003}
+标题：渲染引擎
+时间：2025-01-17 | 2025-01-17
+作者：开发团队
+
+基于D3.js的图形渲染引擎，负责脑图的可视化展示。
+
+主要特性：
+- 动态布局算法
+- 节点交互控制
+- 关系线渲染
+
+---
+【标记族】
+父子关系：^N001
+依赖关系：←N002
+分类标签：@系统.核心.渲染
+技术标签：@前端.D3js.SVG</textarea>
+                </div>
+
+                <!-- 节点内容编辑器 -->
+                <div id="node-content-editor" class="node-content-editor" style="display: none;">
+                    <h4>📝 编辑节点内容</h4>
+                    <div>
+                        <strong>节点ID：</strong><span id="editing-node-id">无</span>
+                    </div>
+                    <div style="margin-top: 8px;">
+                        <strong>节点标题：</strong><span id="editing-node-title">无</span>
+                    </div>
+                    <textarea id="node-content-textarea" placeholder="编辑节点的详细内容..."></textarea>
+                    <div class="btn-group">
+                        <button class="btn-small btn-save" onclick="saveNodeContent()">保存</button>
+                        <button class="btn-small btn-cancel" onclick="cancelNodeEdit()">取消</button>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>布局算法：</label>
+                    <select id="layout-select" onchange="updateLayout()">
+                        <option value="horizontal">标准水平树</option>
+                        <option value="vertical">垂直树布局</option>
+                        <option value="radial">径向辐射布局</option>
+                        <option value="circle">圆形分层布局</option>
+                        <option value="compact">紧凑自适应布局</option>
+                        <option value="fishbone">鱼骨交替布局</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="mindmap-container">
+                <svg id="mindmap-svg" class="mindmap-svg"></svg>
+                
+                <div class="zoom-controls">
+                    <button class="zoom-btn" onclick="mindMap.zoomIn()">+</button>
+                    <button class="zoom-btn" onclick="mindMap.zoomOut()">-</button>
+                    <button class="zoom-btn" onclick="mindMap.fitToView()">⌂</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="status-bar">
+            <span id="status-text">准备就绪 | 节点数: 0 | 关系数: 0 | 操作提示：点击节点选择，Enter添加同级，Ctrl+Enter添加子节点</span>
+        </div>
+    </div>
+
+    <script>
+        class NodeMindMap {
+            constructor(svgSelector) {
+                this.svg = d3.select(svgSelector);
+                this.width = 1000;
+                this.height = 600;
+                this.data = null;
+                this.nodes = [];
+                this.links = [];
+                this.simulation = null;
+                this.transform = d3.zoomIdentity;
+                this.selectedNode = null;
+                this.editingNode = null;
+                this.editingNodeContent = null;
+                this.nextNodeId = 4; // 从N004开始
+                
+                this.init();
+                this.setupKeyboardEvents();
+            }
+
+            init() {
+                this.svg.attr('viewBox', `0 0 ${this.width} ${this.height}`);
+                
+                // 添加缩放功能
+                this.zoom = d3.zoom()
+                    .scaleExtent([0.1, 4])
+                    .on('zoom', (event) => {
+                        this.transform = event.transform;
+                        this.container.attr('transform', this.transform);
+                    });
+                
+                this.svg.call(this.zoom);
+                
+                // 创建容器组
+                this.container = this.svg.append('g');
+                this.linksGroup = this.container.append('g').attr('class', 'links');
+                this.nodesGroup = this.container.append('g').attr('class', 'nodes');
+
+                // 点击空白处取消选择
+                this.svg.on('click', (event) => {
+                    if (event.target === event.currentTarget) {
+                        this.selectNode(null);
+                    }
+                });
+            }
+
+            setupKeyboardEvents() {
+                document.addEventListener('keydown', (event) => {
+                    // 如果在编辑状态，不处理快捷键
+                    if (this.editingNode) return;
+                    
+                    switch(event.key) {
+                        case 'Enter':
+                            event.preventDefault();
+                            if (event.ctrlKey) {
+                                this.addChildNode();
+                            } else {
+                                this.addSiblingNode();
+                            }
+                            break;
+                        case 'Delete':
+                        case 'Backspace':
+                            event.preventDefault();
+                            this.deleteSelectedNode();
+                            break;
+                        case 'Escape':
+                            this.selectNode(null);
+                            break;
+                    }
+                });
+            }
+
+            selectNode(nodeId) {
+                // 移除之前的选择状态
+                this.nodesGroup.selectAll('.node').classed('selected', false);
+                
+                if (nodeId) {
+                    // 添加新的选择状态
+                    this.nodesGroup.selectAll('.node')
+                        .filter(d => (d.id || d.data.id) === nodeId)
+                        .classed('selected', true);
+                    this.selectedNode = nodeId;
+                    
+                    // 显示节点内容编辑器
+                    this.showNodeEditor(nodeId);
+                } else {
+                    this.selectedNode = null;
+                    this.hideNodeEditor();
+                }
+                
+                this.updateStatus();
+            }
+
+            showNodeEditor(nodeId) {
+                const nodeData = this.nodes.find(n => n.id === nodeId);
+                if (!nodeData) return;
+
+                const editor = document.getElementById('node-content-editor');
+                const nodeIdSpan = document.getElementById('editing-node-id');
+                const nodeTitleSpan = document.getElementById('editing-node-title');
+                const textarea = document.getElementById('node-content-textarea');
+
+                nodeIdSpan.textContent = nodeData.id;
+                nodeTitleSpan.textContent = nodeData.title;
+                textarea.value = this.extractNodeContent(nodeData);
+                
+                editor.style.display = 'block';
+                this.editingNodeContent = nodeId;
+            }
+
+            hideNodeEditor() {
+                const editor = document.getElementById('node-content-editor');
+                editor.style.display = 'none';
+                this.editingNodeContent = null;
+            }
+
+            extractNodeContent(nodeData) {
+                // 从MD文档中提取该节点的完整内容
+                const textarea = document.getElementById('markdown-input');
+                const content = textarea.value;
+                
+                // 查找该节点的完整块
+                const nodePattern = new RegExp(`编号：\\{#${nodeData.id}\\}[\\s\\S]*?(?=编号：\\{#|$)`, 'g');
+                const match = nodePattern.exec(content);
+                
+                if (match) {
+                    return match[0].trim();
+                } else {
+                    // 如果没找到，返回基本格式
+                    return `编号：{#${nodeData.id}}
+标题：${nodeData.title}
+时间：${nodeData.time}
+作者：${nodeData.author}
+
+${nodeData.content}
+
+---
+【标记族】
+${nodeData.data.relations.parent ? `父子关系：^${nodeData.data.relations.parent}\n` : ''}分类标签：@${nodeData.data.tags.categories.join('.')}
+${nodeData.data.tags.technical.length > 0 ? `技术标签：@${nodeData.data.tags.technical.join('.')}\n` : ''}${nodeData.data.tags.status.length > 0 ? `状态标签：@${nodeData.data.tags.status.join('.')}` : ''}`;
+                }
+            }
+
+            saveNodeContent() {
+                if (!this.editingNodeContent) return;
+
+                const textarea = document.getElementById('node-content-textarea');
+                const newContent = textarea.value.trim();
+                
+                if (!newContent) {
+                    alert('内容不能为空');
+                    return;
+                }
+
+                // 更新MD文档
+                this.updateNodeInMarkdown(this.editingNodeContent, newContent);
+                
+                // 重新加载脑图
+                this.loadMarkdown(document.getElementById('markdown-input').value);
+                
+                // 重新选择该节点
+                setTimeout(() => {
+                    this.selectNode(this.editingNodeContent);
+                }, 100);
+
+                alert('节点内容已保存');
+            }
+
+            cancelNodeEdit() {
+                this.hideNodeEditor();
+                this.selectNode(null);
+            }
+
+            updateNodeInMarkdown(nodeId, newContent) {
+                const textarea = document.getElementById('markdown-input');
+                const content = textarea.value;
+                
+                // 替换该节点的内容
+                const nodePattern = new RegExp(`编号：\\{#${nodeId}\\}[\\s\\S]*?(?=编号：\\{#|$)`, 'g');
+                const newMarkdown = content.replace(nodePattern, newContent + '\n\n');
+                
+                textarea.value = newMarkdown.trim();
+            }
+
+            addSiblingNode() {
+                if (!this.selectedNode) {
+                    alert('请先选择一个节点');
+                    return;
+                }
+
+                const selectedNodeData = this.nodes.find(n => n.id === this.selectedNode);
+                if (!selectedNodeData) return;
+
+                const newId = `N${String(this.nextNodeId++).padStart(3, '0')}`;
+                const newTitle = `新节点 ${newId}`;
+                
+                // 添加到MD文档
+                this.addNodeToMarkdown(newId, newTitle, selectedNodeData.data.relations.parent);
+                
+                // 刷新脑图
+                this.loadMarkdown(document.getElementById('markdown-input').value);
+                
+                // 选择新节点
+                setTimeout(() => {
+                    this.selectNode(newId);
+                    this.editNode(newId);
+                }, 100);
+            }
+
+            addChildNode() {
+                if (!this.selectedNode) {
+                    alert('请先选择一个节点');
+                    return;
+                }
+
+                const newId = `N${String(this.nextNodeId++).padStart(3, '0')}`;
+                const newTitle = `子节点 ${newId}`;
+                
+                // 添加到MD文档，父节点是当前选中的节点
+                this.addNodeToMarkdown(newId, newTitle, this.selectedNode);
+                
+                // 刷新脑图
+                this.loadMarkdown(document.getElementById('markdown-input').value);
+                
+                // 选择新节点
+                setTimeout(() => {
+                    this.selectNode(newId);
+                    this.editNode(newId);
+                }, 100);
+            }
+
+            addNodeToMarkdown(id, title, parentId = null) {
+                const textarea = document.getElementById('markdown-input');
+                const currentContent = textarea.value;
+                
+                const newNodeContent = `
+
+编号：{#${id}}
+标题：${title}
+时间：${new Date().toISOString().split('T')[0]} | ${new Date().toISOString().split('T')[0]}
+作者：用户
+
+新节点内容...
+
+主要功能：
+- 功能描述1
+- 功能描述2
+
+---
+【标记族】${parentId ? `
+父子关系：^${parentId}` : ''}
+分类标签：@新建.节点
+状态标签：@编辑中`;
+
+                textarea.value = currentContent + newNodeContent;
+            }
+
+            deleteSelectedNode() {
+                if (!this.selectedNode) {
+                    alert('请先选择要删除的节点');
+                    return;
+                }
+
+                if (confirm(`确定要删除节点 "${this.selectedNode}" 吗？`)) {
+                    this.removeNodeFromMarkdown(this.selectedNode);
+                    this.loadMarkdown(document.getElementById('markdown-input').value);
+                    this.selectNode(null);
+                }
+            }
+
+            removeNodeFromMarkdown(nodeId) {
+                const textarea = document.getElementById('markdown-input');
+                const content = textarea.value;
+                
+                // 使用正则表达式删除指定节点
+                const nodePattern = new RegExp(`编号：\\{#${nodeId}\\}[\\s\\S]*?(?=编号：\\{#|$)`, 'g');
+                const newContent = content.replace(nodePattern, '').trim();
+                
+                textarea.value = newContent;
+            }
+
+            editNode(nodeId) {
+                const nodeElement = this.nodesGroup.selectAll('.node')
+                    .filter(d => d.id === nodeId);
+                
+                if (nodeElement.empty()) return;
+
+                const nodeData = nodeElement.datum();
+                const rect = nodeElement.select('rect').node();
+                const rectBBox = rect.getBBox();
+                const transform = nodeElement.attr('transform');
+                
+                // 解析transform属性获取位置
+                const translateMatch = transform.match(/translate\(([^,]+),([^)]+)\)/);
+                if (!translateMatch) return;
+                
+                const x = parseFloat(translateMatch[1]);
+                const y = parseFloat(translateMatch[2]);
+                
+                // 创建编辑输入框
+                const editor = document.createElement('input');
+                editor.className = 'node-editor';
+                editor.value = nodeData.title;
+                editor.style.left = (x + rectBBox.x) + 'px';
+                editor.style.top = (y + rectBBox.y - 5) + 'px';
+                editor.style.width = Math.max(120, rectBBox.width) + 'px';
+                
+                document.querySelector('.mindmap-container').appendChild(editor);
+                
+                this.editingNode = nodeId;
+                editor.focus();
+                editor.select();
+                
+                const finishEditing = () => {
+                    const newTitle = editor.value.trim() || nodeData.title;
+                    this.updateNodeTitle(nodeId, newTitle);
+                    editor.remove();
+                    this.editingNode = null;
+                };
+                
+                editor.addEventListener('blur', finishEditing);
+                editor.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        finishEditing();
+                    } else if (e.key === 'Escape') {
+                        editor.remove();
+                        this.editingNode = null;
+                    }
+                });
+            }
+
+            updateNodeTitle(nodeId, newTitle) {
+                const textarea = document.getElementById('markdown-input');
+                const content = textarea.value;
+                
+                // 使用正则表达式更新节点标题
+                const titlePattern = new RegExp(`(编号：\\{#${nodeId}\\}\\s*\\n标题：)[^\\n]+`, 'g');
+                const newContent = content.replace(titlePattern, `$1${newTitle}`);
+                
+                textarea.value = newContent;
+                this.loadMarkdown(newContent);
+            }
+
+            parseMarkdown(markdown) {
+                const blocks = [];
+                
+                // 先按编号分割文档
+                const sections = markdown.split(/(?=编号：\{#[^}]+\})/);
+                
+                sections.forEach(section => {
+                    if (!section.trim()) return;
+                    
+                    // 解析每个section
+                    const headerMatch = section.match(/编号：\{#([^}]+)\}\s*\n标题：([^\n]+)\s*\n时间：([^\n]+)\s*\n作者：([^\n]+)\s*\n([\s\S]*?)(?=---\s*【标记族】|$)/);
+                    
+                    if (!headerMatch) return;
+                    
+                    const [, id, title, time, author, content] = headerMatch;
+                    
+                    const block = {
+                        id: id.trim(),
+                        title: title.trim(),
+                        time: time.trim(),
+                        author: author.trim(),
+                        content: content.trim(),
+                        relations: {
+                            parent: null,
+                            references: [],
+                            dependencies: [],
+                            associations: []
+                        },
+                        tags: {
+                            categories: [],
+                            technical: [],
+                            status: []
+                        }
+                    };
+                    
+                    // 解析关系标记
+                    const relationMatch = section.match(/---\s*【标记族】\s*([\s\S]*?)(?=编号：\{#|$)/);
+                    
+                    if (relationMatch) {
+                        const relationText = relationMatch[1];
+                        
+                        // 解析各种关系
+                        const parentMatch = relationText.match(/父子关系：\^([^\s\n]+)/);
+                        if (parentMatch) {
+                            block.relations.parent = parentMatch[1];
+                        }
+                        
+                        const refMatches = relationText.match(/引用关系：((?:→[^\s\n]+\s*)+)/);
+                        if (refMatches) {
+                            block.relations.references = refMatches[1].match(/→([^\s\n]+)/g)?.map(r => r.slice(1)) || [];
+                        }
+                        
+                        const depMatches = relationText.match(/依赖关系：((?:←[^\s\n]+\s*)+)/);
+                        if (depMatches) {
+                            block.relations.dependencies = depMatches[1].match(/←([^\s\n]+)/g)?.map(d => d.slice(1)) || [];
+                        }
+                        
+                        // 解析标签
+                        const categoryMatches = relationText.match(/分类标签：@([^\n]+)/);
+                        if (categoryMatches) {
+                            block.tags.categories = categoryMatches[1].split('.').map(t => t.trim());
+                        }
+                        
+                        const techMatches = relationText.match(/技术标签：@([^\n]+)/);
+                        if (techMatches) {
+                            block.tags.technical = techMatches[1].split('.').map(t => t.trim());
+                        }
+                        
+                        const statusMatches = relationText.match(/状态标签：@([^\n]+)/);
+                        if (statusMatches) {
+                            block.tags.status = statusMatches[1].split('.').map(t => t.trim());
+                        }
+                    }
+                    
+                    blocks.push(block);
+                });
+                
+                // 更新nextNodeId
+                blocks.forEach(block => {
+                    const idNum = parseInt(block.id.replace(/\D/g, ''));
+                    if (idNum >= this.nextNodeId) {
+                        this.nextNodeId = idNum + 1;
+                    }
+                });
+                
+                return blocks;
+            }
+
+            buildGraph(blocks) {
+                // 构建节点
+                this.nodes = blocks.map(block => ({
+                    id: block.id,
+                    title: block.title,
+                    content: block.content,
+                    data: block,
+                    x: Math.random() * this.width,
+                    y: Math.random() * this.height
+                }));
+                
+                // 构建连接
+                this.links = [];
+                
+                blocks.forEach(block => {
+                    // 父子关系
+                    if (block.relations.parent) {
+                        this.links.push({
+                            source: block.relations.parent,
+                            target: block.id,
+                            type: 'hierarchy'
+                        });
+                    }
+                    
+                    // 引用关系
+                    block.relations.references.forEach(ref => {
+                        this.links.push({
+                            source: block.id,
+                            target: ref,
+                            type: 'reference'
+                        });
+                    });
+                    
+                    // 依赖关系
+                    block.relations.dependencies.forEach(dep => {
+                        this.links.push({
+                            source: dep,
+                            target: block.id,
+                            type: 'dependency'
+                        });
+                    });
+                });
+                
+                // 更新状态
+                this.updateStatus();
+            }
+
+            render() {
+                const rootNodes = this.nodes.filter(n => !n.data.relations.parent);
+                if (rootNodes.length === 0) return;
+                
+                const root = rootNodes[0];
+                const layoutType = document.getElementById('layout-select').value;
+                
+                // 根据选择的布局类型调用不同的布局算法
+                switch(layoutType) {
+                    case 'horizontal':
+                        this.renderHorizontalTree(root);
+                        break;
+                    case 'vertical':
+                        this.renderVerticalTree(root);
+                        break;
+                    case 'radial':
+                        this.renderRadialLayout(root);
+                        break;
+                    case 'circle':
+                        this.renderCircleLayout(root);
+                        break;
+                    case 'compact':
+                        this.renderCompactLayout(root);
+                        break;
+                    case 'fishbone':
+                        this.renderFishboneLayout(root);
+                        break;
+                    default:
+                        this.renderHorizontalTree(root);
+                }
+            }
+
+            // 1. 标准水平树布局
+            renderHorizontalTree(root) {
+                const hierarchy = this.buildHierarchy(root);
+                const treeLayout = d3.tree()
+                    .size([this.height - 100, this.width - 200])
+                    .separation((a, b) => (a.parent === b.parent ? 1.5 : 2.5) / a.depth);
+                
+                const treeRoot = d3.hierarchy(hierarchy);
+                treeLayout(treeRoot);
+                
+                const descendants = treeRoot.descendants();
+                descendants.forEach(d => {
+                    const temp = d.x;
+                    d.x = d.y + 100;
+                    d.y = temp + 50;
+                });
+                
+                this.renderNodesAndLinks(descendants, treeRoot.links());
+            }
+
+            // 2. 垂直树布局
+            renderVerticalTree(root) {
+                const hierarchy = this.buildHierarchy(root);
+                const treeLayout = d3.tree()
+                    .size([this.width - 200, this.height - 100])
+                    .separation((a, b) => (a.parent === b.parent ? 1.2 : 2) / a.depth);
+                
+                const treeRoot = d3.hierarchy(hierarchy);
+                treeLayout(treeRoot);
+                
+                const descendants = treeRoot.descendants();
+                descendants.forEach(d => {
+                    d.x = d.x + 100;
+                    d.y = d.y + 50;
+                });
+                
+                this.renderNodesAndLinks(descendants, treeRoot.links());
+            }
+
+            // 3. 径向辐射布局
+            renderRadialLayout(root) {
+                const hierarchy = this.buildHierarchy(root);
+                const radius = Math.min(this.width, this.height) / 2 - 100;
+                const tree = d3.cluster().size([2 * Math.PI, radius]);
+                
+                const treeRoot = d3.hierarchy(hierarchy);
+                tree(treeRoot);
+                
+                const descendants = treeRoot.descendants();
+                descendants.forEach(d => {
+                    const angle = d.x;
+                    const r = d.y;
+                    d.x = Math.cos(angle - Math.PI / 2) * r + this.width / 2;
+                    d.y = Math.sin(angle - Math.PI / 2) * r + this.height / 2;
+                });
+                
+                this.renderNodesAndLinks(descendants, treeRoot.links());
+            }
+
+            // 4. 圆形分层布局
+            renderCircleLayout(root) {
+                const centerX = this.width / 2;
+                const centerY = this.height / 2;
+                
+                // 按层级分组
+                const levels = this.groupByLevel();
+                const descendants = [];
+                
+                Object.keys(levels).forEach(levelStr => {
+                    const level = parseInt(levelStr);
+                    const nodes = levels[level];
+                    
+                    if (level === 0) {
+                        // 根节点居中
+                        nodes[0].x = centerX;
+                        nodes[0].y = centerY;
+                        descendants.push(nodes[0]);
+                    } else {
+                        // 其他层级围绕中心圆形分布
+                        const radius = level * 120;
+                        const angleStep = (2 * Math.PI) / nodes.length;
+                        
+                        nodes.forEach((node, i) => {
+                            const angle = i * angleStep;
+                            node.x = centerX + Math.cos(angle) * radius;
+                            node.y = centerY + Math.sin(angle) * radius;
+                            descendants.push(node);
+                        });
+                    }
+                });
+                
+                this.renderNodesAndLinksCustom(descendants);
+            }
+
+            // 5. 紧凑自适应布局
+            renderCompactLayout(root) {
+                const hierarchy = this.buildHierarchy(root);
+                
+                // 动态计算尺寸
+                const maxNodes = Math.max(...this.getLevelCounts(hierarchy));
+                const dynamicWidth = Math.max(this.width, maxNodes * 140);
+                const dynamicHeight = Math.max(this.height, this.getMaxDepth(hierarchy) * 80);
+                
+                const treeLayout = d3.tree()
+                    .size([dynamicHeight - 100, dynamicWidth - 200])
+                    .separation((a, b) => {
+                        const baseDistance = a.parent === b.parent ? 1.2 : 2;
+                        const nodeCountFactor = a.parent ? Math.max(1, a.parent.children.length / 8) : 1;
+                        return baseDistance * nodeCountFactor;
+                    });
+                
+                const treeRoot = d3.hierarchy(hierarchy);
+                treeLayout(treeRoot);
+                
+                const descendants = treeRoot.descendants();
+                descendants.forEach(d => {
+                    const temp = d.x;
+                    d.x = d.y + 100;
+                    d.y = temp + 50;
+                });
+                
+                // 碰撞检测和调整
+                this.adjustForCollisions(descendants);
+                this.renderNodesAndLinks(descendants, treeRoot.links());
+            }
+
+            // 6. 鱼骨交替布局
+            renderFishboneLayout(root) {
+                const centerX = this.width / 2;
+                const centerY = this.height / 2;
+                const descendants = [];
+                
+                // 根节点居中
+                root.x = centerX;
+                root.y = centerY;
+                descendants.push(root);
+                
+                // 获取子节点并按层级分布
+                const children = this.nodes.filter(n => n.data.relations.parent === root.id);
+                children.forEach((child, i) => {
+                    const side = i % 2 === 0 ? -1 : 1; // 左右交替
+                    const layer = Math.floor(i / 2) + 1;
+                    child.x = centerX + side * (150 + layer * 50);
+                    child.y = centerY + (i % 2 === 0 ? -1 : 1) * layer * 60;
+                    descendants.push(child);
+                    
+                    // 处理孙节点
+                    const grandChildren = this.nodes.filter(n => n.data.relations.parent === child.id);
+                    grandChildren.forEach((grandChild, j) => {
+                        grandChild.x = child.x + side * 100;
+                        grandChild.y = child.y + (j - grandChildren.length / 2) * 40;
+                        descendants.push(grandChild);
+                    });
+                });
+                
+                this.renderNodesAndLinksCustom(descendants);
+            }
+
+            // 渲染节点和连线的通用方法
+            renderNodesAndLinks(descendants, links) {
+                // 渲染连接线
+                const link = this.linksGroup.selectAll('.link')
+                    .data(links)
+                    .enter().append('path')
+                    .attr('class', 'link')
+                    .attr('d', d3.linkHorizontal()
+                        .x(d => d.x)
+                        .y(d => d.y))
+                    .attr('stroke', '#90a4ae')
+                    .attr('stroke-width', 2)
+                    .attr('fill', 'none');
+                
+                this.renderNodes(descendants);
+            }
+
+            // 自定义连线渲染
+            renderNodesAndLinksCustom(descendants) {
+                // 渲染连接线（父子关系）
+                const links = [];
+                descendants.forEach(node => {
+                    if (node.data && node.data.relations.parent) {
+                        const parent = descendants.find(n => n.id === node.data.relations.parent);
+                        if (parent) {
+                            links.push({source: parent, target: node});
+                        }
+                    }
+                });
+                
+                const link = this.linksGroup.selectAll('.link')
+                    .data(links)
+                    .enter().append('line')
+                    .attr('class', 'link')
+                    .attr('x1', d => d.source.x)
+                    .attr('y1', d => d.source.y)
+                    .attr('x2', d => d.target.x)
+                    .attr('y2', d => d.target.y)
+                    .attr('stroke', '#90a4ae')
+                    .attr('stroke-width', 2);
+                
+                this.renderNodes(descendants);
+            }
+
+            // 渲染节点
+            renderNodes(descendants) {
+                const node = this.nodesGroup.selectAll('.node')
+                    .data(descendants)
+                    .enter().append('g')
+                    .attr('class', 'node')
+                    .attr('transform', d => `translate(${d.x},${d.y})`)
+                    .on('click', (event, d) => {
+                        event.stopPropagation();
+                        this.selectNode(d.id || d.data.id);
+                    })
+                    .on('dblclick', (event, d) => {
+                        event.stopPropagation();
+                        this.editNode(d.id || d.data.id);
+                    });
+                
+                // 添加节点矩形
+                node.append('rect')
+                    .attr('width', d => Math.max(120, (d.title || d.data.title).length * 8 + 20))
+                    .attr('height', 40)
+                    .attr('x', d => -Math.max(60, (d.title || d.data.title).length * 4 + 10))
+                    .attr('y', -20)
+                    .attr('rx', 8)
+                    .attr('ry', 8)
+                    .attr('fill', d => (d.depth === 0 || (!d.data.relations.parent)) ? '#ff6b35' : '#4facfe')
+                    .attr('stroke', d => (d.depth === 0 || (!d.data.relations.parent)) ? '#e55a2b' : '#0288d1')
+                    .attr('stroke-width', 2);
+                
+                // 添加节点文本
+                node.append('text')
+                    .text(d => {
+                        const title = d.title || d.data.title;
+                        return title.length > 15 ? title.substring(0, 15) + '...' : title;
+                    })
+                    .attr('dy', '.35em')
+                    .attr('text-anchor', 'middle')
+                    .attr('fill', 'white')
+                    .attr('font-size', '14px')
+                    .attr('font-weight', '500');
+                
+                // 添加节点提示
+                node.append('title')
+                    .text(d => {
+                        const title = d.title || d.data.title;
+                        const content = d.content || d.data.content;
+                        return `${title}\n\n${content.substring(0, 100)}...\n\n点击选择 | 双击编辑`;
+                    });
+                
+                // 存储节点位置信息
+                this.nodes.forEach(n => {
+                    const treeNode = descendants.find(d => (d.id || d.data.id) === n.id);
+                    if (treeNode) {
+                        n.x = treeNode.x;
+                        n.y = treeNode.y;
+                    }
+                });
+            }
+
+            // 辅助方法
+            groupByLevel() {
+                const levels = {};
+                const visited = new Set();
+                
+                const traverse = (nodeId, level = 0) => {
+                    if (visited.has(nodeId)) return;
+                    visited.add(nodeId);
+                    
+                    const node = this.nodes.find(n => n.id === nodeId);
+                    if (!node) return;
+                    
+                    if (!levels[level]) levels[level] = [];
+                    levels[level].push(node);
+                    
+                    // 找子节点
+                    const children = this.nodes.filter(n => n.data.relations.parent === nodeId);
+                    children.forEach(child => traverse(child.id, level + 1));
+                };
+                
+                const rootNodes = this.nodes.filter(n => !n.data.relations.parent);
+                rootNodes.forEach(root => traverse(root.id));
+                
+                return levels;
+            }
+
+            getLevelCounts(hierarchy) {
+                const counts = [];
+                const traverse = (node, depth = 0) => {
+                    counts[depth] = (counts[depth] || 0) + 1;
+                    if (node.children) {
+                        node.children.forEach(child => traverse(child, depth + 1));
+                    }
+                };
+                traverse(hierarchy);
+                return counts;
+            }
+
+            getMaxDepth(hierarchy) {
+                const getDepth = (node) => {
+                    if (!node.children) return 1;
+                    return 1 + Math.max(...node.children.map(getDepth));
+                };
+                return getDepth(hierarchy);
+            }
+
+            adjustForCollisions(nodes) {
+                for (let i = 0; i < 3; i++) { // 多次迭代优化
+                    nodes.forEach((node, idx) => {
+                        nodes.slice(idx + 1).forEach(other => {
+                            const dx = node.x - other.x;
+                            const dy = node.y - other.y;
+                            const distance = Math.sqrt(dx * dx + dy * dy);
+                            const minDistance = 80;
+                            
+                            if (distance < minDistance && distance > 0) {
+                                const pushX = (dx / distance) * (minDistance - distance) * 0.5;
+                                const pushY = (dy / distance) * (minDistance - distance) * 0.5;
+                                node.x += pushX;
+                                node.y += pushY;
+                                other.x -= pushX;
+                                other.y -= pushY;
+                            }
+                        });
+                    });
+                }
+            }
+
+            buildHierarchy(root) {
+                const addChildren = (node) => {
+                    const children = this.nodes.filter(n => n.data.relations.parent === node.id);
+                    if (children.length > 0) {
+                        node.children = children.map(child => {
+                            const childNode = {
+                                id: child.id,
+                                title: child.title,
+                                content: child.content,
+                                data: child.data
+                            };
+                            return addChildren(childNode);
+                        });
+                    }
+                    return node;
+                };
+                
+                return addChildren({
+                    id: root.id,
+                    title: root.title,
+                    content: root.content,
+                    data: root.data
+                });
+            }
+
+            loadMarkdown(markdown) {
+                const blocks = this.parseMarkdown(markdown);
+                this.buildGraph(blocks);
+                this.clear();
+                this.render();
+            }
+
+            clear() {
+                this.linksGroup.selectAll('*').remove();
+                this.nodesGroup.selectAll('*').remove();
+            }
+
+            zoomIn() {
+                this.svg.transition().call(this.zoom.scaleBy, 1.5);
+            }
+
+            zoomOut() {
+                this.svg.transition().call(this.zoom.scaleBy, 1 / 1.5);
+            }
+
+            fitToView() {
+                const bounds = this.container.node().getBBox();
+                const parent = this.container.node().parentElement;
+                const fullWidth = parent.clientWidth || parent.parentNode.clientWidth;
+                const fullHeight = parent.clientHeight || parent.parentNode.clientHeight;
+                
+                if (bounds.width === 0 || bounds.height === 0) return;
+                
+                const midX = bounds.x + bounds.width / 2;
+                const midY = bounds.y + bounds.height / 2;
+                const scale = 0.8 / Math.max(bounds.width / fullWidth, bounds.height / fullHeight);
+                const translate = [fullWidth / 2 - scale * midX, fullHeight / 2 - scale * midY];
+                
+                this.svg.transition()
+                    .duration(750)
+                    .call(this.zoom.transform, d3.zoomIdentity.translate(translate[0], translate[1]).scale(scale));
+            }
+
+            exportData() {
+                const data = {
+                    nodes: this.nodes,
+                    links: this.links,
+                    timestamp: new Date().toISOString()
+                };
+                
+                const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'mindmap-data.json';
+                a.click();
+                URL.revokeObjectURL(url);
+            }
+
+            updateStatus() {
+                const statusText = document.getElementById('status-text');
+                const selectedInfo = this.selectedNode ? ` | 已选择: ${this.selectedNode}` : '';
+                statusText.textContent = `就绪 | 节点数: ${this.nodes.length} | 连接数: ${this.links.length}${selectedInfo} | Enter添加同级，Ctrl+Enter添加子节点`;
+            }
+        }
+
+        // 初始化脑图
+        const mindMap = new NodeMindMap('#mindmap-svg');
+
+        // 示例数据
+        const examples = {
+            project: `编号：{#P001}
+标题：产品开发项目
+时间：2025-01-17 | 2025-01-17
+作者：项目经理
+
+产品开发的主要项目，包含需求分析、设计、开发、测试等各个阶段。
+
+关键目标：
+- 按时交付高质量产品
+- 满足用户需求
+- 控制成本和风险
+
+---
+【标记族】
+分类标签：@项目.管理.开发
+状态标签：@进行中
+
+编号：{#P002}
+标题：需求分析
+时间：2025-01-17 | 2025-01-17
+作者：产品经理
+
+深入分析用户需求，制定产品功能规格。
+
+主要工作：
+- 用户调研
+- 竞品分析
+- 功能定义
+
+---
+【标记族】
+父子关系：^P001
+分类标签：@项目.需求.分析
+状态标签：@已完成
+
+编号：{#P003}
+标题：系统设计
+时间：2025-01-17 | 2025-01-17
+作者：架构师
+
+基于需求分析结果，设计系统架构和技术方案。
+
+设计内容：
+- 系统架构
+- 数据库设计
+- 接口设计
+
+---
+【标记族】
+父子关系：^P001
+依赖关系：←P002
+分类标签：@项目.设计.架构
+状态标签：@进行中`,
+
+            knowledge: `编号：{#K001}
+标题：前端开发知识体系
+时间：2025-01-17 | 2025-01-17
+作者：技术专家
+
+前端开发的完整知识体系，涵盖基础知识到高级应用。
+
+核心领域：
+- HTML/CSS/JavaScript基础
+- 框架与库应用
+- 工程化与优化
+
+---
+【标记族】
+分类标签：@知识.前端.体系
+技术标签：@前端.JavaScript.框架
+
+编号：{#K002}
+标题：JavaScript基础
+时间：2025-01-17 | 2025-01-17
+作者：技术专家
+
+JavaScript语言的核心概念和基础语法。
+
+学习重点：
+- 变量与数据类型
+- 函数与作用域
+- 异步编程
+
+---
+【标记族】
+父子关系：^K001
+分类标签：@知识.前端.基础
+技术标签：@前端.JavaScript.语法
+
+编号：{#K003}
+标题：React框架
+时间：2025-01-17 | 2025-01-17
+作者：技术专家
+
+React框架的核心概念和最佳实践。
+
+核心内容：
+- 组件化开发
+- 状态管理
+- 生命周期
+
+---
+【标记族】
+父子关系：^K001
+依赖关系：←K002
+分类标签：@知识.前端.框架
+技术标签：@前端.React.组件`,
+
+            learning: `编号：{#L001}
+标题：数据结构与算法
+时间：2025-01-17 | 2025-01-17
+作者：学习者
+
+计算机科学的核心课程，学习各种数据结构和算法。
+
+学习目标：
+- 掌握基本数据结构
+- 理解算法复杂度
+- 培养编程思维
+
+---
+【标记族】
+分类标签：@学习.计算机.基础
+状态标签：@学习中
+
+编号：{#L002}
+标题：线性数据结构
+时间：2025-01-17 | 2025-01-17
+作者：学习者
+
+数组、链表、栈、队列等线性数据结构。
+
+主要内容：
+- 数组操作
+- 链表实现
+- 栈和队列应用
+
+---
+【标记族】
+父子关系：^L001
+分类标签：@学习.数据结构.线性
+状态标签：@已掌握
+
+编号：{#L003}
+标题：树形数据结构
+时间：2025-01-17 | 2025-01-17
+作者：学习者
+
+二叉树、平衡树、B树等树形结构。
+
+重点概念：
+- 二叉树遍历
+- 平衡树原理
+- 树的应用场景
+
+---
+【标记族】
+父子关系：^L001
+依赖关系：←L002
+分类标签：@学习.数据结构.树形
+状态标签：@学习中`
+        };
+
+        // 加载示例
+        function loadExample(type) {
+            document.getElementById('markdown-input').value = examples[type];
+            updateMindMap();
+        }
+
+        // 更新脑图
+        function updateMindMap() {
+            const markdown = document.getElementById('markdown-input').value;
+            if (markdown.trim()) {
+                mindMap.loadMarkdown(markdown);
+            }
+        }
+
+        // 更新布局
+        function updateLayout() {
+            updateMindMap();
+        }
+
+        // 初始化加载
+        window.addEventListener('load', () => {
+            updateMindMap();
+        });
+
+        // 全局函数供HTML调用
+        function saveNodeContent() {
+            mindMap.saveNodeContent();
+        }
+
+        function cancelNodeEdit() {
+            mindMap.cancelNodeEdit();
+        }
+    </script>
+</body>
+</html> 

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#667eea" />
+    <meta name="description" content="现代化React脑图应用 - MindMap Modern v3.0" />
+    <title>MindMap Modern - 现代化脑图应用</title>
+    
+    <!-- 预加载关键字体 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <!-- 性能优化 -->
+    <link rel="dns-prefetch" href="//fonts.googleapis.com">
+    
+    <style>
+      /* 加载动画 */
+      #loading {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        color: white;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      }
+      
+      .loading-content {
+        text-align: center;
+      }
+      
+      .loading-spinner {
+        width: 50px;
+        height: 50px;
+        border: 4px solid rgba(255, 255, 255, 0.3);
+        border-top: 4px solid white;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 20px;
+      }
+      
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+      
+      .loading-text {
+        font-size: 18px;
+        font-weight: 500;
+        margin-bottom: 8px;
+      }
+      
+      .loading-subtitle {
+        font-size: 14px;
+        opacity: 0.8;
+      }
+    </style>
+  </head>
+  <body>
+    <noscript>
+      <div style="text-align: center; padding: 50px; font-family: Arial, sans-serif;">
+        <h2>需要启用JavaScript</h2>
+        <p>此应用需要JavaScript才能正常运行，请在浏览器中启用JavaScript。</p>
+      </div>
+    </noscript>
+    
+    <!-- 加载动画 -->
+    <div id="loading">
+      <div class="loading-content">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">MindMap Modern</div>
+        <div class="loading-subtitle">正在加载现代化脑图应用...</div>
+      </div>
+    </div>
+    
+    <!-- React应用挂载点 -->
+    <div id="root"></div>
+    
+    <script>
+      // 隐藏加载动画
+      window.addEventListener('load', function() {
+        setTimeout(function() {
+          const loading = document.getElementById('loading');
+          if (loading) {
+            loading.style.opacity = '0';
+            loading.style.transition = 'opacity 0.5s ease-out';
+            setTimeout(function() {
+              loading.style.display = 'none';
+            }, 500);
+          }
+        }, 1000);
+      });
+      
+      // 错误处理
+      window.addEventListener('error', function(e) {
+        console.error('应用加载错误:', e.error);
+        const loading = document.getElementById('loading');
+        if (loading) {
+          loading.innerHTML = `
+            <div class="loading-content">
+              <h2 style="color: #ff6b6b; margin-bottom: 16px;">⚠️ 加载失败</h2>
+              <p style="margin-bottom: 16px;">应用加载时出现错误，请刷新页面重试。</p>
+              <button onclick="location.reload()" style="
+                background: white;
+                color: #667eea;
+                border: none;
+                padding: 12px 24px;
+                border-radius: 6px;
+                font-size: 14px;
+                font-weight: 500;
+                cursor: pointer;
+              ">刷新页面</button>
+            </div>
+          `;
+        }
+      });
+    </script>
+  </body>
+</html> 
