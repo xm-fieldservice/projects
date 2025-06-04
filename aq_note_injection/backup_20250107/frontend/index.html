@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teams 智能体团队协作系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+        
+        .nav-links a {
+            color: #333;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        
+        .nav-links a:hover {
+            background-color: #f0f0f0;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .hero {
+            text-align: center;
+            color: white;
+            padding: 3rem 0;
+        }
+        
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+        
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+        
+        .feature-card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .status-panel {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin: 2rem 0;
+        }
+        
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .team-item {
+            padding: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background: #f9f9f9;
+        }
+        
+        .team-item h4 {
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+        
+        .member-list {
+            list-style: none;
+        }
+        
+        .member-list li {
+            padding: 0.2rem 0;
+            font-size: 0.9rem;
+        }
+        
+        .status-online {
+            color: #4CAF50;
+        }
+        
+        .status-offline {
+            color: #f44336;
+        }
+        
+        .cta-section {
+            text-align: center;
+            margin: 3rem 0;
+        }
+        
+        .cta-button {
+            background: #4CAF50;
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin: 0.5rem;
+            transition: background-color 0.3s;
+        }
+        
+        .cta-button:hover {
+            background: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="logo">
+            🤖 Teams 协作系统
+        </div>
+        <nav class="nav-links">
+            <a href="#teams">团队管理</a>
+            <a href="#agents">智能体</a>
+            <a href="qa-note-block/qa-note.html">进入系统</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <section class="hero">
+            <h1>Teams 智能体团队协作系统</h1>
+            <p>从 qa_note_injection 提取的专业团队协作功能</p>
+            <p>基于 AutoGen 框架的多智能体协作平台</p>
+        </section>
+
+        <section class="status-panel">
+            <h3>🌐 系统状态</h3>
+            <div id="system-status">
+                <p>智能体服务: <span id="agent-status">检查中...</span></p>
+                <p>主要智能体: <strong>rag_team</strong> (团队协作)</p>
+                <p>团队成员: <strong>7人</strong> (3个团队)</p>
+                <p>在线状态: <span id="online-count">5人在线, 2人离线</span></p>
+            </div>
+        </section>
+
+        <section class="feature-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🤝</div>
+                <h3>团队协作</h3>
+                <p>rag_team 智能体支持多成员协作，实现团队间高效沟通和任务分配</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">🧠</div>
+                <h3>智能问答</h3>
+                <p>RAG 技术支持的知识检索，提供专业的团队协作式问答服务</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <h3>实时管理</h3>
+                <p>团队成员状态实时显示，项目协作进度可视化监控</p>
+            </div>
+        </section>
+
+        <section id="teams" class="status-panel">
+            <h3>👥 团队结构</h3>
+            <div class="team-grid">
+                <div class="team-item">
+                    <h4>👨‍💻 开发团队</h4>
+                    <ul class="member-list">
+                        <li>张开发 <span class="status-online">(在线)</span></li>
+                        <li>李程序 <span class="status-offline">(离线)</span></li>
+                        <li>王前端 <span class="status-online">(在线)</span></li>
+                    </ul>
+                </div>
+                <div class="team-item">
+                    <h4>🎨 设计团队</h4>
+                    <ul class="member-list">
+                        <li>刘设计 <span class="status-online">(在线)</span></li>
+                        <li>陈UI <span class="status-online">(在线)</span></li>
+                    </ul>
+                </div>
+                <div class="team-item">
+                    <h4>📊 产品团队</h4>
+                    <ul class="member-list">
+                        <li>赵产品 <span class="status-online">(在线)</span></li>
+                        <li>孙运营 <span class="status-offline">(离线)</span></li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="agents" class="status-panel">
+            <h3>🤖 支持的智能体</h3>
+            <div class="team-grid">
+                <div class="team-item" style="border: 2px solid #4CAF50;">
+                    <h4>RAG 团队协作 ⭐</h4>
+                    <p><strong>端点:</strong> /api/rag/team</p>
+                    <p><strong>能力:</strong> 团队协作、深度分析、多角度回答</p>
+                    <p><strong>状态:</strong> <span class="status-online">主要智能体</span></p>
+                </div>
+                <div class="team-item">
+                    <h4>通用助手</h4>
+                    <p><strong>端点:</strong> /api/general</p>
+                    <p><strong>能力:</strong> 问答、对话、文本生成</p>
+                </div>
+                <div class="team-item">
+                    <h4>代码助手</h4>
+                    <p><strong>端点:</strong> /api/code</p>
+                    <p><strong>能力:</strong> 代码生成、技术问答</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="cta-section">
+            <h2 style="color: white; margin-bottom: 2rem;">开始使用团队协作功能</h2>
+            <a href="qa-note-block/qa-note.html" class="cta-button">进入团队协作界面</a>
+            <a href="shared/agent-connector.js" class="cta-button">查看智能体配置</a>
+        </section>
+    </div>
+
+    <script src="shared/agent-connector.js"></script>
+    <script>
+        // 初始化系统状态检查
+        document.addEventListener('DOMContentLoaded', function() {
+            try {
+                // 检查智能体连接器是否可用
+                if (typeof AgentConnector !== 'undefined') {
+                    const agentConnector = new AgentConnector();
+                    const agentStatus = document.getElementById('agent-status');
+                    
+                    // 检查智能体服务状态
+                    agentConnector.checkConnection().then(isConnected => {
+                        if (isConnected) {
+                            agentStatus.textContent = '✅ 正常运行';
+                            agentStatus.style.color = '#4CAF50';
+                        } else {
+                            agentStatus.textContent = '❌ 服务离线';
+                            agentStatus.style.color = '#f44336';
+                        }
+                    }).catch(error => {
+                        agentStatus.textContent = '⚠️ 连接异常';
+                        agentStatus.style.color = '#ff9800';
+                        console.warn('AgentConnector check failed:', error);
+                    });
+                    
+                    // 监听连接状态变化
+                    window.addEventListener('agentConnectionChange', function(event) {
+                        const { status, message } = event.detail;
+                        if (status === 'online') {
+                            agentStatus.textContent = '✅ ' + message;
+                            agentStatus.style.color = '#4CAF50';
+                        } else {
+                            agentStatus.textContent = '❌ ' + message;
+                            agentStatus.style.color = '#f44336';
+                        }
+                    });
+                } else {
+                    document.getElementById('agent-status').textContent = '⚠️ 智能体连接器未加载';
+                    document.getElementById('agent-status').style.color = '#ff9800';
+                }
+            } catch (error) {
+                console.error('Failed to initialize agent connector:', error);
+                document.getElementById('agent-status').textContent = '❌ 初始化失败';
+                document.getElementById('agent-status').style.color = '#f44336';
+            }
+        });
+    </script>
+</body>
+</html> 

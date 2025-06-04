@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuthBlock 用户登录</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .login-header {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .login-header h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        .login-form {
+            padding: 40px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1em;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .login-button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: 500;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .login-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .login-button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .demo-accounts {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .demo-accounts h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+
+        .account-item {
+            background: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            border: 1px solid #e0e0e0;
+        }
+
+        .account-item:hover {
+            background: #f0f0f0;
+        }
+
+        .account-item strong {
+            color: #667eea;
+        }
+
+        .account-item small {
+            color: #666;
+            display: block;
+            margin-top: 5px;
+        }
+
+        .message {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .back-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .back-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .back-link a:hover {
+            text-decoration: underline;
+        }
+
+        .user-info {
+            background: #e8f4fd;
+            border: 1px solid #b8e6ff;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .user-info h3 {
+            color: #0066cc;
+            margin-bottom: 15px;
+        }
+
+        .user-detail {
+            margin-bottom: 10px;
+        }
+
+        .user-detail strong {
+            display: inline-block;
+            width: 80px;
+            color: #333;
+        }
+
+        .logout-button {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+
+        .logout-button:hover {
+            background: #c82333;
+        }
+
+        @media (max-width: 480px) {
+            .login-container {
+                margin: 20px;
+            }
+            
+            .login-form {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-header">
+            <h1>🔐 用户登录</h1>
+            <p>AuthBlock 权限系统</p>
+        </div>
+
+        <div class="login-form">
+            <div id="message" class="message"></div>
+
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username">用户名</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">密码</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+
+                <button type="submit" class="login-button" id="loginButton">
+                    登录
+                </button>
+            </form>
+
+            <div class="user-info" id="userInfo">
+                <h3>🎉 登录成功！</h3>
+                <div class="user-detail">
+                    <strong>用户名:</strong> <span id="userUsername"></span>
+                </div>
+                <div class="user-detail">
+                    <strong>姓名:</strong> <span id="userName"></span>
+                </div>
+                <div class="user-detail">
+                    <strong>角色:</strong> <span id="userRole"></span>
+                </div>
+                <div class="user-detail">
+                    <strong>邮箱:</strong> <span id="userEmail"></span>
+                </div>
+                <div class="user-detail">
+                    <strong>令牌:</strong> <span id="userToken" style="font-family: monospace; font-size: 0.8em; word-break: break-all;"></span>
+                </div>
+                <button class="logout-button" onclick="logout()">退出登录</button>
+            </div>
+
+            <div class="demo-accounts">
+                <h3>🎭 演示账号</h3>
+                
+                <div class="account-item" onclick="fillAccount('admin', 'admin123')">
+                    <strong>管理员账号</strong>
+                    <small>用户名: admin | 密码: admin123</small>
+                </div>
+                
+                <div class="account-item" onclick="fillAccount('demo', 'demo123')">
+                    <strong>演示用户</strong>
+                    <small>用户名: demo | 密码: demo123</small>
+                </div>
+                
+                <div class="account-item" onclick="fillAccount('test', 'test123')">
+                    <strong>测试用户</strong>
+                    <small>用户名: test | 密码: test123</small>
+                </div>
+            </div>
+
+            <div class="back-link">
+                <a href="index.html">← 返回首页</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentToken = null;
+
+        // 填充账号信息
+        function fillAccount(username, password) {
+            document.getElementById('username').value = username;
+            document.getElementById('password').value = password;
+        }
+
+        // 显示消息
+        function showMessage(text, type = 'error') {
+            const messageEl = document.getElementById('message');
+            messageEl.textContent = text;
+            messageEl.className = `message ${type}`;
+            messageEl.style.display = 'block';
+            
+            setTimeout(() => {
+                messageEl.style.display = 'none';
+            }, 5000);
+        }
+
+        // 登录函数
+        async function login(username, password) {
+            const loginButton = document.getElementById('loginButton');
+            loginButton.disabled = true;
+            loginButton.textContent = '登录中...';
+
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    currentToken = data.data.token;
+                    showUserInfo(data.data.user, data.data.token);
+                    showMessage('登录成功！', 'success');
+                } else {
+                    showMessage(data.error || '登录失败');
+                }
+            } catch (error) {
+                showMessage('网络错误，请检查服务器连接');
+                console.error('登录错误:', error);
+            } finally {
+                loginButton.disabled = false;
+                loginButton.textContent = '登录';
+            }
+        }
+
+        // 显示用户信息
+        function showUserInfo(user, token) {
+            document.getElementById('userUsername').textContent = user.username;
+            document.getElementById('userName').textContent = user.name;
+            document.getElementById('userRole').textContent = user.role;
+            document.getElementById('userEmail').textContent = user.email;
+            document.getElementById('userToken').textContent = token.substring(0, 50) + '...';
+            
+            // 保存认证信息到localStorage供其他模块使用
+            localStorage.setItem('qa_auth_token', token);
+            localStorage.setItem('qa_user_info', JSON.stringify(user));
+            sessionStorage.setItem('authToken', token);
+            
+            document.getElementById('loginForm').style.display = 'none';
+            document.querySelector('.demo-accounts').style.display = 'none';
+            document.getElementById('userInfo').style.display = 'block';
+            
+            // 添加跳转按钮和自动跳转
+            const userInfoDiv = document.getElementById('userInfo');
+            if (!userInfoDiv.querySelector('.nav-buttons')) {
+                const navButtons = document.createElement('div');
+                navButtons.className = 'nav-buttons';
+                navButtons.style.marginTop = '15px';
+                navButtons.innerHTML = `
+                    <button onclick="goToQAModule()" class="login-button" style="margin: 5px; padding: 10px 20px;">进入问答系统</button>
+                    <button onclick="goToDemo()" class="login-button" style="margin: 5px; padding: 10px 20px; background: #6c757d;">返回演示</button>
+                `;
+                userInfoDiv.appendChild(navButtons);
+            }
+            
+            // 3秒后自动跳转到问答模块
+            setTimeout(() => {
+                showMessage('即将自动跳转到问答系统...', 'success');
+                setTimeout(() => {
+                    goToQAModule();
+                }, 2000);
+            }, 3000);
+        }
+        
+        // 跳转到问答模块
+        function goToQAModule() {
+            window.location.href = '../qa-note-block/qa-note.html';
+        }
+        
+        // 返回演示页面
+        function goToDemo() {
+            window.location.href = 'index.html';
+        }
+
+        // 退出登录
+        async function logout() {
+            if (currentToken) {
+                try {
+                    await fetch('/api/auth/logout', {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${currentToken}`
+                        }
+                    });
+                } catch (error) {
+                    console.error('退出登录错误:', error);
+                }
+            }
+
+            currentToken = null;
+            document.getElementById('loginForm').style.display = 'block';
+            document.querySelector('.demo-accounts').style.display = 'block';
+            document.getElementById('userInfo').style.display = 'none';
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+            showMessage('已退出登录', 'success');
+        }
+
+        // 表单提交事件
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+
+            if (!username || !password) {
+                showMessage('请输入用户名和密码');
+                return;
+            }
+
+            login(username, password);
+        });
+
+        // 测试API连接
+        async function testConnection() {
+            try {
+                const response = await fetch('/api/test');
+                const data = await response.json();
+                
+                if (data.success) {
+                    console.log('API连接正常:', data);
+                } else {
+                    console.warn('API响应异常:', data);
+                }
+            } catch (error) {
+                console.error('API连接失败:', error);
+                showMessage('无法连接到服务器，请检查服务状态');
+            }
+        }
+
+        // 页面加载时测试连接
+        testConnection();
+
+        // 检查是否已经有令牌（页面刷新后保持登录状态）
+        const storedToken = sessionStorage.getItem('authToken');
+        if (storedToken) {
+            // 验证存储的令牌
+            fetch('/api/auth/user', {
+                headers: {
+                    'Authorization': `Bearer ${storedToken}`
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    currentToken = storedToken;
+                    showUserInfo(data.data.user, storedToken);
+                } else {
+                    sessionStorage.removeItem('authToken');
+                }
+            })
+            .catch(() => {
+                sessionStorage.removeItem('authToken');
+            });
+        }
+
+        // 保存令牌到sessionStorage
+        function saveToken(token) {
+            sessionStorage.setItem('authToken', token);
+        }
+
+        // 修改login函数以保存令牌
+        const originalLogin = login;
+        login = async function(username, password) {
+            const result = await originalLogin(username, password);
+            if (currentToken) {
+                saveToken(currentToken);
+            }
+            return result;
+        };
+
+        // 修改logout函数以清除令牌
+        const originalLogout = logout;
+        logout = async function() {
+            await originalLogout();
+            sessionStorage.removeItem('authToken');
+        };
+    </script>
+</body>
+</html> 

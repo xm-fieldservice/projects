@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>笔记块系统 v3.0 - 部署验证</title>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .status {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-weight: bold;
+        }
+        
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .demo-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            background: #f8f9fa;
+        }
+        
+        .demo-result {
+            background: #e8f5e8;
+            border: 1px solid #c3e6c3;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            white-space: pre-wrap;
+            font-family: monospace;
+        }
+        
+        .btn {
+            background: #3498db;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        
+        .btn:hover {
+            background: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 笔记块系统 v3.0 部署验证</h1>
+        
+        <div id="loading-status" class="status">
+            📦 正在检查系统组件...
+        </div>
+        
+        <div class="demo-section">
+            <h3>🔧 基础功能测试</h3>
+            <button class="btn" onclick="testBasicFunction()">测试基础功能</button>
+            <div id="basic-result" class="demo-result"></div>
+        </div>
+        
+        <div class="demo-section">
+            <h3>🚀 策略生成测试</h3>
+            <button class="btn" onclick="testStrategyGeneration()">测试策略生成</button>
+            <div id="strategy-result" class="demo-result"></div>
+        </div>
+        
+        <div class="demo-section">
+            <h3>⚡ 快速原型测试</h3>
+            <button class="btn" onclick="testQuickPrototype()">测试快速原型</button>
+            <div id="prototype-result" class="demo-result"></div>
+        </div>
+        
+        <div class="demo-section">
+            <h3>📊 系统信息</h3>
+            <button class="btn" onclick="showSystemInfo()">显示系统信息</button>
+            <div id="system-result" class="demo-result"></div>
+        </div>
+    </div>
+
+    <!-- 引入笔记块系统 -->
+    <script src="note-block-system/tools/note-toolkit.js"></script>
+    
+    <script>
+        // 页面加载完成后检查系统状态
+        document.addEventListener('DOMContentLoaded', function() {
+            checkSystemStatus();
+        });
+        
+        function checkSystemStatus() {
+            const statusDiv = document.getElementById('loading-status');
+            
+            try {
+                // 检查核心组件是否加载
+                if (typeof NoteToolkit === 'undefined') {
+                    throw new Error('NoteToolkit未加载');
+                }
+                
+                if (typeof useNoteStrategy === 'undefined') {
+                    throw new Error('函数接口未加载');
+                }
+                
+                // 创建工具包实例测试
+                const toolkit = new NoteToolkit();
+                
+                statusDiv.className = 'status success';
+                statusDiv.innerHTML = `
+                    ✅ 系统加载成功！<br>
+                    📦 版本: ${toolkit.version || 'v3.0.0'}<br>
+                    🔧 组件: 已加载<br>
+                    ⚡ 状态: 就绪
+                `;
+                
+            } catch (error) {
+                statusDiv.className = 'status error';
+                statusDiv.innerHTML = `
+                    ❌ 系统加载失败<br>
+                    🚨 错误: ${error.message}<br>
+                    💡 请检查文件路径是否正确
+                `;
+            }
+        }
+        
+        function testBasicFunction() {
+            const resultDiv = document.getElementById('basic-result');
+            
+            try {
+                // 测试基础笔记生成
+                const sample = `
+问：什么是部署验证？
+答：确保系统正常工作
+  - 功能测试
+  - 性能测试
+                `;
+                
+                const result = useNoteStrategy(sample, 'deploy_test');
+                
+                if (!result.success) {
+                    throw new Error(`策略生成失败: ${result.error}`);
+                }
+                
+                const note = generateNote({
+                    question: "部署是否成功？",
+                    answer: "系统运行正常",
+                    details: ["组件加载完成", "接口响应正常"]
+                });
+                
+                resultDiv.textContent = `✅ 基础功能测试通过\n\n生成的笔记:\n${note}`;
+                
+            } catch (error) {
+                resultDiv.textContent = `❌ 基础功能测试失败: ${error.message}`;
+            }
+        }
+        
+        function testStrategyGeneration() {
+            const resultDiv = document.getElementById('strategy-result');
+            
+            try {
+                // 测试策略生成和切换
+                const formatA = `[问题] 测试A\n[答案] 成功A`;
+                const formatB = `【问】测试B\n【答】成功B`;
+                
+                useNoteStrategy(formatA, 'formatA');
+                useNoteStrategy(formatB, 'formatB');
+                
+                // 测试切换
+                switchToStrategy('formatA');
+                const noteA = generateNote({ question: "格式测试", answer: "A格式" });
+                
+                switchToStrategy('formatB');
+                const noteB = generateNote({ question: "格式测试", answer: "B格式" });
+                
+                if (noteA === noteB) {
+                    throw new Error('策略切换无效');
+                }
+                
+                resultDiv.textContent = `✅ 策略生成测试通过\n\n格式A:\n${noteA}\n\n格式B:\n${noteB}`;
+                
+            } catch (error) {
+                resultDiv.textContent = `❌ 策略生成测试失败: ${error.message}`;
+            }
+        }
+        
+        function testQuickPrototype() {
+            const resultDiv = document.getElementById('prototype-result');
+            
+            try {
+                // 测试快速原型功能
+                const sample = `
+## 核心问题
+如何验证部署？
+
+## 解决方案
+运行测试用例
+- 基础功能测试
+- 集成测试
+- 性能测试
+                `;
+                
+                const testData = {
+                    question: "系统是否稳定？",
+                    answer: "通过所有测试",
+                    details: ["功能正常", "性能良好", "兼容性好"]
+                };
+                
+                const result = quickPrototype(sample, testData);
+                
+                if (!result.success) {
+                    throw new Error(`快速原型失败: ${result.error}`);
+                }
+                
+                resultDiv.textContent = `✅ 快速原型测试通过\n\n策略: ${result.strategyName}\n\n生成结果:\n${result.testOutput}`;
+                
+            } catch (error) {
+                resultDiv.textContent = `❌ 快速原型测试失败: ${error.message}`;
+            }
+        }
+        
+        function showSystemInfo() {
+            const resultDiv = document.getElementById('system-result');
+            
+            try {
+                const toolkit = new NoteToolkit();
+                const status = getToolkitStatus();
+                const strategies = getAllStrategies();
+                
+                const info = {
+                    version: toolkit.version || 'v3.0.0',
+                    timestamp: new Date().toLocaleString(),
+                    strategies: strategies,
+                    status: status,
+                    browser: navigator.userAgent.split(' ')[0],
+                    features: {
+                        'NoteToolkit': typeof NoteToolkit !== 'undefined',
+                        'useNoteStrategy': typeof useNoteStrategy !== 'undefined',
+                        'generateNote': typeof generateNote !== 'undefined',
+                        'quickPrototype': typeof quickPrototype !== 'undefined'
+                    }
+                };
+                
+                resultDiv.textContent = `📊 系统信息:\n${JSON.stringify(info, null, 2)}`;
+                
+            } catch (error) {
+                resultDiv.textContent = `❌ 获取系统信息失败: ${error.message}`;
+            }
+        }
+    </script>
+</body>
+</html> 

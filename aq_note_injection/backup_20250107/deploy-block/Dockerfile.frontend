@@ -1,0 +1,35 @@
+# 前端服务 Dockerfile
+# 基于 Nginx Alpine 镜像
+FROM nginx:alpine
+
+# 设置工作目录
+WORKDIR /usr/share/nginx/html
+
+# 安装必要的工具
+RUN apk add --no-cache curl
+
+# 复制项目文件
+COPY ui-block/ ./ui-block/
+COPY auth-block/ ./auth-block/
+COPY deploy-block/ ./deploy-block/
+COPY shared/ ./shared/
+
+# 创建主入口文件
+COPY deploy-block/nginx.conf /etc/nginx/nginx.conf
+
+# 创建健康检查文件
+RUN echo '<!DOCTYPE html><html><head><title>Health Check</title></head><body><h1>OK</h1></body></html>' > /usr/share/nginx/html/health
+
+# 设置正确的文件权限
+RUN chown -R nginx:nginx /usr/share/nginx/html
+RUN chmod -R 755 /usr/share/nginx/html
+
+# 暴露端口
+EXPOSE 80
+
+# 健康检查
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+    CMD curl -f http://localhost:80/health || exit 1
+
+# 启动 Nginx
+CMD ["nginx", "-g", "daemon off;"] 

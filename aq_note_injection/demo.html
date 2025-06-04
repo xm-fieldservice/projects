@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>本地笔记保存工具 - 第三方页面集成演示</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f7fa;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .demo-app {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .demo-app h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .control-group {
+            margin-bottom: 20px;
+        }
+
+        .control-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 5px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .textarea {
+            width: 100%;
+            min-height: 120px;
+            padding: 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 16px;
+            font-family: inherit;
+            resize: vertical;
+        }
+
+        .textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .note-saver-status {
+            padding: 12px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .note-saver-status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .note-saver-status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .note-saver-status.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .integration-info {
+            background: #e8f4fd;
+            border: 1px solid #bee5eb;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .code-block {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+        }
+
+        .support-info {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📝 本地笔记保存工具</h1>
+        <p>可集成到任何第三方页面的本地笔记保存解决方案</p>
+    </div>
+
+    <!-- 浏览器支持检测 -->
+    <div class="demo-app">
+        <h2>🔧 浏览器支持检测</h2>
+        <div id="browser-support" class="support-info">
+            正在检测浏览器支持情况...
+        </div>
+    </div>
+
+    <!-- 模拟第三方应用 -->
+    <div class="demo-app">
+        <h2>📱 模拟第三方应用（如聊天软件、笔记应用等）</h2>
+        
+        <!-- 参数1：路径和文件选择器 -->
+        <div class="control-group">
+            <label>📁 参数1：路径和文件选择器</label>
+            <button id="select-file-btn" class="btn">选择现有笔记文件</button>
+            <button id="create-file-btn" class="btn btn-warning">创建新笔记文件</button>
+            <p><small>
+                • <strong>选择现有文件</strong>：打开已有的笔记文件，内容将追加到文件末尾<br>
+                • <strong>创建新文件</strong>：创建全新的笔记文件
+            </small></p>
+        </div>
+
+        <!-- 参数2：文字或图片录入 -->
+        <div class="control-group">
+            <label>✏️ 参数2：文字或图片录入框</label>
+            <textarea id="content-input" class="textarea" placeholder="在此输入要保存到笔记的内容...
+
+💡 提示：
+- 支持直接粘贴图片（Ctrl+V）
+- 支持多行文本输入
+- 内容将以追加方式保存到笔记文件"></textarea>
+            <p><small>支持文字输入和图片粘贴（Ctrl+V）</small></p>
+        </div>
+
+        <!-- 参数3：保存或发送 -->
+        <div class="control-group">
+            <label>💾 参数3：保存或发送按钮</label>
+            <button id="save-btn" class="btn btn-success">保存到本地笔记</button>
+            <p><small>点击此按钮将内容追加保存到选择的本地文件</small></p>
+        </div>
+
+        <!-- 状态显示 -->
+        <div id="note-saver-status" class="note-saver-status"></div>
+    </div>
+
+    <!-- 集成说明 -->
+    <div class="demo-app">
+        <h2>🔌 集成到您的页面</h2>
+        <div class="integration-info">
+            <h3>📋 集成步骤：</h3>
+            <ol>
+                <li><strong>引入工具包：</strong>
+                    <div class="code-block">&lt;script src="local-note-saver.js"&gt;&lt;/script&gt;</div>
+                </li>
+                <li><strong>初始化工具：</strong>
+                    <div class="code-block">const noteSaver = new LocalNoteSaver({
+    appName: '您的应用名称',
+    debugMode: true  // 开发时启用调试
+});</div>
+                </li>
+                <li><strong>绑定页面元素：</strong>
+                    <div class="code-block">// 绑定文件选择按钮
+noteSaver.bindSelectButton('#your-select-button');
+
+// 绑定内容输入框
+noteSaver.bindInput('#your-input-element');
+
+// 绑定保存按钮
+noteSaver.bindSaveButton('#your-save-button');</div>
+                </li>
+                <li><strong>添加状态显示元素（可选）：</strong>
+                    <div class="code-block">&lt;div id="note-saver-status" class="note-saver-status"&gt;&lt;/div&gt;</div>
+                </li>
+            </ol>
+        </div>
+
+        <div class="integration-info">
+            <h3>🎯 核心特性：</h3>
+            <ul>
+                <li>✅ <strong>更新保存</strong>：内容追加到现有笔记，不会删除原内容</li>
+                <li>✅ <strong>纯前端</strong>：无需后端服务，直接操作本地文件</li>
+                <li>✅ <strong>支持图片</strong>：可以粘贴图片到笔记中</li>
+                <li>✅ <strong>自动时间戳</strong>：每次保存都会添加时间戳</li>
+                <li>✅ <strong>浏览器兼容</strong>：现代浏览器直接保存，旧浏览器下载保存</li>
+                <li>✅ <strong>零依赖</strong>：纯JavaScript实现，无需第三方库</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- 演示用状态显示 -->
+    <div class="demo-app">
+        <h2>📊 工具状态</h2>
+        <button id="check-status-btn" class="btn btn-warning">检查工具状态</button>
+        <div id="status-display" class="code-block" style="margin-top: 15px;"></div>
+    </div>
+
+    <!-- 引入工具包 -->
+    <script src="local-note-saver.js"></script>
+    
+    <script>
+        // 初始化工具包
+        const noteSaver = new LocalNoteSaver({
+            appName: '第三方应用演示',
+            debugMode: true  // 启用调试模式
+        });
+
+        // 绑定页面元素
+        noteSaver.bindSelectButton('#select-file-btn');
+        noteSaver.bindCreateButton('#create-file-btn');
+        noteSaver.bindInput('#content-input');
+        noteSaver.bindSaveButton('#save-btn');
+
+        // 检测浏览器支持
+        function checkBrowserSupport() {
+            const supportEl = document.getElementById('browser-support');
+            
+            if ('showOpenFilePicker' in window && 'showSaveFilePicker' in window) {
+                supportEl.innerHTML = `
+                    <strong>✅ 完全支持</strong><br>
+                    您的浏览器支持 File System Access API<br>
+                    ✓ 可以选择现有文件进行追加保存<br>
+                    ✓ 可以创建新文件<br>
+                    ✓ 支持更新保存功能（不会清空现有内容）
+                `;
+                supportEl.style.background = '#d4edda';
+                supportEl.style.borderColor = '#c3e6cb';
+                supportEl.style.color = '#155724';
+            } else if ('showSaveFilePicker' in window) {
+                supportEl.innerHTML = `
+                    <strong>⚠️ 部分支持</strong><br>
+                    您的浏览器部分支持 File System Access API<br>
+                    ✓ 可以创建新文件<br>
+                    ❌ 无法选择现有文件（仅能创建新文件）
+                `;
+                supportEl.style.background = '#fff3cd';
+                supportEl.style.borderColor = '#ffeaa7';
+                supportEl.style.color = '#856404';
+            } else {
+                supportEl.innerHTML = `
+                    <strong>⚠️ 降级支持</strong><br>
+                    您的浏览器不支持 File System Access API<br>
+                    将使用下载保存方式（需要手动管理文件）<br>
+                    <em>推荐使用 Chrome 86+ 或 Edge 86+ 获得最佳体验</em>
+                `;
+                supportEl.style.background = '#fff3cd';
+                supportEl.style.borderColor = '#ffeaa7';
+                supportEl.style.color = '#856404';
+            }
+        }
+
+        // 状态检查按钮
+        document.getElementById('check-status-btn').addEventListener('click', () => {
+            const status = noteSaver.getStatus();
+            const statusDisplay = document.getElementById('status-display');
+            
+            statusDisplay.innerHTML = `
+工具状态：
+• 是否选择文件: ${status.hasFile ? '✅ 已选择' : '❌ 未选择'}
+• 当前文件名: ${status.fileName || '无'}
+• 已添加图片: ${status.imageCount} 张
+• 输入框绑定: ${status.hasInput ? '✅ 已绑定' : '❌ 未绑定'}
+• API支持: ${status.apiSupported ? '✅ 支持直接保存' : '⚠️ 仅支持下载保存'}
+            `;
+        });
+
+        // 页面加载完成后检测支持情况
+        document.addEventListener('DOMContentLoaded', () => {
+            checkBrowserSupport();
+            
+            // 初始状态检查
+            setTimeout(() => {
+                document.getElementById('check-status-btn').click();
+            }, 1000);
+        });
+
+        // 快捷键支持
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.key === 's') {
+                e.preventDefault();
+                document.getElementById('save-btn').click();
+            }
+        });
+    </script>
+</body>
+</html> 

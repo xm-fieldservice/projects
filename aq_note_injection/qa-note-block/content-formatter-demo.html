@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>内容格式化工具演示</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f8f9fa;
+        }
+        
+        .demo-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .input-panel, .output-panel {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .controls {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        textarea {
+            width: 100%;
+            height: 300px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 10px;
+            font-family: monospace;
+            resize: vertical;
+        }
+        
+        .output {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 10px;
+            background: #f8f9fa;
+            min-height: 300px;
+            white-space: pre-wrap;
+            font-family: monospace;
+        }
+        
+        .btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .btn:hover {
+            background: #0056b3;
+        }
+        
+        .style-selector, .preset-selector {
+            margin-right: 15px;
+        }
+        
+        .options {
+            margin: 15px 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .option {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        
+        h3 {
+            color: #555;
+            margin-bottom: 15px;
+        }
+        
+        .note-block {
+            background: #e8f4fd;
+            border: 1px solid #b3d7ff;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        
+        .note-block h4 {
+            margin: 0 0 10px 0;
+            color: #0066cc;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎨 内容格式化工具演示</h1>
+    
+    <div class="note-block">
+        <h4>💡 使用说明</h4>
+        这个工具专门用于格式化笔记内容，不涉及笔记块的整体结构。<br>
+        笔记块的外层结构（标题栏、元数据等）可以固定写在代码中，这里只处理内容部分的格式化。
+    </div>
+    
+    <div class="controls">
+        <h3>格式化控制</h3>
+        
+        <div>
+            <label class="style-selector">
+                样式：
+                <select id="styleSelect">
+                    <option value="default">默认格式</option>
+                    <option value="markdown">Markdown格式</option>
+                    <option value="simple">简化格式</option>
+                    <option value="rich">丰富格式</option>
+                </select>
+            </label>
+            
+            <label class="preset-selector">
+                快速预设：
+                <select id="presetSelect">
+                    <option value="standard">标准</option>
+                    <option value="full">完整</option>
+                    <option value="minimal">简化</option>
+                    <option value="code">代码</option>
+                </select>
+            </label>
+        </div>
+        
+        <div class="options">
+            <label class="option">
+                <input type="checkbox" id="addTimestamp"> 添加时间戳
+            </label>
+            <label class="option">
+                <input type="checkbox" id="autoList"> 自动列表
+            </label>
+            <label class="option">
+                <input type="checkbox" id="wrapCode"> 代码块包装
+            </label>
+            <label class="option">
+                <input type="checkbox" id="highlightKeywords"> 关键词高亮
+            </label>
+            <label class="option">
+                <input type="checkbox" id="addLineNumbers"> 添加行号
+            </label>
+        </div>
+        
+        <div>
+            <button class="btn" onclick="formatContent()">🎯 格式化</button>
+            <button class="btn" onclick="quickFormat()">⚡ 快速格式化</button>
+            <button class="btn" onclick="clearAll()">🧹 清空</button>
+            <button class="btn" onclick="loadSample()">📝 加载示例</button>
+        </div>
+    </div>
+    
+    <div class="demo-container">
+        <div class="input-panel">
+            <h3>📝 输入内容</h3>
+            <textarea id="inputContent" placeholder="在这里输入要格式化的内容..."></textarea>
+        </div>
+        
+        <div class="output-panel">
+            <h3>✨ 格式化结果</h3>
+            <div id="outputContent" class="output"></div>
+        </div>
+    </div>
+    
+    <script src="note-block-formatter.js"></script>
+    <script>
+        // 初始化格式化器
+        let formatter = new ContentFormatter({
+            style: 'default',
+            debugMode: true
+        });
+        
+        // 格式化内容
+        function formatContent() {
+            const content = document.getElementById('inputContent').value;
+            const options = {
+                addTimestamp: document.getElementById('addTimestamp').checked,
+                autoList: document.getElementById('autoList').checked,
+                wrapCode: document.getElementById('wrapCode').checked,
+                highlightKeywords: document.getElementById('highlightKeywords').checked,
+                addLineNumbers: document.getElementById('addLineNumbers').checked
+            };
+            
+            const result = formatter.format(content, options);
+            document.getElementById('outputContent').textContent = result;
+        }
+        
+        // 快速格式化
+        function quickFormat() {
+            const content = document.getElementById('inputContent').value;
+            const preset = document.getElementById('presetSelect').value;
+            
+            const result = formatter.quickFormat(content, preset);
+            document.getElementById('outputContent').textContent = result;
+        }
+        
+        // 清空内容
+        function clearAll() {
+            document.getElementById('inputContent').value = '';
+            document.getElementById('outputContent').textContent = '';
+        }
+        
+        // 加载示例内容
+        function loadSample() {
+            const sampleContent = `这是一个问答结果示例
+包含多行内容
+重要提示：记住保存文件
+注意代码格式
+function example() {
+    return "hello world";
+}
+还有一些TODO项目需要处理
+最后是一些总结性内容`;
+            
+            document.getElementById('inputContent').value = sampleContent;
+        }
+        
+        // 样式切换
+        document.getElementById('styleSelect').addEventListener('change', function() {
+            formatter.setStyle(this.value);
+        });
+        
+        // 实时格式化（可选）
+        document.getElementById('inputContent').addEventListener('input', function() {
+            // 可以添加防抖动的实时格式化
+        });
+        
+        // 预设选择器变化时自动更新选项
+        document.getElementById('presetSelect').addEventListener('change', function() {
+            const preset = this.value;
+            const presets = {
+                standard: {
+                    addTimestamp: false,
+                    autoList: false,
+                    wrapCode: false,
+                    highlightKeywords: true,
+                    addLineNumbers: false
+                },
+                full: {
+                    addTimestamp: true,
+                    autoList: true,
+                    wrapCode: true,
+                    highlightKeywords: true,
+                    addLineNumbers: false
+                },
+                minimal: {
+                    addTimestamp: false,
+                    autoList: false,
+                    wrapCode: false,
+                    highlightKeywords: false,
+                    addLineNumbers: false
+                },
+                code: {
+                    addTimestamp: false,
+                    autoList: false,
+                    wrapCode: true,
+                    highlightKeywords: false,
+                    addLineNumbers: true
+                }
+            };
+            
+            const config = presets[preset];
+            if (config) {
+                document.getElementById('addTimestamp').checked = config.addTimestamp;
+                document.getElementById('autoList').checked = config.autoList;
+                document.getElementById('wrapCode').checked = config.wrapCode;
+                document.getElementById('highlightKeywords').checked = config.highlightKeywords;
+                document.getElementById('addLineNumbers').checked = config.addLineNumbers;
+            }
+        });
+        
+        // 页面加载完成后加载示例
+        window.addEventListener('load', function() {
+            loadSample();
+            console.log('✅ 内容格式化工具演示页面加载完成');
+            console.log('📊 格式化器信息:', formatter.getInfo());
+        });
+    </script>
+</body>
+</html> 

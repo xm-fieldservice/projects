@@ -1,0 +1,435 @@
+const express = require('express');
+const cors = require('cors');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
+const cookieParser = require('cookie-parser');
+const path = require('path');
+const fs = require('fs');
+const AuthBlock = require('./lib/auth-block');
+const config = require('./config/server.json');
+const logger = require('./lib/logger');
+
+// 初始化Express应用
+const app = express();
+
+// 创建AuthBlock实例
+const authBlock = new AuthBlock({
+    ...config.auth,
+    debug: config.nodeEnv !== 'production'
+});
+
+// 确保数据目录存在
+const dataDir = path.join(__dirname, 'data');
+if (!fs.existsSync(dataDir)) {
+    fs.mkdirSync(dataDir, { recursive: true });
+    logger.info('创建数据目录:', dataDir);
+}
+
+// 安全中间件
+app.use(helmet({
+    contentSecurityPolicy: false, // 允许演示页面和问答系统
+    crossOriginEmbedderPolicy: false
+}));
+
+// CORS配置
+app.use(cors({
+    origin: config.cors.origin,
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
+}));
+
+// Cookie解析
+app.use(cookieParser());
+
+// 速率限制
+const limiter = rateLimit({
+    windowMs: config.rateLimit.windowMs,
+    max: config.rateLimit.max,
+    message: {
+        error: 'Too many requests from this IP, please try again later.',
+        code: 'RATE_LIMIT_EXCEEDED'
+    },
+    standardHeaders: true,
+    legacyHeaders: false
+});
+app.use('/api/', limiter);
+
+// 请求解析
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true }));
+
+// 请求日志中间件
+app.use((req, res, next) => {
+    const startTime = Date.now();
+    
+    res.on('finish', () => {
+        const duration = Date.now() - startTime;
+        logger.info('HTTP Request', {
+            method: req.method,
+            url: req.originalUrl,
+            status: res.statusCode,
+            duration: `${duration}ms`,
+            ip: req.ip,
+            userAgent: req.get('User-Agent')
+        });
+    });
+    
+    next();
+});
+
+// ============ 认证中间件 ============
+function requireAuth(req, res, next) {
+    // 静态资源和公开路径跳过认证
+    const publicPaths = [
+        '/api/auth/login', '/api/auth/register', '/health',
+        '/auth', '/login.html', '/register.html'
+    ];
+    
+    const isStaticResource = req.path.match(/\.(js|css|html|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$/);
+    const isPublicPath = publicPaths.some(path => req.path.startsWith(path));
+    
+    if (isStaticResource || isPublicPath) {
+        return next();
+    }
+    
+    // 检查认证状态
+    const authToken = req.headers.authorization?.replace('Bearer ', '') || 
+                     req.cookies?.auth_token || 
+                     req.headers['x-auth-token'];
+    
+    if (!authToken) {
+        if (req.path === '/' || req.path.startsWith('/qa-system')) {
+            return res.redirect('/auth');
+        }
+        return res.status(401).json({ error: '需要登录' });
+    }
+    
+    // 验证令牌
+    authBlock.verifyToken(authToken).then(result => {
+        if (result.success) {
+            req.user = result.user;
+            req.session = result.session;
+            next();
+        } else {
+            if (req.path === '/' || req.path.startsWith('/qa-system')) {
+                return res.redirect('/auth');
+            }
+            return res.status(401).json({ error: '认证失败，请重新登录' });
+        }
+    }).catch(err => {
+        logger.error('Auth verification error:', err);
+        res.status(500).json({ error: '认证服务异常' });
+    });
+}
+
+// ============ 静态文件服务 ============
+
+// 根路径公共资源（favicon, service-worker等）
+app.use(express.static(path.join(__dirname, 'public')));
+
+// 认证页面（公开）
+app.use('/auth', express.static(path.join(__dirname, 'public')));
+
+// 共享资源
+app.use('/shared', express.static(path.join(__dirname, 'shared')));
+
+// QA问答系统（需要认证）
+app.use('/qa-system', requireAuth, express.static(path.join(__dirname, 'qa-system')));
+
+// ============ 路由配置 ============
+
+// 健康检查端点
+app.get('/health', (req, res) => {
+    res.json({
+        status: 'healthy',
+        timestamp: new Date().toISOString(),
+        uptime: process.uptime(),
+        version: require('./package.json').version,
+        node: process.version,
+        environment: config.nodeEnv,
+        modules: {
+            auth: 'AuthBlock集成',
+            qa: 'QA Note Block集成',
+            storage: '本地文件存储'
+        }
+    });
+});
+
+// API路由
+app.use('/api', require('./routes/api')(authBlock));
+
+// 根路径处理
+app.get('/', requireAuth, (req, res) => {
+    res.redirect('/qa-system/qa-note.html');
+});
+
+// 登录页面路由
+app.get('/login', (req, res) => {
+    res.redirect('/auth');
+});
+
+// ============ 认证登录页面 ============
+app.get('/auth', (req, res) => {
+    res.send(`
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能问答笔记系统 - 用户登录</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh; display: flex; align-items: center; justify-content: center;
+        }
+        .login-container { 
+            background: white; padding: 2rem; border-radius: 12px; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 400px;
+        }
+        .login-header { text-align: center; margin-bottom: 2rem; }
+        .login-title { color: #333; font-size: 1.8rem; margin-bottom: 0.5rem; }
+        .login-subtitle { color: #666; font-size: 0.9rem; }
+        .form-group { margin-bottom: 1.5rem; }
+        .form-label { display: block; margin-bottom: 0.5rem; color: #333; font-weight: 500; }
+        .form-input { 
+            width: 100%; padding: 0.75rem; border: 2px solid #e1e5e9; border-radius: 6px;
+            font-size: 1rem; transition: border-color 0.2s;
+        }
+        .form-input:focus { outline: none; border-color: #667eea; }
+        .login-btn { 
+            width: 100%; padding: 0.75rem; background: #667eea; color: white;
+            border: none; border-radius: 6px; font-size: 1rem; cursor: pointer;
+            transition: background 0.2s;
+        }
+        .login-btn:hover { background: #5a6fd8; }
+        .demo-accounts { 
+            margin-top: 1.5rem; padding: 1rem; background: #f8f9fa; border-radius: 6px;
+        }
+        .demo-title { font-size: 0.9rem; color: #666; margin-bottom: 0.5rem; }
+        .demo-account { 
+            display: inline-block; margin: 0.25rem; padding: 0.25rem 0.5rem;
+            background: #e9ecef; border-radius: 4px; font-size: 0.8rem; color: #495057;
+            cursor: pointer; transition: background 0.2s;
+        }
+        .demo-account:hover { background: #dee2e6; }
+        .error-message { 
+            color: #dc3545; font-size: 0.9rem; margin-top: 0.5rem; display: none;
+        }
+        .success-message { 
+            color: #28a745; font-size: 0.9rem; margin-top: 0.5rem; display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-header">
+            <h1 class="login-title">🤖 智能问答系统</h1>
+            <p class="login-subtitle">请登录以访问问答笔记功能</p>
+        </div>
+        
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="username" class="form-label">用户名</label>
+                <input type="text" id="username" name="username" class="form-input" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="password" class="form-label">密码</label>
+                <input type="password" id="password" name="password" class="form-input" required>
+            </div>
+            
+            <button type="submit" class="login-btn">登录</button>
+            
+            <div class="error-message" id="errorMessage"></div>
+            <div class="success-message" id="successMessage"></div>
+        </form>
+        
+        <div class="demo-accounts">
+            <div class="demo-title">📋 测试账户：</div>
+            <span class="demo-account" onclick="fillCredentials('admin', 'admin123')">admin / admin123</span>
+            <span class="demo-account" onclick="fillCredentials('demo', 'demo123')">demo / demo123</span>
+            <span class="demo-account" onclick="fillCredentials('test', 'test123')">test / test123</span>
+        </div>
+    </div>
+
+    <script>
+        function fillCredentials(username, password) {
+            document.getElementById('username').value = username;
+            document.getElementById('password').value = password;
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const errorDiv = document.getElementById('errorMessage');
+            const successDiv = document.getElementById('successMessage');
+            
+            errorDiv.style.display = 'none';
+            successDiv.style.display = 'none';
+            
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    // 保存认证信息
+                    document.cookie = \`auth_token=\${result.data.token}; path=/; max-age=\${7*24*60*60}\`;
+                    localStorage.setItem('auth_token', result.data.token);
+                    localStorage.setItem('user_info', JSON.stringify(result.data.user));
+                    
+                    successDiv.textContent = '登录成功，正在跳转...';
+                    successDiv.style.display = 'block';
+                    
+                    setTimeout(() => {
+                        window.location.href = '/qa-system/qa-note.html';
+                    }, 1000);
+                } else {
+                    errorDiv.textContent = result.error || '登录失败';
+                    errorDiv.style.display = 'block';
+                }
+            } catch (error) {
+                errorDiv.textContent = '网络错误，请重试';
+                errorDiv.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>
+    `);
+});
+
+// ============ 错误处理 ============
+
+// 404处理
+app.use('*', (req, res) => {
+    if (req.originalUrl.startsWith('/api/')) {
+        res.status(404).json({
+            error: 'API endpoint not found',
+            code: 'NOT_FOUND',
+            path: req.originalUrl,
+            availableEndpoints: [
+                'GET /health',
+                'GET /auth',
+                'POST /api/auth/login',
+                'POST /api/auth/logout',
+                'GET /api/auth/user',
+                'GET /qa-system/qa-note.html'
+            ]
+        });
+    } else {
+        res.status(404).send(`
+            <h1>页面未找到</h1>
+            <p><a href="/auth">返回登录页面</a></p>
+        `);
+    }
+});
+
+// 错误处理中间件
+app.use((err, req, res, next) => {
+    logger.error('Server error:', {
+        error: err.message,
+        stack: err.stack,
+        path: req.path,
+        method: req.method,
+        body: req.body
+    });
+
+    const status = err.status || 500;
+    const message = config.nodeEnv === 'production' 
+        ? 'Internal server error' 
+        : err.message;
+
+    res.status(status).json({
+        error: message,
+        code: err.code || 'INTERNAL_ERROR',
+        timestamp: new Date().toISOString(),
+        ...(config.nodeEnv !== 'production' && { 
+            stack: err.stack,
+            details: err.details 
+        })
+    });
+});
+
+// ============ 服务器启动 ============
+const PORT = config.port || 3000;
+const HOST = config.host || '0.0.0.0';
+
+const server = app.listen(PORT, HOST, () => {
+    logger.info('🚀 集成问答系统启动成功', {
+        port: PORT,
+        host: HOST,
+        environment: config.nodeEnv,
+        pid: process.pid
+    });
+    
+    console.log(`
+╔══════════════════════════════════════════════════════════════╗
+║                   集成智能问答笔记系统 v3.0                   ║
+╠══════════════════════════════════════════════════════════════╣
+║  🌍 访问地址: http://${HOST}:${PORT}                          ║
+║  🔐 登录页面: http://${HOST}:${PORT}/auth                     ║
+║  🤖 问答系统: http://${HOST}:${PORT}/qa-system/qa-note.html   ║
+║  📊 健康检查: http://${HOST}:${PORT}/health                   ║
+║  🌟 环境模式: ${config.nodeEnv}                               ║
+║  📁 数据目录: ${dataDir}                        ║
+║                                                              ║
+║  👤 测试账户:                                                ║
+║     admin / admin123  (管理员)                               ║
+║     demo / demo123    (演示用户)                             ║
+║     test / test123    (测试用户)                             ║
+╚══════════════════════════════════════════════════════════════╝
+    `);
+});
+
+// 优雅关闭处理
+const gracefulShutdown = (signal) => {
+    logger.info(`${signal} received, shutting down gracefully`);
+    
+    server.close((err) => {
+        if (err) {
+            logger.error('Error during server shutdown:', err);
+            process.exit(1);
+        }
+        
+        logger.info('Server closed successfully');
+        process.exit(0);
+    });
+    
+    // 强制退出（30秒后）
+    setTimeout(() => {
+        logger.error('Could not close connections in time, forcefully shutting down');
+        process.exit(1);
+    }, 30000);
+};
+
+// 注册信号处理
+process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+process.on('SIGINT', () => gracefulShutdown('SIGINT'));
+
+// 未捕获异常处理
+process.on('uncaughtException', (err) => {
+    logger.error('Uncaught Exception:', {
+        error: err.message,
+        stack: err.stack
+    });
+    gracefulShutdown('UNCAUGHT_EXCEPTION');
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+    logger.error('Unhandled Rejection:', {
+        reason: reason,
+        promise: promise
+    });
+});
+
+module.exports = app; 

@@ -1,0 +1,222 @@
+看起来RAG系统正在运行中。要在命令行测试RAG系统，您可以通过以下方式进行：
+
+您可以通过终端与当前运行的RAG脚本交互，输入问题并查看回答。
+如果您想重新启动并测试，可以使用以下命令：
+python3 /home/ecs-user/rag_project/scripts/rag_system_v3.py
+python3 rag_project/scripts/test_comprehensive_search_agent.py
+python3 /home/ecs-user/rag_project/utils/clear_chromadb.py
+
+python3 rag_project/scripts/test_timely_search.py | tee test_timely_search.log
+121.43.126.173:8000
+121.43.126.173:3001
+121.43.126.173:3100
+大模型问答启动
+python3 -m autogenstudio.cli ui --host 0.0.0.0 --port 8081
+笔记本启动
+cd /home/ecs-user/projects/mobile_notes && python main.py
+source ~/.bashrc
+切换分支的工具；
+
+最终解决方案总结
+我们已经成功实现了一个可靠的Autogen消息记录系统，具有以下特点：
+
+直接集成到Autogen框架中 - 通过拦截send和receive方法，确保所有消息都能被捕获
+消息去重功能 - 避免同一消息被重复记录
+空消息过滤 - 自动跳过空消息，只记录有实际内容的消息
+并发安全 - 使用文件锁机制确保多个Agent同时发送消息时不会出现写入冲突
+格式化记录 - 以Markdown格式记录，包含时间戳、发送者和接收者信息
+这个解决方案比之前的外挂工具方法更可靠，因为：
+
+它直接集成在Autogen的消息流程中，不依赖于模型的调用决策
+每条消息都会自动触发记录，不会遗漏
+使用拦截器模式，对原有代码影响最小
+使用方法
+在您的Autogen应用中，只需要三个简单步骤：
+
+python
+CopyInsert
+# 1. 导入记录器
+from autogen_conversation_logger import ConversationLogger
+
+# 2. 创建记录器实例
+logger = ConversationLogger(file_path="agent_conversations.md")
+
+# 3. 注册记录器到所有Agent
+logger.register_to_agent(assistant)
+logger.register_to_agent(user_proxy)
+这样，所有Agent之间的消息交互都会被自动记录到指定的文件中，而且不会有重复记录。
+
+您可以将这个记录器集成到任何Autogen应用中，包括Autogen Studio，只需要在创建Agent后注册记录器即可。
+
+如果您有任何其他需求或问题，请随时告诉我！
+
+装总结
+我们已经成功安装了 AutoGen Studio，这是 AutoGen 框架的图形用户界面版本
+使用清华大学的镜像源解决了网络超时问题
+创建了两个启动脚本：
+start_autogen_studio.sh - 直接在前台启动 AutoGen Studio
+run_autogen_studio_background.sh - 使用 screen 在后台运行 AutoGen Studio
+如何使用
+AutoGen Studio 现在已在端口 8081 上运行
+您可以通过浏览器访问 http://localhost:8081 或 http://服务器IP:8081
+如果需要查看运行日志，可以使用命令：screen -r autogen_studio
+要退出日志查看模式，请按 Ctrl+A 然后按 D
+配置信息
+我们已经配置了阿里云的 DeepSeek-R1 模型作为 LLM 后端
+API 密钥：sk-c978041c0845421d89273625c22908b0
+基础 URL：https://dashscope.aliyuncs.com/compatible-mode/v1
+如果您想停止 AutoGen Studio，可以使用以下命令：
+
+CopyInsert
+screen -S autogen_studio -X quit
+需要我为您演示如何使用 AutoGen Studio 的基本功能吗？
+
+
+启动命令：
+python -m autogenstudio.cli ui --host 0.0.0.0 --port 8081
+
+
+---
+
+已经为你设置了一个基于网页的 JupyterLab 环境，你可以通过它在服务器上运行 AutoGen，而不需要使用传统的 IDE。
+
+已完成的工作
+安装了 JupyterLab，这是一个功能强大的基于网页的开发环境
+创建了一个 AutoGen 示例 Jupyter Notebook：autogen_demo.ipynb
+编写了启动脚本 start_jupyter.sh，用于启动 JupyterLab 服务器
+已经启动了 JupyterLab 服务器，运行在端口 8888 上
+如何使用
+通过浏览器访问 JupyterLab：
+如果你在服务器本地：http://127.0.0.1:8888/lab?token=85b99f597866351367abac41b37234b1eb6857132a6325f4
+如果你从远程访问：http://服务器IP:8888/lab?token=85b99f597866351367abac41b37234b1eb6857132a6325f4
+在 JupyterLab 中，你可以：
+打开并运行我们创建的 autogen_examples/autogen_demo.ipynb 示例
+创建新的笔记本
+编辑和运行 Python 代码
+使用终端（JupyterLab 内置了终端功能）
+要在服务器后台持续运行 JupyterLab，你可以使用 screen：
+bash
+CopyInsert
+screen -S jupyter
+cd /home/ecs-user/autogen_project
+./start_jupyter.sh
+然后按 Ctrl+A 再按 D 来分离会话，JupyterLab 将继续在后台运行。
+优势
+基于网页的界面：不需要在本地安装任何 IDE，只需要一个浏览器
+交互式开发：可以逐个单元格运行代码，查看结果
+内置终端：JupyterLab 提供了网页版终端，可以直接在浏览器中执行命令
+文件管理：可以在 JupyterLab 中浏览、创建和编辑文件
+远程访问：可以从任何地方通过浏览器访问你的开发环境
+这种方式比在命令行中直接运行 Python 脚本更加灵活和友好，特别适合开发和调试 AutoGen 应用。
+
+
+---
+
+
+这是 Cursor 编辑器的 "Inline Edit" 模式（内联编辑模式）
+
+cd mcp-server && npm start
+
+
+git config --global user.name "xm-fieldservice"
+git config --global user.email "1076223776@qq.com"
+git init
+
+git remote add origin https://github.com/xm-fieldservice/ai-base.git
+git remote -v
+现在您的本地仓库已经与远程仓库 https://github.com/xm-fieldservice/mcp-builder.git 建立了连接。
+
+远程仓库配置如下：
+
+远程名称：origin
+远程URL：https://github.com/xm-fieldservice/mcp-builder.git
+已配置用于拉取(fetch)和推送(push)操作
+您现在可以进行以下操作：
+
+拉取远程仓库的内容：git pull origin main（或其他分支名）
+推送本地更改到远程仓库：git push origin main（或其他分支名）
+查看远程分支：git branch -r
+
+
+git clone <repository-url>
+git status
+
+分支管理
+git branch <branch-name>    创建分支
+git checkout <branch-name>   切换分支
+git merge <branch-name>      合并分支
+git push origin <branch-name> 推送到远程分支
+git pull origin <branch-name> 拉取远程分支
+git fetch origin <branch-name> 拉取远程分支
+
+git branch -v
+
+git push -u origin master
+
+# 或者如果您使用main作为默认分支
+
+git push -u origin main
+
+# 如果您还没有添加远程仓库
+
+git remote add origin https://github.com/xm-fieldservice/workflow-agent.git
+
+# 推送到远程仓库
+
+git push -u origin master
+
+
+
+### 1. 服务器标识
+- 服务器名称：iZbp1jbmer4nl9h9y10znfZ
+- 公网IP：121.43.126.173
+- 操作系统：Ubuntu Linux 5.15.0-131-generic
+- 系统架构：x86_64
+
+### 2. 访问凭证
+- 用户名：ecs-user
+- 认证方式：SSH密钥认证
+- 默认端口：22 (SSH)
+现在您可以通过 http://121.43.126.173:3000/dashboard 访问总控制台，通过 http://121.43.126.173:3000/ 或 http://121.43.126.173:3000/index 访问MCP控制中心页面。
+
+可视化开发策略：由于是ai全部开发部署实施。我是零代码基础，AI又具有需求偏移的固有特性。因此我希望在整个开发的过程中采取一个策略。它每一步开发都能在页面上做某种形式的体现，这样除了文档约束以外。作为项目经理的我，也可以随时发现问题。
+
+这是一个很好的例子，说明了为什么在软件开发中，精确诊断往往比反复修改代码更有效。
+
+既然我们已经讨论到这儿了。我想开发一个总的后台管理页面，这个页面将能够配置管理所有后台项目，例如聊天大模型mcp或者其他的挂载到。游戏权限系统上面的各种模块的配置和管理。 Mcp的页面，大模型的页面，聊天的页面笔记的页面只不过是这个管理页面的二级子页面，无论它后面有多复杂，我现在想要这样一个页面，而且这个页面从一开始的时候我就希望有。因为它符合可视化开发的理念，因为以前我们用ai开发代码，需求漂移，聚焦。不明显短期记忆让ai开发代码变得非常的不可控。我们有了mcp的这次理念实际上是往前推了一大步，但是伴随着这种工作方法，我提出了一个可视化开发的一个观点就是ai的一方面，我们加强ai的监督，另一方面作为项目经理的我能随时的可视化的看到了它的进展，也方便把控这个我们以前讨论过，甚至有专门的文档。我把这个文档现在放在了附件里，你看一眼基于通盘的这些考虑。所以我想以mcp管理为基础，把整个mcp作为一个总控总后台页面的一个二级页面。把这个基础打好以后，我们再开始真正的开发。当然了，这个总控页面里面还有一个分支，就是能够看到服务器 cursor等等所有与开发工作相关的工具环境的运行情况。你理解我的意思了吗？给我一个点评和你的建议，态度鲜明一点，同意就同意不同意说出理由。
+
+开发一个mcp ai干活的所有信息都截取下来，比让他们事后分析代码要更直接一些。
+
+
+---
+
+{
+  "provider": "autogen_ext.models.openai.OpenAIChatCompletionClient",
+  "component_type": "model",
+  "config": {
+    "model": "deepseek-v3",
+    "api_key": "sk-9f3927041a054816bc7e77d680d2b71d",
+    "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+    "model_info": {
+      "api_type": "openai",
+      "family": "qwen",
+      "vision": false,
+      "function_calling": true,
+      "json_output": true,
+      "organization": null,
+      "timeout": null
+    },
+    "stop": [
+      "stop_sequences: [\"\\n\"]"
+    ]
+  },
+  "label": "QWEN-deepseek-v3",
+  "description": "QWEN-deepseek-v3"
+}
+
+
+model : qwen-turbo-latest
+model: qwen2.5-vl-72b-instruct
+model: deepseek-r1
+
+

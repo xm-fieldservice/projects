@@ -1,0 +1,66 @@
+{
+  "nodeEnv": "production",
+  "port": 3000,
+  "host": "0.0.0.0",
+  
+  "cors": {
+    "origin": "*"
+  },
+  
+  "rateLimit": {
+    "windowMs": 900000,
+    "max": 100
+  },
+  
+  "auth": {
+    "jwtSecret": "your-super-secret-key-change-in-production",
+    "sessionTimeout": 7200000,
+    "storageType": "file",
+    "dataPath": "./data",
+    "bcryptRounds": 12,
+    
+    "defaultAdmin": {
+      "username": "admin",
+      "password": "admin123",
+      "name": "系统管理员",
+      "email": "admin@authblock.local"
+    },
+    
+    "demoUsers": [
+      {
+        "id": 1,
+        "username": "demo",
+        "password": "demo123", 
+        "name": "演示用户",
+        "role": "user",
+        "email": "demo@authblock.local"
+      },
+      {
+        "id": 2,
+        "username": "test",
+        "password": "test123",
+        "name": "测试用户", 
+        "role": "user",
+        "email": "test@authblock.local"
+      }
+    ]
+  },
+  
+  "logging": {
+    "level": "info",
+    "file": "./logs/authblock.log",
+    "maxSize": "10m",
+    "maxFiles": "5d",
+    "datePattern": "YYYY-MM-DD"
+  },
+  
+  "pm2": {
+    "name": "authblock-server",
+    "instances": 1,
+    "exec_mode": "cluster",
+    "max_memory_restart": "500M",
+    "error_file": "./logs/pm2-error.log",
+    "out_file": "./logs/pm2-out.log",
+    "log_file": "./logs/pm2-combined.log"
+  }
+} 

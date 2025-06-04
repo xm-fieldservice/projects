@@ -1,0 +1,124 @@
+{
+  // === Cursor 内存优化设置（保留AI功能）===
+  
+  // AI功能优化 - 保留核心功能，优化内存使用
+  "cursor.ai.enabled": true,
+  "cursor.ai.autoComplete": true,
+  "cursor.ai.enableAutocompletions": true,
+  "cursor.ai.maxCompletionTokens": 100,  // 从30增加到100但仍控制在合理范围
+  "cursor.ai.temperature": 0.3,
+  "cursor.ai.maxPromptLength": 2000,     // 限制prompt长度减少内存
+  "cursor.ai.contextLength": 8000,       // 减少上下文长度
+  "cursor.ai.cacheSize": 50,             // 限制AI缓存大小
+  
+  // 编辑器内存优化
+  "editor.quickSuggestions": {
+    "other": true,     // 保留基本建议
+    "comments": false,
+    "strings": false
+  },
+  "editor.acceptSuggestionOnCommitCharacter": true,
+  "editor.acceptSuggestionOnEnter": "smart",
+  "editor.suggestOnTriggerCharacters": true,
+  "editor.parameterHints.enabled": true,
+  "editor.wordBasedSuggestions": "matchingDocuments",  // 仅匹配当前文档
+  "editor.minimap.enabled": false,
+  "editor.hover.delay": 300,             // 减少延迟提升响应
+  "editor.linkedEditing": false,
+  "editor.occurrencesHighlight": "off",
+  "editor.selectionHighlight": false,
+  "editor.renderLineHighlight": "none",
+  "editor.renderWhitespace": "none",
+  "editor.wordWrap": "off",
+  "editor.foldingHighlight": false,
+  
+  // 大幅优化文件监控 - 这是内存消耗大户
+  "files.watcherExclude": {
+    "**/.git/**": true,
+    "**/node_modules/**": true,
+    "**/tmp/**": true,
+    "**/.cache/**": true,
+    "**/dist/**": true,
+    "**/build/**": true,
+    "**/*.zip": true,
+    "**/coverage/**": true,
+    "**/.vscode/**": true,
+    "**/logs/**": true,
+    "**/*.log": true,
+    "**/*.bak": true,
+    "**/*.tmp": true,
+    "**/temp/**": true
+  },
+  
+  // 搜索优化 - 减少索引内存
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/.git": true,
+    "**/dist": true,
+    "**/build": true,
+    "**/.cache": true,
+    "**/*.zip": true,
+    "**/coverage": true,
+    "**/*.log": true,
+    "**/logs": true,
+    "**/*.bak": true,
+    "**/*.tmp": true
+  },
+  
+  // 文件排除 - 减少监控负担
+  "files.exclude": {
+    "**/.git": true,
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/build": true,
+    "**/.cache": true,
+    "**/coverage": true,
+    "**/*.zip": true,
+    "**/*.log": true,
+    "**/logs": true,
+    "**/*.bak": true,
+    "**/*.tmp": true
+  },
+  
+  // 语言服务内存优化
+  "typescript.suggest.enabled": true,
+  "typescript.validate.enable": true,
+  "typescript.updateImportsOnFileMove.enabled": "never",
+  "typescript.preferences.includePackageJsonAutoImports": "off",
+  "typescript.maxTsServerMemory": 2048,  // 限制TS服务器内存为2GB
+  "javascript.suggest.enabled": true,
+  "javascript.validate.enable": true,
+  "javascript.preferences.includePackageJsonAutoImports": "off",
+  
+  // Git 优化但不完全禁用
+  "git.enabled": true,
+  "git.autorefresh": false,
+  "git.autofetch": false,
+  "git.decorations.enabled": false,     // 减少Git装饰内存占用
+  "git.enableSmartCommit": false,
+  "git.autoStash": false,
+  
+  // 扩展优化
+  "extensions.autoUpdate": false,
+  "extensions.autoCheckUpdates": false,
+  
+  // 工作区内存优化
+  "workbench.enableExperiments": false,
+  "workbench.settings.enableNaturalLanguageSearch": false,
+  "workbench.startupEditor": "none",    // 减少启动内存
+  
+  // 文件关联 - 明确类型避免重复解析
+  "files.associations": {
+    "*.js": "javascript",
+    "*.html": "html",
+    "*.md": "markdown",
+    "*.json": "json"
+  },
+  
+  // 新增：内存优化关键设置
+  "files.maxMemoryForLargeFilesMB": 512,        // 限制大文件内存
+  "editor.maxTokenizationLineLength": 10000,    // 限制行解析长度
+  "diffEditor.maxComputationTime": 3000,        // 限制diff计算时间
+  "search.maintainFileSearchCache": false,      // 不维持搜索缓存
+  "explorer.autoReveal": false                  // 减少文件树自动展开
+} 

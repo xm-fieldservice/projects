@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuthBlock 权限系统演示</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+            max-width: 1000px;
+            width: 90%;
+        }
+
+        .header {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .feature-card {
+            border: 1px solid #e0e0e0;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .feature-icon {
+            font-size: 3em;
+            margin-bottom: 20px;
+        }
+
+        .feature-card h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .feature-card p {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 40px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: 500;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .api-info {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 40px;
+        }
+
+        .api-info h3 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.4em;
+        }
+
+        .endpoint {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .endpoint code {
+            background: #e9ecef;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-online {
+            background: #28a745;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .footer {
+            background: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                width: 100%;
+                max-width: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔐 AuthBlock</h1>
+            <p>企业级权限管理系统演示平台</p>
+            <div style="margin-top: 20px;">
+                <span class="status-indicator status-online"></span>
+                <span id="server-status">服务运行中</span>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🚀</div>
+                    <h3>快速集成</h3>
+                    <p>提供完整的API接口和客户端SDK，可快速集成到现有系统中，支持多种编程语言和框架。</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🛡️</div>
+                    <h3>安全可靠</h3>
+                    <p>采用JWT令牌认证、BCrypt密码加密、会话管理等多重安全机制，确保系统安全。</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>高性能</h3>
+                    <p>基于Node.js构建，支持高并发访问，内置缓存机制和性能优化，响应速度快。</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🔧</div>
+                    <h3>易于配置</h3>
+                    <p>支持多种部署方式，提供完整的配置文档和管理工具，运维简单方便。</p>
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <a href="/api" class="btn btn-primary">📖 API 文档</a>
+                <a href="login.html" class="btn btn-secondary">🔑 用户登录</a>
+                <a href="/health" class="btn btn-secondary">💚 健康检查</a>
+            </div>
+
+            <div class="api-info">
+                <h3>🔗 API 接口概览</h3>
+                
+                <div class="endpoint">
+                    <strong>用户认证:</strong> <code>POST /api/auth/login</code>
+                    <p>用户登录，获取访问令牌</p>
+                </div>
+                
+                <div class="endpoint">
+                    <strong>获取用户信息:</strong> <code>GET /api/auth/user</code>
+                    <p>获取当前登录用户的详细信息</p>
+                </div>
+                
+                <div class="endpoint">
+                    <strong>系统统计:</strong> <code>GET /api/admin/stats</code>
+                    <p>获取系统运行状态和统计信息（需要管理员权限）</p>
+                </div>
+                
+                <div class="endpoint">
+                    <strong>测试接口:</strong> <code>GET /api/test</code>
+                    <p>测试API连接状态，无需认证</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>AuthBlock v1.0.0 | 企业级权限管理解决方案</p>
+            <p>支持 Docker 部署 | PM2 进程管理 | 集群模式</p>
+        </div>
+    </div>
+
+    <script>
+        // 检查服务器状态
+        async function checkServerStatus() {
+            try {
+                const response = await fetch('/health');
+                const data = await response.json();
+                
+                if (data.status === 'healthy') {
+                    document.getElementById('server-status').textContent = '服务运行中';
+                } else {
+                    document.getElementById('server-status').textContent = '服务异常';
+                }
+            } catch (error) {
+                document.getElementById('server-status').textContent = '连接失败';
+                console.error('健康检查失败:', error);
+            }
+        }
+
+        // 页面加载时检查状态
+        checkServerStatus();
+        
+        // 每30秒检查一次状态
+        setInterval(checkServerStatus, 30000);
+
+        // 添加页面交互效果
+        document.addEventListener('DOMContentLoaded', function() {
+            // 为所有按钮添加点击效果
+            document.querySelectorAll('.btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    // 创建波纹效果
+                    const ripple = document.createElement('span');
+                    const rect = this.getBoundingClientRect();
+                    const size = Math.max(rect.width, rect.height);
+                    
+                    ripple.style.cssText = `
+                        width: ${size}px;
+                        height: ${size}px;
+                        position: absolute;
+                        border-radius: 50%;
+                        background: rgba(255,255,255,0.5);
+                        transform: scale(0);
+                        animation: ripple 0.6s linear;
+                        left: ${e.clientX - rect.left - size/2}px;
+                        top: ${e.clientY - rect.top - size/2}px;
+                        pointer-events: none;
+                    `;
+                    
+                    this.style.position = 'relative';
+                    this.style.overflow = 'hidden';
+                    this.appendChild(ripple);
+                    
+                    setTimeout(() => {
+                        ripple.remove();
+                    }, 600);
+                });
+            });
+        });
+
+        // 添加波纹动画CSS
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes ripple {
+                to {
+                    transform: scale(4);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html> 

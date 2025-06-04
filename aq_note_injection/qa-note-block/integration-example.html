@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>笔记系统集成示例</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f8f9fa;
+        }
+        
+        .note-block {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        
+        .note-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+        }
+        
+        .note-title {
+            font-size: 1.5em;
+            font-weight: 600;
+            margin: 0;
+        }
+        
+        .note-meta {
+            display: flex;
+            gap: 15px;
+            margin-top: 10px;
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+        
+        .note-content {
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .note-footer {
+            background: #f8f9fa;
+            padding: 15px 20px;
+            border-top: 1px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .tags {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .tag {
+            background: #e3f2fd;
+            color: #1976d2;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: 500;
+        }
+        
+        .input-section {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #555;
+        }
+        
+        input, textarea, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        
+        textarea {
+            height: 120px;
+            resize: vertical;
+            font-family: monospace;
+        }
+        
+        .format-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .format-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        
+        .format-btn:hover {
+            background: #218838;
+        }
+        
+        .btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        
+        .btn:hover {
+            background: #0056b3;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        
+        .demo-note {
+            white-space: pre-wrap;
+            font-family: 'Courier New', monospace;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            border-left: 4px solid #007bff;
+        }
+    </style>
+</head>
+<body>
+    <h1>📝 笔记系统集成示例</h1>
+    
+    <div class="input-section">
+        <h3>💡 创建新笔记</h3>
+        
+        <div class="form-group">
+            <label for="noteTitle">笔记标题</label>
+            <input type="text" id="noteTitle" placeholder="输入笔记标题...">
+        </div>
+        
+        <div class="form-group">
+            <label for="noteContent">笔记内容</label>
+            <div class="format-controls">
+                <select id="formatStyle">
+                    <option value="default">默认格式</option>
+                    <option value="markdown">Markdown</option>
+                    <option value="simple">简化</option>
+                    <option value="rich">丰富</option>
+                </select>
+                <button class="format-btn" onclick="applyFormat('standard')">标准格式</button>
+                <button class="format-btn" onclick="applyFormat('full')">完整格式</button>
+                <button class="format-btn" onclick="applyFormat('code')">代码格式</button>
+                <button class="format-btn" onclick="applyFormat('minimal')">简化格式</button>
+            </div>
+            <textarea id="noteContent" placeholder="输入笔记内容..."></textarea>
+        </div>
+        
+        <div class="form-group">
+            <label for="noteTags">标签（用逗号分隔）</label>
+            <input type="text" id="noteTags" placeholder="标签1, 标签2, 标签3...">
+        </div>
+        
+        <button class="btn" onclick="saveNote()">💾 保存笔记</button>
+    </div>
+    
+    <div id="noteDisplay"></div>
+    
+    <script src="note-block-formatter.js"></script>
+    <script>
+        // 初始化内容格式化器
+        const contentFormatter = new ContentFormatter({
+            style: 'default',
+            debugMode: false
+        });
+        
+        // 应用格式化
+        function applyFormat(preset) {
+            const content = document.getElementById('noteContent').value;
+            const style = document.getElementById('formatStyle').value;
+            
+            // 设置样式
+            contentFormatter.setStyle(style);
+            
+            // 应用格式化
+            const formatted = contentFormatter.quickFormat(content, preset);
+            document.getElementById('noteContent').value = formatted;
+        }
+        
+        // 保存笔记
+        function saveNote() {
+            const title = document.getElementById('noteTitle').value.trim();
+            const content = document.getElementById('noteContent').value.trim();
+            const tagsText = document.getElementById('noteTags').value.trim();
+            
+            if (!title || !content) {
+                alert('请填写标题和内容！');
+                return;
+            }
+            
+            // 解析标签
+            const tags = tagsText ? tagsText.split(',').map(tag => tag.trim()).filter(tag => tag) : [];
+            
+            // 创建笔记对象（这里是固定的笔记块结构）
+            const note = {
+                id: Date.now(),
+                title: title,
+                content: content, // 内容已经格式化过了
+                tags: tags,
+                timestamp: new Date().toLocaleString('zh-CN'),
+                source: '智能笔记系统v3.0'
+            };
+            
+            // 显示笔记
+            displayNote(note);
+            
+            // 清空表单
+            document.getElementById('noteTitle').value = '';
+            document.getElementById('noteContent').value = '';
+            document.getElementById('noteTags').value = '';
+            
+            console.log('📝 保存笔记:', note);
+        }
+        
+        // 显示笔记（固定的笔记块结构）
+        function displayNote(note) {
+            const noteHtml = `
+                <div class="note-block">
+                    <div class="note-header">
+                        <h2 class="note-title">📋 ${note.title}</h2>
+                        <div class="note-meta">
+                            <span>⏰ ${note.timestamp}</span>
+                            <span>📊 ${note.source}</span>
+                            <span>🆔 #${note.id}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="note-content">
+                        <div class="demo-note">${note.content}</div>
+                    </div>
+                    
+                    <div class="note-footer">
+                        <div class="tags">
+                            ${note.tags.map(tag => `<span class="tag">#${tag}</span>`).join('')}
+                        </div>
+                        <button class="format-btn" onclick="editNote(${note.id})">✏️ 编辑</button>
+                    </div>
+                </div>
+            `;
+            
+            // 插入到页面顶部
+            const display = document.getElementById('noteDisplay');
+            display.insertAdjacentHTML('afterbegin', noteHtml);
+        }
+        
+        // 编辑笔记（示例功能）
+        function editNote(noteId) {
+            alert(`编辑笔记 #${noteId} 的功能将在这里实现`);
+        }
+        
+        // 页面加载完成后的初始化
+        window.addEventListener('load', function() {
+            // 加载一个示例笔记
+            const sampleNote = {
+                id: 1001,
+                title: '内容格式化工具使用指南',
+                content: `这是一个演示如何使用内容格式化工具的示例笔记。
+
+**重要**: 笔记块的外层结构是固定的
+- 标题栏：显示笔记标题和元数据
+- 内容区：显示格式化后的内容
+- 底部栏：显示标签和操作按钮
+
+TODO: 添加更多格式化选项
+NOTE: 内容格式化工具专注于内容处理，不涉及结构
+
+\`\`\`javascript
+// 示例代码块
+const formatter = new ContentFormatter();
+const result = formatter.format(content);
+\`\`\`
+
+这样的设计让笔记系统更加模块化和易于维护。`,
+                tags: ['格式化', '工具', '示例'],
+                timestamp: new Date().toLocaleString('zh-CN'),
+                source: '智能笔记系统v3.0'
+            };
+            
+            displayNote(sampleNote);
+            
+            console.log('✅ 笔记系统集成示例加载完成');
+            console.log('🔧 格式化器信息:', contentFormatter.getInfo());
+        });
+        
+        // 样式切换时的实时更新
+        document.getElementById('formatStyle').addEventListener('change', function() {
+            contentFormatter.setStyle(this.value);
+        });
+        
+        // 加载示例内容
+        function loadSampleContent() {
+            const sampleContent = `人工智能发展趋势分析
+近年来AI技术快速发展
+重要突破包括：
+大语言模型的兴起
+多模态AI的发展
+自动化程度提升
+
+function analyzeAI() {
+    return {
+        trend: "upward",
+        impact: "significant"
+    };
+}
+
+注意：需要关注AI伦理问题
+TODO：深入研究技术细节`;
+            
+            document.getElementById('noteContent').value = sampleContent;
+        }
+        
+        // 添加快捷键支持
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 's') {
+                e.preventDefault();
+                saveNote();
+            }
+        });
+    </script>
+</body>
+</html> 

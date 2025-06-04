@@ -1,0 +1,50 @@
+{
+  "name": "local-note-saver-toolkit",
+  "version": "1.0.0",
+  "description": "三套完整的本地笔记保存解决方案，可部署到任意本地应用，支持纯本地运行、离线使用、跨平台兼容",
+  "main": "local-note-saver.js",
+  "files": [
+    "local-note-saver.js",
+    "notebook-manager.js",
+    "examples/",
+    "README.md",
+    "本地笔记保存工具包_完整部署文档.md"
+  ],
+  "scripts": {
+    "demo": "open examples/web-demo.html",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "note",
+    "saver",
+    "local",
+    "notebook",
+    "markdown",
+    "offline",
+    "file-system-api",
+    "localstorage",
+    "javascript",
+    "browser",
+    "toolkit"
+  ],
+  "author": "AI Assistant",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/username/local-note-saver-toolkit.git"
+  },
+  "bugs": {
+    "url": "https://github.com/username/local-note-saver-toolkit/issues"
+  },
+  "homepage": "https://github.com/username/local-note-saver-toolkit#readme",
+  "engines": {
+    "node": ">=12.0.0"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ],
+  "devDependencies": {},
+  "dependencies": {}
+} 

@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>笔记块系统 - 快速开始</title>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+        
+        .demo-section {
+            margin-bottom: 40px;
+            padding: 20px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            background: #f8f9fa;
+        }
+        
+        .demo-title {
+            font-size: 1.5em;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        
+        .demo-code {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            margin: 10px 0;
+            overflow-x: auto;
+        }
+        
+        .demo-result {
+            background: #e8f5e8;
+            border: 1px solid #c3e6c3;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            white-space: pre-wrap;
+            font-family: monospace;
+        }
+        
+        .btn {
+            background: #3498db;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 14px;
+        }
+        
+        .btn:hover {
+            background: #2980b9;
+        }
+        
+        .btn-success {
+            background: #27ae60;
+        }
+        
+        .btn-success:hover {
+            background: #219a52;
+        }
+        
+        .status {
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+        
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 笔记块系统快速开始</h1>
+        
+        <!-- Demo 1: 基础使用 -->
+        <div class="demo-section">
+            <div class="demo-title">💡 Demo 1: 一行代码生成策略</div>
+            <div class="demo-code">
+// 从样例自动生成策略并立即使用
+useNoteStrategy(`
+【问题】什么是人工智能？
+└─【答案】AI是模拟人类智能的技术
+  ├─机器学习：让机器从数据中学习
+  └─深度学习：模拟神经网络的算法
+`, 'ai_format');
+
+// 现在可以直接生成相同格式的笔记
+const note = generateNote({
+    question: "什么是机器学习？",
+    answer: "让计算机从数据中自动学习规律的方法",
+    details: ["监督学习", "无监督学习", "强化学习"]
+});
+            </div>
+            <button class="btn" onclick="demo1()">运行 Demo 1</button>
+            <div id="demo1-result" class="demo-result"></div>
+        </div>
+        
+        <!-- Demo 2: 策略切换 -->
+        <div class="demo-section">
+            <div class="demo-title">🔄 Demo 2: 动态策略切换</div>
+            <div class="demo-code">
+// 定义不同格式的样例
+const formatA = `问：什么是AI？\n答：人工智能\n  - 机器学习\n  - 深度学习`;
+const formatB = `[Q] 什么是AI？\n[A] 人工智能\n    • 机器学习\n    • 深度学习`;
+
+// 生成并切换策略
+useNoteStrategy(formatA, 'formatA');
+useNoteStrategy(formatB, 'formatB');
+
+// 动态切换
+switchToStrategy('formatA');  // 使用格式A
+switchToStrategy('formatB');  // 使用格式B
+            </div>
+            <button class="btn" onclick="demo2()">运行 Demo 2</button>
+            <div id="demo2-result" class="demo-result"></div>
+        </div>
+        
+        <!-- Demo 3: 快速原型 -->
+        <div class="demo-section">
+            <div class="demo-title">⚡ Demo 3: 快速原型验证</div>
+            <div class="demo-code">
+// 一键原型：样例分析 → 策略生成 → 验证 → 测试
+const sample = `
+【核心问题】如何学习编程？
+└─【解决方案】分步骤学习
+  ├─【第一步】选择语言
+  │  ├─Python：适合初学者
+  │  └─JavaScript：前端必备
+  └─【第二步】大量练习
+     ├─做项目
+     └─刷题目
+`;
+
+const testData = {
+    question: "如何提高编程技能？",
+    answer: "持续实践和学习",
+    steps: [
+        { name: "阅读文档", desc: "理解API和语法" },
+        { name: "写代码", desc: "动手实践项目" }
+    ]
+};
+
+const result = quickPrototype(sample, testData);
+            </div>
+            <button class="btn" onclick="demo3()">运行 Demo 3</button>
+            <div id="demo3-result" class="demo-result"></div>
+        </div>
+        
+        <!-- Demo 4: 高级功能 -->
+        <div class="demo-section">
+            <div class="demo-title">🔧 Demo 4: 高级功能展示</div>
+            <div class="demo-code">
+// 创建自定义配置的工具包
+const toolkit = new NoteToolkit({
+    debugMode: true,
+    defaultStrategy: 'standard'
+});
+
+// 批量处理样例
+const samples = [
+    { name: '标准格式', content: '问：测试\n答：成功' },
+    { name: '树形格式', content: '问题：测试\n└─答案：成功' }
+];
+
+const results = batchProcessSamples(samples);
+
+// 策略对比
+const data = { question: '测试问题', answer: '测试答案' };
+const comparison = compareStrategies(data);
+            </div>
+            <button class="btn" onclick="demo4()">运行 Demo 4</button>
+            <div id="demo4-result" class="demo-result"></div>
+        </div>
+        
+        <!-- 系统状态 -->
+        <div class="demo-section">
+            <div class="demo-title">📊 系统状态</div>
+            <button class="btn btn-success" onclick="showStatus()">获取系统状态</button>
+            <button class="btn" onclick="showStrategies()">查看所有策略</button>
+            <button class="btn" onclick="clearResults()">清空结果</button>
+            <div id="status-result" class="demo-result"></div>
+        </div>
+    </div>
+
+    <!-- 引入核心组件 -->
+    <script src="../core/pluggable-note-generator.js"></script>
+    <script src="../core/auto-strategy-generator.js"></script>
+    <script src="../core/note-compatibility-adapter.js"></script>
+    <script src="../tools/note-toolkit.js"></script>
+    
+    <script>
+        // 显示系统加载状态
+        document.addEventListener('DOMContentLoaded', function() {
+            const statusDiv = document.getElementById('status-result');
+            if (typeof NoteToolkit !== 'undefined') {
+                statusDiv.innerHTML = '<div class="status success">✅ 笔记块系统加载成功！可以开始演示了。</div>';
+            } else {
+                statusDiv.innerHTML = '<div class="status error">❌ 系统加载失败，请检查文件路径。</div>';
+            }
+        });
+        
+        // Demo 1: 基础使用
+        function demo1() {
+            try {
+                // 使用样例生成策略
+                const result = useNoteStrategy(`
+【问题】什么是人工智能？
+└─【答案】AI是模拟人类智能的技术
+  ├─机器学习：让机器从数据中学习
+  └─深度学习：模拟神经网络的算法
+`, 'ai_format');
+                
+                // 生成新笔记
+                const note = generateNote({
+                    question: "什么是机器学习？",
+                    answer: "让计算机从数据中自动学习规律的方法",
+                    details: ["监督学习", "无监督学习", "强化学习"]
+                });
+                
+                document.getElementById('demo1-result').textContent = 
+                    `策略生成结果: ${result.success ? '成功' : '失败'}\n\n生成的笔记:\n${note}`;
+            } catch (error) {
+                document.getElementById('demo1-result').textContent = `错误: ${error.message}`;
+            }
+        }
+        
+        // Demo 2: 策略切换
+        function demo2() {
+            try {
+                const formatA = `问：什么是AI？\n答：人工智能\n  - 机器学习\n  - 深度学习`;
+                const formatB = `[Q] 什么是AI？\n[A] 人工智能\n    • 机器学习\n    • 深度学习`;
+                
+                // 生成两种策略
+                useNoteStrategy(formatA, 'formatA');
+                useNoteStrategy(formatB, 'formatB');
+                
+                // 测试数据
+                const testData = {
+                    question: "什么是深度学习？",
+                    answer: "模拟神经网络的机器学习方法",
+                    details: ["卷积神经网络", "循环神经网络"]
+                };
+                
+                // 使用格式A
+                switchToStrategy('formatA');
+                const noteA = generateNote(testData);
+                
+                // 使用格式B
+                switchToStrategy('formatB');
+                const noteB = generateNote(testData);
+                
+                document.getElementById('demo2-result').textContent = 
+                    `格式A生成的笔记:\n${noteA}\n\n格式B生成的笔记:\n${noteB}`;
+            } catch (error) {
+                document.getElementById('demo2-result').textContent = `错误: ${error.message}`;
+            }
+        }
+        
+        // Demo 3: 快速原型
+        function demo3() {
+            try {
+                const sample = `
+【核心问题】如何学习编程？
+└─【解决方案】分步骤学习
+  ├─【第一步】选择语言
+  │  ├─Python：适合初学者
+  │  └─JavaScript：前端必备
+  └─【第二步】大量练习
+     ├─做项目
+     └─刷题目
+`;
+                
+                const testData = {
+                    question: "如何提高编程技能？",
+                    answer: "持续实践和学习",
+                    steps: [
+                        { name: "阅读文档", desc: "理解API和语法" },
+                        { name: "写代码", desc: "动手实践项目" }
+                    ]
+                };
+                
+                const result = quickPrototype(sample, testData);
+                
+                document.getElementById('demo3-result').textContent = 
+                    `原型验证: ${result.success ? '成功' : '失败'}\n\n` +
+                    `策略名称: ${result.strategyName}\n\n` +
+                    `生成的测试笔记:\n${result.testOutput}`;
+            } catch (error) {
+                document.getElementById('demo3-result').textContent = `错误: ${error.message}`;
+            }
+        }
+        
+        // Demo 4: 高级功能
+        function demo4() {
+            try {
+                const toolkit = new NoteToolkit({
+                    debugMode: true,
+                    defaultStrategy: 'standard'
+                });
+                
+                // 批量处理样例
+                const samples = [
+                    { name: '标准格式', content: '问：测试1\n答：成功1' },
+                    { name: '树形格式', content: '问题：测试2\n└─答案：成功2' }
+                ];
+                
+                const batchResults = batchProcessSamples(samples);
+                
+                // 策略对比
+                const data = { question: '测试问题', answer: '测试答案' };
+                const comparison = compareStrategies(data);
+                
+                document.getElementById('demo4-result').textContent = 
+                    `批量处理结果:\n${JSON.stringify(batchResults, null, 2)}\n\n` +
+                    `策略对比:\n${JSON.stringify(comparison, null, 2)}`;
+            } catch (error) {
+                document.getElementById('demo4-result').textContent = `错误: ${error.message}`;
+            }
+        }
+        
+        // 显示系统状态
+        function showStatus() {
+            try {
+                const status = getToolkitStatus();
+                document.getElementById('status-result').textContent = 
+                    `系统状态:\n${JSON.stringify(status, null, 2)}`;
+            } catch (error) {
+                document.getElementById('status-result').textContent = `错误: ${error.message}`;
+            }
+        }
+        
+        // 显示所有策略
+        function showStrategies() {
+            try {
+                const strategies = getAllStrategies();
+                document.getElementById('status-result').textContent = 
+                    `可用策略:\n${JSON.stringify(strategies, null, 2)}`;
+            } catch (error) {
+                document.getElementById('status-result').textContent = `错误: ${error.message}`;
+            }
+        }
+        
+        // 清空所有结果
+        function clearResults() {
+            ['demo1-result', 'demo2-result', 'demo3-result', 'demo4-result', 'status-result'].forEach(id => {
+                document.getElementById(id).textContent = '';
+            });
+        }
+    </script>
+</body>
+</html> 

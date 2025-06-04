@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能问答笔记系统 v3.0</title>
+    
+    <!-- PWA Meta Tags -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="alternate icon" href="/favicon.ico">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#667eea">
+    <meta name="background-color" content="#667eea">
+    <meta name="description" content="集成认证的智能问答和笔记管理系统">
+    <meta name="keywords" content="问答,笔记,AI,智能助手">
+    
+    <!-- Apple PWA Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="QA笔记">
+    <link rel="apple-touch-icon" href="/favicon.svg">
+    
+    <!-- Microsoft PWA Meta Tags -->
+    <meta name="msapplication-TileColor" content="#667eea">
+    <meta name="msapplication-config" content="/browserconfig.xml">
+    
+    <link rel="stylesheet" href="qa-note.css">
+</head>
+<body>
+    <!-- 顶部模式切换区域 -->
+    <header class="mode-header">
+        <div class="mode-container">
+            <!-- 左侧：汉堡菜单 + 问答笔记开关 -->
+            <div class="header-left">
+                <button id="hamburger-menu" class="menu-btn" title="展开功能菜单" aria-label="展开菜单">
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
+                </button>
+                
+                <!-- 模式切换开关 -->
+                <div class="mode-switcher">
+                    <div class="switch-container">
+                        <span class="switch-label">📝 笔记</span>
+                        <label class="switch">
+                            <input type="checkbox" id="mode-switch" checked>
+                            <span class="slider round"></span>
+                        </label>
+                        <span class="switch-label">🤖 问答</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 中间：智能体选择器 -->
+            <div class="header-center">
+                <!-- AI智能体选择（移到顶部） -->
+                <div class="agent-selection-header">
+                    <label for="agent-select-header" class="agent-label">AI智能体：</label>
+                    <select id="agent-select-header" class="agent-select-header">
+                        <option value="general">🧠 通用智能体</option>
+                        <option value="code">💻 代码助手</option>
+                        <option value="writing">✍️ 写作助手</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- 右侧：人员选择和用户信息 -->
+            <div class="header-right">
+                <!-- 人员选择按钮 -->
+                <button id="people-menu" class="menu-btn" title="人员选择" aria-label="展开人员菜单">
+                    <span class="menu-icon">👥</span>
+                </button>
+                
+                <div class="current-user">
+                    <span id="user-display">用户</span>
+                    <button id="logout-btn" class="logout-btn">退出</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- 左侧滑出菜单 -->
+    <nav id="left-sidebar" class="left-sidebar">
+        <div class="sidebar-header">
+            <h3 class="sidebar-title">📚 功能菜单</h3>
+            <button id="close-sidebar" class="close-btn" aria-label="关闭菜单">&times;</button>
+        </div>
+        
+        <div class="sidebar-content">
+            <ul class="sidebar-menu">
+                <li class="menu-item active">
+                    <a href="#" data-action="switch-qa" class="menu-link">
+                        <span class="menu-icon">🤖</span>
+                        <span class="menu-text">智能问答</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="#" data-action="switch-note" class="menu-link">
+                        <span class="menu-icon">📝</span>
+                        <span class="menu-text">笔记管理</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="#" data-action="export-data" class="menu-link">
+                        <span class="menu-icon">📤</span>
+                        <span class="menu-text">数据导出</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="#" data-action="clear-all" class="menu-link">
+                        <span class="menu-icon">🗑️</span>
+                        <span class="menu-text">清空数据</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="#" data-action="settings" class="menu-link">
+                        <span class="menu-icon">⚙️</span>
+                        <span class="menu-text">系统设置</span>
+                    </a>
+                </li>
+            </ul>
+
+            <!-- 系统状态面板 -->
+            <div class="system-status">
+                <h4 class="status-title">📊 系统状态</h4>
+                <div class="status-item">
+                    <span class="status-label">存储模式:</span>
+                    <span class="status-value" id="storage-mode-display">混合模式</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-label">同步状态:</span>
+                    <span class="status-value" id="sync-status-display">已同步</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-label">数据量:</span>
+                    <span class="status-value" id="data-count-display">0 条记录</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 右侧人员栏 -->
+    <nav id="right-sidebar" class="right-sidebar">
+        <div class="sidebar-header">
+            <h3 class="sidebar-title">👥 人员选择</h3>
+            <button id="close-people-sidebar" class="close-btn" aria-label="关闭人员菜单">&times;</button>
+        </div>
+        
+        <div class="sidebar-content">
+            <!-- 已选人员显示 -->
+            <div class="selected-people">
+                <h4 class="section-title">已选人员</h4>
+                <div id="selected-people-list" class="selected-list">
+                    <span class="empty-state">暂未选择人员</span>
+                </div>
+                <div class="selection-actions">
+                    <button id="clear-selection" class="btn btn-sm btn-secondary">清空选择</button>
+                    <button id="apply-selection" class="btn btn-sm btn-primary">应用到输入框</button>
+                </div>
+            </div>
+
+            <!-- 人员分组列表 -->
+            <div class="people-groups">
+                <h4 class="section-title">人员分组</h4>
+                
+                <!-- 开发团队分组 -->
+                <div class="group-item">
+                    <div class="group-header" data-group="dev-team">
+                        <input type="checkbox" id="group-dev" class="group-checkbox">
+                        <label for="group-dev" class="group-label">
+                            <span class="group-icon">👨‍💻</span>
+                            <span class="group-name">开发团队</span>
+                            <span class="group-count">(3人)</span>
+                            <span class="expand-icon">▼</span>
+                        </label>
+                    </div>
+                    <div class="group-members">
+                        <div class="member-item">
+                            <input type="checkbox" id="member-zhang" class="member-checkbox" data-group="dev-team" data-member="张开发">
+                            <label for="member-zhang" class="member-label">
+                                <span class="member-avatar">👨</span>
+                                <span class="member-name">张开发</span>
+                                <span class="member-status online">在线</span>
+                            </label>
+                        </div>
+                        <div class="member-item">
+                            <input type="checkbox" id="member-li" class="member-checkbox" data-group="dev-team" data-member="李程序">
+                            <label for="member-li" class="member-label">
+                                <span class="member-avatar">👩</span>
+                                <span class="member-name">李程序</span>
+                                <span class="member-status offline">离线</span>
+                            </label>
+                        </div>
+                        <div class="member-item">
+                            <input type="checkbox" id="member-wang" class="member-checkbox" data-group="dev-team" data-member="王前端">
+                            <label for="member-wang" class="member-label">
+                                <span class="member-avatar">👨</span>
+                                <span class="member-name">王前端</span>
+                                <span class="member-status online">在线</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 设计团队分组 -->
+                <div class="group-item">
+                    <div class="group-header" data-group="design-team">
+                        <input type="checkbox" id="group-design" class="group-checkbox">
+                        <label for="group-design" class="group-label">
+                            <span class="group-icon">🎨</span>
+                            <span class="group-name">设计团队</span>
+                            <span class="group-count">(2人)</span>
+                            <span class="expand-icon">▼</span>
+                        </label>
+                    </div>
+                    <div class="group-members">
+                        <div class="member-item">
+                            <input type="checkbox" id="member-liu" class="member-checkbox" data-group="design-team" data-member="刘设计">
+                            <label for="member-liu" class="member-label">
+                                <span class="member-avatar">👩</span>
+                                <span class="member-name">刘设计</span>
+                                <span class="member-status online">在线</span>
+                            </label>
+                        </div>
+                        <div class="member-item">
+                            <input type="checkbox" id="member-chen" class="member-checkbox" data-group="design-team" data-member="陈UI">
+                            <label for="member-chen" class="member-label">
+                                <span class="member-avatar">👨</span>
+                                <span class="member-name">陈UI</span>
+                                <span class="member-status online">在线</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 产品团队分组 -->
+                <div class="group-item">
+                    <div class="group-header" data-group="product-team">
+                        <input type="checkbox" id="group-product" class="group-checkbox">
+                        <label for="group-product" class="group-label">
+                            <span class="group-icon">📊</span>
+                            <span class="group-name">产品团队</span>
+                            <span class="group-count">(2人)</span>
+                            <span class="expand-icon">▼</span>
+                        </label>
+                    </div>
+                    <div class="group-members">
+                        <div class="member-item">
+                            <input type="checkbox" id="member-zhao" class="member-checkbox" data-group="product-team" data-member="赵产品">
+                            <label for="member-zhao" class="member-label">
+                                <span class="member-avatar">👩</span>
+                                <span class="member-name">赵产品</span>
+                                <span class="member-status online">在线</span>
+                            </label>
+                        </div>
+                        <div class="member-item">
+                            <input type="checkbox" id="member-sun" class="member-checkbox" data-group="product-team" data-member="孙运营">
+                            <label for="member-sun" class="member-label">
+                                <span class="member-avatar">👨</span>
+                                <span class="member-name">孙运营</span>
+                                <span class="member-status offline">离线</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 背景遮罩 -->
+    <div id="backdrop" class="backdrop"></div>
+
+    <!-- 主要输入区域 -->
+    <main class="main-container">
+        <!-- 统一输入界面 -->
+        <section class="input-section">
+            <div class="input-container">
+                <!-- 本地文件管理工具栏（新增） -->
+                <div class="field-group local-file-toolbar">
+                    <div class="toolbar-row">
+                        <button id="select-file-btn" class="btn btn-secondary">📁 选择本地笔记文件</button>
+                        <button id="create-file-btn" class="btn btn-secondary">📄 新建本地文件</button>
+                        <div id="file-status" class="file-status">未选择文件</div>
+                    </div>
+                    <div class="field-hint">选择或创建本地Markdown文件进行直接读写保存（支持File System API）</div>
+                </div>
+
+                <!-- 标题输入 -->
+                <div class="field-group">
+                    <label for="title-input" class="field-label">
+                        <span id="title-label">标题</span>
+                        <span class="required">*</span>
+                    </label>
+                    <input type="text" 
+                           id="title-input" 
+                           class="field-input" 
+                           placeholder="请输入标题..." 
+                           maxlength="200" 
+                           required>
+                    <div class="field-hint" id="title-hint">为您的内容起个标题</div>
+                </div>
+
+                <!-- 内容输入 -->
+                <div class="field-group">
+                    <label for="content-input" class="field-label">
+                        <span id="content-label">内容</span>
+                        <span class="required">*</span>
+                    </label>
+                    <textarea id="content-input" 
+                              class="field-textarea" 
+                              placeholder="请输入内容...（支持图片粘贴）" 
+                              rows="8" 
+                              required></textarea>
+                    <div class="field-hint" id="content-hint">详细描述您的内容。支持Ctrl+V粘贴图片</div>
+                </div>
+
+                <!-- 标签输入 -->
+                <div class="field-group">
+                    <label for="tags-input" class="field-label">
+                        <span>标签</span>
+                        <span class="optional">(可选)</span>
+                    </label>
+                    <input type="text" 
+                           id="tags-input" 
+                           class="field-input" 
+                           placeholder="输入标签，用逗号分隔...">
+                    <div class="field-hint">例如：编程,算法,Python</div>
+                </div>
+
+                <!-- 图片预览区域（新增） -->
+                <div class="field-group" id="image-preview-section" style="display: none;">
+                    <label class="field-label">📷 已添加的图片</label>
+                    <div id="image-preview-container" class="image-preview-container">
+                        <!-- 动态添加图片预览 -->
+                    </div>
+                    <div class="field-hint">粘贴的图片将以base64格式保存在笔记中</div>
+                </div>
+
+                <!-- 统一操作按钮 -->
+                <div class="field-group action-field">
+                    <div class="action-buttons-row">
+                        <!-- 主操作按钮 -->
+                        <button id="submit-btn" class="btn btn-primary btn-main">
+                            <span id="submit-text">🚀 发送问题</span>
+                        </button>
+                        
+                        <!-- 附件按钮 -->
+                        <button id="attachment-btn" class="btn btn-secondary btn-attachment" title="上传文档">
+                            <span>📎 附件</span>
+                            <input type="file" id="file-input" style="display: none;" accept=".txt,.md,.pdf,.doc,.docx">
+                        </button>
+                        
+                        <!-- 网络状态显示 -->
+                        <div class="network-status-compact" id="network-status-compact">
+                            <span class="status-icon" id="network-icon-compact">🌐</span>
+                            <span class="status-text" id="network-text-compact">在线</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 操作设置区域 -->
+            <div class="action-section">
+                <div class="storage-options">
+                    <div class="storage-mode">
+                        <label for="storage-select">存储模式：</label>
+                        <select id="storage-select" class="storage-select">
+                            <option value="hybrid">🔄 混合模式（推荐）</option>
+                            <option value="server">☁️ 仅服务器</option>
+                            <option value="local">💾 仅本地</option>
+                            <option value="file">📁 本地文件直接读写</option>
+                        </select>
+                    </div>
+                    <div class="file-api-status" id="file-api-status">
+                        <span id="file-api-support">检查中...</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 结果显示区域 -->
+        <section class="result-section" id="result-section" style="display: none;">
+            <div class="result-container">
+                <div class="result-header">
+                    <h3 id="result-title">AI回答</h3>
+                    <div class="result-actions">
+                        <button id="save-answer-btn" class="btn btn-sm">💾 保存为笔记</button>
+                        <button id="copy-answer-btn" class="btn btn-sm">📋 复制回答</button>
+                    </div>
+                </div>
+                <div class="result-content" id="result-content">
+                    <!-- AI回答内容 -->
+                </div>
+                <div class="result-meta" id="result-meta">
+                    <!-- 回答元信息：时间、智能体、token使用等 -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 状态提示区域（新增） -->
+    <div id="status-overlay" class="status-overlay" style="display: none;">
+        <div class="status-message" id="status-message">
+            <span id="status-icon">ℹ️</span>
+            <span id="status-text">状态信息</span>
+        </div>
+    </div>
+
+    <!-- 消息提示区域 -->
+    <div id="message-container" class="message-container"></div>
+
+    <!-- 加载状态遮罩 -->
+    <div id="loading-overlay" class="loading-overlay" style="display: none;">
+        <div class="loading-spinner">
+            <div class="spinner"></div>
+            <div class="loading-text">正在处理中...</div>
+        </div>
+    </div>
+
+    <!-- 脚本引入 -->
+    <script src="/shared/api.js"></script>
+    <script src="/shared/notebook.js"></script>
+    <script src="/shared/utils.js"></script>
+    <script src="local-note-saver.js"></script>
+    <script src="qa-note-saver.js"></script>
+    <script src="qa-note.js"></script>
+    
+    <!-- Service Worker 注册 -->
+    <script>
+        // Service Worker 注册和管理
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('/service-worker.js')
+                    .then(function(registration) {
+                        console.log('✅ Service Worker 注册成功:', registration.scope);
+                        
+                        // 检查是否有新的Service Worker等待激活
+                        if (registration.waiting) {
+                            console.log('🔄 发现新的Service Worker，正在更新...');
+                            registration.waiting.postMessage({action: 'skipWaiting'});
+                        }
+                        
+                        // 监听Service Worker更新
+                        registration.addEventListener('updatefound', function() {
+                            const newWorker = registration.installing;
+                            if (newWorker) {
+                                newWorker.addEventListener('statechange', function() {
+                                    if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                        console.log('📦 Service Worker 已更新，刷新页面以应用更改');
+                                        // 可以在这里提示用户刷新页面
+                                        newWorker.postMessage({action: 'skipWaiting'});
+                                    }
+                                });
+                            }
+                        });
+                    })
+                    .catch(function(error) {
+                        console.log('❌ Service Worker 注册失败:', error);
+                    });
+                
+                // 监听Service Worker控制权变化
+                navigator.serviceWorker.addEventListener('controllerchange', function() {
+                    console.log('🔄 Service Worker 控制权已更改，可能需要刷新页面');
+                    // 在这里可以选择自动刷新页面
+                    // window.location.reload();
+                });
+            });
+        } else {
+            console.log('⚠️ 浏览器不支持Service Worker');
+        }
+    </script>
+    
+    <!-- 初始化脚本 -->
+    <script>
+        // 全局错误处理
+        window.addEventListener('error', function(e) {
+            console.error('页面错误:', e.error);
+            console.error('错误源:', e.filename, '行:', e.lineno, '列:', e.colno);
+        });
+        
+        window.addEventListener('unhandledrejection', function(e) {
+            console.error('未处理的Promise拒绝:', e.reason);
+        });
+        
+        // 显示加载状态
+        function showLoadingStatus(message) {
+            console.log('🔄', message);
+            const statusDiv = document.createElement('div');
+            statusDiv.id = 'init-status';
+            statusDiv.style.cssText = `
+                position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+                background: rgba(0,0,0,0.8); color: white; padding: 20px;
+                border-radius: 8px; z-index: 10000; font-family: Arial, sans-serif;
+            `;
+            statusDiv.innerHTML = `
+                <div style="text-align: center;">
+                    <div style="margin-bottom: 10px;">🚀 智能问答系统初始化</div>
+                    <div id="status-text">${message}</div>
+                    <div style="margin-top: 10px; font-size: 12px; opacity: 0.8;">请稍候...</div>
+                </div>
+            `;
+            document.body.appendChild(statusDiv);
+            return statusDiv;
+        }
+        
+        function updateLoadingStatus(message) {
+            const statusText = document.getElementById('status-text');
+            if (statusText) {
+                statusText.textContent = message;
+            }
+            console.log('📝', message);
+        }
+        
+        function hideLoadingStatus() {
+            const statusDiv = document.getElementById('init-status');
+            if (statusDiv) {
+                statusDiv.remove();
+            }
+        }
+        
+        // 页面加载完成后初始化系统
+        document.addEventListener('DOMContentLoaded', async function() {
+            console.log('🌟 页面DOM加载完成，开始初始化QANoteBlock...');
+            
+            const statusDiv = showLoadingStatus('正在检查系统依赖...');
+            
+            try {
+                // 步骤1：检查必要的对象是否存在
+                updateLoadingStatus('检查JavaScript模块...');
+                
+                if (typeof QANoteBlock === 'undefined') {
+                    throw new Error('QANoteBlock未定义，可能是qa-note.js加载失败');
+                }
+                console.log('✅ QANoteBlock对象存在');
+                
+                if (typeof QANoteSaver === 'undefined') {
+                    console.warn('⚠️ QANoteSaver未定义，将使用降级模式');
+                    // 创建一个简单的Mock对象
+                    window.QANoteSaver = class {
+                        constructor() {}
+                        async saveNote() { return { success: false, message: '保存功能不可用' }; }
+                    };
+                }
+                
+                if (typeof LocalNoteSaver === 'undefined') {
+                    console.warn('⚠️ LocalNoteSaver未定义，将使用降级模式');
+                    // 创建一个简单的Mock对象
+                    window.LocalNoteSaver = class {
+                        constructor() {}
+                        bindSelectButton() {}
+                        bindInput() {}
+                        bindCreateButton() {}
+                        async saveNote() { return { success: false, message: '本地保存功能不可用' }; }
+                    };
+                }
+                
+                if (typeof APIClient === 'undefined') {
+                    console.warn('⚠️ APIClient未定义，将使用降级模式');
+                    // 创建一个简单的Mock对象
+                    window.APIClient = class {
+                        static async request() { 
+                            throw new Error('API客户端不可用'); 
+                        }
+                    };
+                }
+                
+                // 步骤2：检查关键DOM元素
+                updateLoadingStatus('检查页面元素...');
+                
+                const requiredElements = [
+                    'mode-switch', 'submit-btn', 'title-input', 'content-input',
+                    'hamburger-menu', 'logout-btn', 'storage-select'
+                ];
+                
+                const missingElements = [];
+                for (const elementId of requiredElements) {
+                    const element = document.getElementById(elementId);
+                    if (!element) {
+                        missingElements.push(elementId);
+                    }
+                }
+                
+                if (missingElements.length > 0) {
+                    console.warn('⚠️ 某些页面元素未找到:', missingElements);
+                    console.log('系统将在降级模式下运行');
+                }
+                
+                // 步骤3：初始化QANoteBlock
+                updateLoadingStatus('初始化系统核心...');
+                
+                await QANoteBlock.init();
+                console.log('✅ QANoteBlock初始化成功');
+                
+                // 步骤4：完成初始化
+                updateLoadingStatus('初始化完成！');
+                
+                setTimeout(() => {
+                    hideLoadingStatus();
+                    // 恢复页面显示
+                    document.body.style.opacity = '1';
+                    console.log('🎉 系统初始化完成，页面已就绪');
+                }, 500);
+                
+            } catch (error) {
+                console.error('❌ QANoteBlock初始化失败:', error);
+                hideLoadingStatus();
+                
+                // 显示用户友好的错误界面
+                document.body.innerHTML = `
+                    <div style="padding: 40px; text-align: center; font-family: Arial, sans-serif; background: #f8f9fa; min-height: 100vh;">
+                        <div style="max-width: 600px; margin: 0 auto; background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                            <h2 style="color: #dc3545; margin-bottom: 20px;">⚠️ 系统初始化失败</h2>
+                            <div style="background: #f8d7da; border: 1px solid #f5c6cb; border-radius: 6px; padding: 15px; margin: 20px 0; color: #721c24;">
+                                <strong>错误信息：</strong> ${error.message}
+                            </div>
+                            
+                            <h3 style="color: #495057; margin: 30px 0 15px 0;">🔧 故障排除步骤</h3>
+                            <div style="text-align: left; background: #e9ecef; padding: 20px; border-radius: 6px; margin: 20px 0;">
+                                <ol style="margin: 0; padding-left: 20px;">
+                                    <li style="margin: 10px 0;"><strong>刷新页面：</strong> 按 F5 或 Ctrl+F5 强制刷新</li>
+                                    <li style="margin: 10px 0;"><strong>清除缓存：</strong> 按 Ctrl+Shift+Delete 清除浏览器缓存</li>
+                                    <li style="margin: 10px 0;"><strong>检查网络：</strong> 确保网络连接正常</li>
+                                    <li style="margin: 10px 0;"><strong>重新登录：</strong> 可能是认证状态失效</li>
+                                    <li style="margin: 10px 0;"><strong>联系支持：</strong> 如问题持续存在，请联系技术支持</li>
+                                </ol>
+                            </div>
+                            
+                            <div style="margin-top: 30px;">
+                                <button onclick="window.location.reload()" 
+                                        style="background: #007bff; color: white; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; margin: 5px; font-size: 16px;">
+                                    🔄 刷新页面
+                                </button>
+                                <button onclick="window.location.href='/auth'" 
+                                        style="background: #28a745; color: white; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; margin: 5px; font-size: 16px;">
+                                    🔐 重新登录
+                                </button>
+                            </div>
+                            
+                            <div style="margin-top: 20px; font-size: 14px; color: #6c757d;">
+                                <details>
+                                    <summary style="cursor: pointer; margin-bottom: 10px;">🔍 技术详情（点击查看）</summary>
+                                    <pre style="background: #f8f9fa; padding: 15px; border-radius: 6px; text-align: left; overflow-x: auto; font-size: 12px;">${error.stack || error.message}</pre>
+                                </details>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                // 如果初始化失败，可能是认证问题，跳转到登录页面
+                if (error.message.includes('认证') || error.message.includes('auth') || error.message.includes('token')) {
+                    console.log('🔄 认证失败，5秒后跳转到登录页面...');
+                    setTimeout(() => {
+                        window.location.href = '/auth';
+                    }, 5000);
+                }
+            }
+        });
+        
+        // 处理页面可见性变化
+        document.addEventListener('visibilitychange', function() {
+            if (!document.hidden && window.QANoteBlock && typeof QANoteBlock.checkAuthStatus === 'function') {
+                // 页面变为可见时，检查认证状态
+                QANoteBlock.checkAuthStatus().then(isValid => {
+                    if (!isValid) {
+                        console.log('🔄 认证状态失效，跳转到登录页面...');
+                        window.location.href = '/auth';
+                    }
+                }).catch(error => {
+                    console.error('认证状态检查失败:', error);
+                });
+            }
+        });
+        
+        // 添加性能监控
+        window.addEventListener('load', function() {
+            if (window.performance) {
+                const perfData = window.performance.timing;
+                const loadTime = perfData.loadEventEnd - perfData.navigationStart;
+                console.log(`📊 页面加载性能: ${loadTime}ms`);
+            }
+        });
+    </script>
+</body>
+</html> 

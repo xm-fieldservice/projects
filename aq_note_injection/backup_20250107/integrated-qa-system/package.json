@@ -1,0 +1,55 @@
+{
+  "name": "integrated-qa-system",
+  "version": "3.0.0",
+  "description": "集成智能问答笔记系统 - AuthBlock认证 + QA Note Block问答功能完整集成版",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js",
+    "install-deps": "npm install --production",
+    "setup": "node scripts/setup.js",
+    "test": "node scripts/test-connection.js",
+    "build": "npm run install-deps",
+    "deploy": "npm run build && npm start"
+  },
+  "keywords": [
+    "qa-system",
+    "question-answer",
+    "note-system",
+    "auth",
+    "authentication",
+    "ai-chat",
+    "intelligent-qa",
+    "note-management"
+  ],
+  "author": "QA System Team",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "helmet": "^7.1.0",
+    "express-rate-limit": "^7.1.5",
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.2",
+    "winston": "^3.11.0",
+    "winston-daily-rotate-file": "^4.7.1",
+    "multer": "^1.4.5-lts.1",
+    "cookie-parser": "^1.4.6",
+    "express-session": "^1.17.3"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/qa-system/integrated-qa-system.git"
+  },
+  "bugs": {
+    "url": "https://github.com/qa-system/integrated-qa-system/issues"
+  },
+  "homepage": "https://github.com/qa-system/integrated-qa-system#readme"
+} 

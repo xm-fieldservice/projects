@@ -1,0 +1,15 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 7
+    },
+    "auditLog": "D:\\AI-Projects\\aq_note_injection\\logs\\.92ed91f0d0071e9446aecbe677ce15cd5d0ec381-audit.json",
+    "files": [
+        {
+            "date": 1749046556111,
+            "name": "D:\\AI-Projects\\aq_note_injection\\logs\\authblock-2025-06-04.log",
+            "hash": "6fd7cf8dbba6317fd65ae7220ce7ec9a67a6cf99b794de8426debbd22b258820"
+        }
+    ],
+    "hashType": "sha256"
+}

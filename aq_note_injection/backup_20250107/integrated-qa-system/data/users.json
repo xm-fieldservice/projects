@@ -1,0 +1,49 @@
+[
+  [
+    "admin",
+    {
+      "id": "admin",
+      "username": "admin",
+      "password": "$2a$12$DF7hZweO65cCyRP318kW..ZK.4UUJJJxMLw6xUke5SM7TMk4WO7ua",
+      "name": "系统管理员",
+      "email": "admin@authblock.local",
+      "role": "admin",
+      "permissions": [
+        "*"
+      ],
+      "createdAt": "2025-06-04T02:28:57.798Z",
+      "lastLogin": "2025-06-04T05:03:36.105Z",
+      "active": true
+    }
+  ],
+  [
+    "demo",
+    {
+      "id": 1,
+      "username": "demo",
+      "password": "$2a$12$oMxgf09J18drxl1tP5gm6ui.bZOVTljjKWeew4XfoGvRAKpAkO.gC",
+      "name": "演示用户",
+      "email": "demo@authblock.local",
+      "role": "user",
+      "permissions": [],
+      "createdAt": "2025-06-04T02:28:58.046Z",
+      "lastLogin": null,
+      "active": true
+    }
+  ],
+  [
+    "test",
+    {
+      "id": 2,
+      "username": "test",
+      "password": "$2a$12$MmN74mgQEjwKDPvLp2KuG.c3ecZKFc4NWpoN/d7J1UdLOJJDV4VSW",
+      "name": "测试用户",
+      "email": "test@authblock.local",
+      "role": "user",
+      "permissions": [],
+      "createdAt": "2025-06-04T02:28:58.272Z",
+      "lastLogin": null,
+      "active": true
+    }
+  ]
+]

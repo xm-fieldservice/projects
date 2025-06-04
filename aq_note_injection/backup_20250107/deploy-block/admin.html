@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>系统管理 - 智能问答系统 v3.0</title>
+    <link rel="stylesheet" href="../ui-block/main.css">
+    <link rel="stylesheet" href="../ui-block/message.css">
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+    <!-- 顶部导航 -->
+    <header class="navbar">
+        <div class="nav-container">
+            <h1 class="logo">⚙️ 系统管理</h1>
+            <nav class="nav-menu">
+                <a href="../ui-block/index.html" class="nav-item">💬 问答</a>
+                <a href="../ui-block/index.html?mode=note" class="nav-item">📝 笔记</a>
+                <a href="admin.html" class="nav-item active">⚙️ 管理</a>
+            </nav>
+            <div class="user-info">
+                <span id="admin-username">管理员</span>
+                <button id="logout-btn" class="btn btn-sm">退出</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主管理界面 -->
+    <main class="admin-main">
+        <!-- 系统监控面板 -->
+        <section class="metrics-section">
+            <h2>📊 系统监控</h2>
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-icon">🖥️</div>
+                    <div class="metric-info">
+                        <span class="metric-label">CPU使用率</span>
+                        <span class="metric-value" id="cpu-usage">--</span>
+                        <div class="metric-progress">
+                            <div class="metric-progress-bar" id="cpu-progress"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon">🧠</div>
+                    <div class="metric-info">
+                        <span class="metric-label">内存使用</span>
+                        <span class="metric-value" id="memory-usage">--</span>
+                        <div class="metric-progress">
+                            <div class="metric-progress-bar" id="memory-progress"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon">💾</div>
+                    <div class="metric-info">
+                        <span class="metric-label">磁盘空间</span>
+                        <span class="metric-value" id="disk-usage">--</span>
+                        <div class="metric-progress">
+                            <div class="metric-progress-bar" id="disk-progress"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon">🌐</div>
+                    <div class="metric-info">
+                        <span class="metric-label">网络流量</span>
+                        <span class="metric-value" id="network-usage">--</span>
+                        <div class="metric-detail" id="network-detail">--</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 服务管理面板 -->
+        <section class="services-section">
+            <h2>🔧 服务管理</h2>
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-header">
+                        <h3>🌐 前端服务</h3>
+                        <span class="service-status" id="frontend-status">运行中</span>
+                    </div>
+                    <div class="service-details">
+                        <div class="service-metric">
+                            <span>端口：</span>
+                            <span>3000</span>
+                        </div>
+                        <div class="service-metric">
+                            <span>CPU：</span>
+                            <span id="frontend-cpu">--</span>
+                        </div>
+                        <div class="service-metric">
+                            <span>内存：</span>
+                            <span id="frontend-memory">--</span>
+                        </div>
+                    </div>
+                    <div class="service-actions">
+                        <button class="btn btn-primary" onclick="restartService('qa-frontend')">重启</button>
+                        <button class="btn btn-secondary" onclick="viewLogs('qa-frontend')">查看日志</button>
+                    </div>
+                </div>
+                
+                <div class="service-card">
+                    <div class="service-header">
+                        <h3>🔌 后端服务</h3>
+                        <span class="service-status" id="backend-status">运行中</span>
+                    </div>
+                    <div class="service-details">
+                        <div class="service-metric">
+                            <span>端口：</span>
+                            <span>8000</span>
+                        </div>
+                        <div class="service-metric">
+                            <span>CPU：</span>
+                            <span id="backend-cpu">--</span>
+                        </div>
+                        <div class="service-metric">
+                            <span>内存：</span>
+                            <span id="backend-memory">--</span>
+                        </div>
+                    </div>
+                    <div class="service-actions">
+                        <button class="btn btn-primary" onclick="restartService('qa-backend')">重启</button>
+                        <button class="btn btn-secondary" onclick="viewLogs('qa-backend')">查看日志</button>
+                    </div>
+                </div>
+                
+                <div class="service-card">
+                    <div class="service-header">
+                        <h3>🗄️ 数据库</h3>
+                        <span class="service-status" id="mysql-status">运行中</span>
+                    </div>
+                    <div class="service-details">
+                        <div class="service-metric">
+                            <span>端口：</span>
+                            <span>3306</span>
+                        </div>
+                        <div class="service-metric">
+                            <span>CPU：</span>
+                            <span id="mysql-cpu">--</span>
+                        </div>
+                        <div class="service-metric">
+                            <span>内存：</span>
+                            <span id="mysql-memory">--</span>
+                        </div>
+                    </div>
+                    <div class="service-actions">
+                        <button class="btn btn-primary" onclick="restartService('mysql')">重启</button>
+                        <button class="btn btn-secondary" onclick="viewLogs('mysql')">查看日志</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 用户管理面板 -->
+        <section class="users-section">
+            <h2>👥 用户管理</h2>
+            <div class="users-controls">
+                <button class="btn btn-primary" onclick="addUser()">添加用户</button>
+                <div class="search-group">
+                    <input type="text" id="user-search" placeholder="搜索用户..." />
+                    <select id="role-filter">
+                        <option value="">所有角色</option>
+                        <option value="admin">管理员</option>
+                        <option value="user">用户</option>
+                        <option value="demo">演示</option>
+                    </select>
+                </div>
+                <button class="btn btn-secondary" onclick="refreshUsers()">刷新</button>
+            </div>
+            <div class="users-table-container">
+                <table class="users-table" id="users-table">
+                    <thead>
+                        <tr>
+                            <th>用户名</th>
+                            <th>显示名称</th>
+                            <th>角色</th>
+                            <th>状态</th>
+                            <th>最后登录</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="users-tbody">
+                        <!-- 用户列表动态生成 -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="pagination" id="users-pagination">
+                <!-- 分页控件动态生成 -->
+            </div>
+        </section>
+
+        <!-- 系统日志面板 -->
+        <section class="logs-section">
+            <h2>📝 系统日志</h2>
+            <div class="logs-controls">
+                <select id="log-level">
+                    <option value="all">所有级别</option>
+                    <option value="error">错误</option>
+                    <option value="warning">警告</option>
+                    <option value="info">信息</option>
+                </select>
+                <select id="log-limit">
+                    <option value="50">50条</option>
+                    <option value="100" selected>100条</option>
+                    <option value="200">200条</option>
+                </select>
+                <button class="btn btn-secondary" onclick="clearLogs()">清空日志</button>
+                <button class="btn btn-primary" onclick="refreshLogs()">刷新</button>
+            </div>
+            <div class="logs-container" id="logs-container">
+                <!-- 日志内容动态生成 -->
+            </div>
+        </section>
+
+        <!-- 部署状态面板 -->
+        <section class="deployment-section">
+            <h2>🚀 部署状态</h2>
+            <div class="deployment-overview">
+                <div class="deployment-card">
+                    <h3>当前版本</h3>
+                    <div class="deployment-value" id="current-version">v3.0.0</div>
+                </div>
+                <div class="deployment-card">
+                    <h3>运行环境</h3>
+                    <div class="deployment-value" id="environment">production</div>
+                </div>
+                <div class="deployment-card">
+                    <h3>启动时间</h3>
+                    <div class="deployment-value" id="start-time">--</div>
+                </div>
+                <div class="deployment-card">
+                    <h3>容器状态</h3>
+                    <div class="deployment-value" id="container-status">3/3 运行中</div>
+                </div>
+            </div>
+            <div class="deployment-actions">
+                <button class="btn btn-warning" onclick="restartAllServices()">重启所有服务</button>
+                <button class="btn btn-info" onclick="checkDeploymentHealth()">健康检查</button>
+                <button class="btn btn-secondary" onclick="viewDeploymentLogs()">部署日志</button>
+            </div>
+        </section>
+    </main>
+
+    <!-- 日志查看器模态框 -->
+    <div id="log-viewer-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="log-viewer-title">服务日志</h3>
+                <button class="modal-close" onclick="closeLogs()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="log-viewer-controls">
+                    <button class="btn btn-sm" onclick="downloadLogs()">下载日志</button>
+                    <button class="btn btn-sm" onclick="clearServiceLogs()">清空</button>
+                </div>
+                <div class="log-viewer-content" id="log-viewer-content">
+                    <!-- 服务日志内容 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 用户编辑模态框 -->
+    <div id="user-edit-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="user-edit-title">编辑用户</h3>
+                <button class="modal-close" onclick="closeUserEdit()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="user-edit-form">
+                    <div class="form-group">
+                        <label for="edit-username">用户名</label>
+                        <input type="text" id="edit-username" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-display-name">显示名称</label>
+                        <input type="text" id="edit-display-name">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-email">邮箱</label>
+                        <input type="email" id="edit-email">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-role">角色</label>
+                        <select id="edit-role">
+                            <option value="user">用户</option>
+                            <option value="admin">管理员</option>
+                            <option value="demo">演示</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-status">状态</label>
+                        <select id="edit-status">
+                            <option value="true">启用</option>
+                            <option value="false">禁用</option>
+                        </select>
+                    </div>
+                </form>
+                <div class="modal-actions">
+                    <button class="btn btn-primary" onclick="saveUser()">保存</button>
+                    <button class="btn btn-secondary" onclick="closeUserEdit()">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 脚本引入 -->
+    <script src="../shared/api.js"></script>
+    <script src="../auth-block/auth.js"></script>
+    <script src="../ui-block/main.js"></script>
+    <script src="deploy.js"></script>
+    <script src="admin.js"></script>
+</body>
+</html> 

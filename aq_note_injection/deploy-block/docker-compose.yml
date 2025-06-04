@@ -1,0 +1,196 @@
+version: '3.8'
+
+services:
+  # 前端服务
+  qa-frontend:
+    build: 
+      context: ..
+      dockerfile: deploy-block/Dockerfile.frontend
+    container_name: qa-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - qa-backend
+    volumes:
+      - ../ui-block:/usr/share/nginx/html/ui-block:ro
+      - ../auth-block:/usr/share/nginx/html/auth-block:ro
+      - ../deploy-block:/usr/share/nginx/html/deploy-block:ro
+      - ../shared:/usr/share/nginx/html/shared:ro
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    environment:
+      - NODE_ENV=production
+      - BACKEND_URL=http://qa-backend:8000
+    networks:
+      - qa-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # 后端服务
+  qa-backend:
+    build:
+      context: ..
+      dockerfile: deploy-block/Dockerfile.backend
+    container_name: qa-backend
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=mysql://qa_user:qa_password@mysql:3306/qa_db
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY:-your-secret-key-here-change-in-production}
+      - API_BASE_URL=http://localhost:8000
+      - CORS_ORIGINS=http://localhost:3000,http://127.0.0.1:3000
+      - DEBUG=false
+      - LOG_LEVEL=INFO
+    depends_on:
+      mysql:
+        condition: service_healthy
+    volumes:
+      - backend_logs:/app/logs
+      - backend_uploads:/app/uploads
+    networks:
+      - qa-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # 数据库服务
+  mysql:
+    image: mysql:8.0
+    container_name: qa-mysql
+    environment:
+      MYSQL_DATABASE: qa_db
+      MYSQL_USER: qa_user
+      MYSQL_PASSWORD: qa_password
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root_password_change_me}
+      MYSQL_CHARSET: utf8mb4
+      MYSQL_COLLATION: utf8mb4_unicode_ci
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./mysql/init:/docker-entrypoint-initdb.d:ro
+      - ./mysql/conf:/etc/mysql/conf.d:ro
+    networks:
+      - qa-network
+    restart: unless-stopped
+    command: --default-authentication-plugin=mysql_native_password
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+
+  # Redis缓存服务（可选）
+  redis:
+    image: redis:7-alpine
+    container_name: qa-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+      - ./redis/redis.conf:/usr/local/etc/redis/redis.conf:ro
+    networks:
+      - qa-network
+    restart: unless-stopped
+    command: redis-server /usr/local/etc/redis/redis.conf
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Nginx反向代理（可选，用于生产环境）
+  nginx-proxy:
+    image: nginx:alpine
+    container_name: qa-nginx-proxy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/proxy.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+      - nginx_logs:/var/log/nginx
+    depends_on:
+      - qa-frontend
+      - qa-backend
+    networks:
+      - qa-network
+    restart: unless-stopped
+    profiles:
+      - production
+
+# 网络配置
+networks:
+  qa-network:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.20.0.0/16
+
+# 数据卷配置
+volumes:
+  mysql_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./data/mysql
+  redis_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./data/redis
+  backend_logs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./logs/backend
+  backend_uploads:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./data/uploads
+  nginx_logs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./logs/nginx
+
+# 开发环境配置覆盖
+x-development: &development
+  environment:
+    - NODE_ENV=development
+    - DEBUG=true
+    - LOG_LEVEL=DEBUG
+  volumes:
+    - ..:/app
+  command: npm run dev
+
+# 生产环境配置
+x-production: &production
+  environment:
+    - NODE_ENV=production
+    - DEBUG=false
+    - LOG_LEVEL=INFO
+  deploy:
+    resources:
+      limits:
+        memory: 512M
+        cpus: '0.5'
+      reservations:
+        memory: 256M
+        cpus: '0.25' 

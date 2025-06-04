@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuthBlock 工具包演示</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .demo-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .demo-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .demo-card h3 {
+            margin-bottom: 1rem;
+            color: #667eea;
+            font-size: 1.3rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #374151;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: #f3f4f6;
+            color: #374151;
+            border: 1px solid #d1d5db;
+        }
+
+        .btn-secondary:hover {
+            background: #e5e7eb;
+        }
+
+        .status-panel {
+            grid-column: 1 / -1;
+        }
+
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .status-item {
+            padding: 1rem;
+            background: #f8fafc;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .status-label {
+            font-weight: 500;
+            color: #667eea;
+            font-size: 0.9rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .status-value {
+            color: #1f2937;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+
+        .message {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            font-weight: 500;
+        }
+
+        .message.success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+
+        .message.error {
+            background: #fee2e2;
+            color: #7f1d1d;
+            border: 1px solid #fca5a5;
+        }
+
+        .message.info {
+            background: #dbeafe;
+            color: #1e3a8a;
+            border: 1px solid #93c5fd;
+        }
+
+        .logs {
+            max-height: 300px;
+            overflow-y: auto;
+            background: #1f2937;
+            color: #f9fafb;
+            padding: 1rem;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.875rem;
+            line-height: 1.4;
+        }
+
+        .log-entry {
+            margin-bottom: 0.25rem;
+            white-space: pre-wrap;
+        }
+
+        .checkbox-wrapper {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .checkbox-wrapper input {
+            margin-right: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .demo-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .container {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔐 AuthBlock 工具包演示</h1>
+            <p>体验强大的用户认证功能</p>
+        </div>
+
+        <div class="demo-grid">
+            <!-- 登录面板 -->
+            <div class="demo-card">
+                <h3>📝 用户登录</h3>
+                <div id="login-messages"></div>
+                
+                <form id="login-form">
+                    <div class="form-group">
+                        <label class="form-label" for="username">用户名</label>
+                        <input type="text" id="username" class="form-input" placeholder="输入用户名" value="demo">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="password">密码</label>
+                        <input type="password" id="password" class="form-input" placeholder="输入密码" value="demo123">
+                    </div>
+                    
+                    <div class="checkbox-wrapper">
+                        <input type="checkbox" id="remember-me">
+                        <label for="remember-me">记住登录状态</label>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">登录</button>
+                    <button type="button" class="btn btn-secondary" id="demo-login-btn">演示登录</button>
+                </form>
+                
+                <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #e5e7eb;">
+                    <p style="font-size: 0.9rem; color: #6b7280;">
+                        <strong>演示账号：</strong><br>
+                        demo / demo123 (普通用户)<br>
+                        admin / admin123 (管理员)
+                    </p>
+                </div>
+            </div>
+
+            <!-- 控制面板 -->
+            <div class="demo-card">
+                <h3>⚙️ 认证控制</h3>
+                <div id="control-messages"></div>
+                
+                <div class="form-group">
+                    <button class="btn btn-secondary" onclick="checkLoginStatus()">检查登录状态</button>
+                    <button class="btn btn-secondary" onclick="getUserInfo()">获取用户信息</button>
+                </div>
+                
+                <div class="form-group">
+                    <button class="btn btn-secondary" onclick="checkPermission('admin')">检查管理员权限</button>
+                    <button class="btn btn-secondary" onclick="checkPermission('user')">检查用户权限</button>
+                </div>
+                
+                <div class="form-group">
+                    <button class="btn btn-secondary" onclick="refreshSession()">刷新会话</button>
+                    <button class="btn btn-secondary" onclick="auth.logout()" style="background: #ef4444; color: white;">退出登录</button>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">存储类型切换</label>
+                    <select id="storage-type" class="form-input" onchange="changeStorageType()">
+                        <option value="localStorage">localStorage</option>
+                        <option value="sessionStorage">sessionStorage</option>
+                        <option value="memory">内存存储</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- 状态面板 -->
+            <div class="demo-card status-panel">
+                <h3>📊 实时状态</h3>
+                <div class="status-grid">
+                    <div class="status-item">
+                        <div class="status-label">登录状态</div>
+                        <div class="status-value" id="status-logged-in">未登录</div>
+                    </div>
+                    <div class="status-item">
+                        <div class="status-label">当前用户</div>
+                        <div class="status-value" id="status-username">无</div>
+                    </div>
+                    <div class="status-item">
+                        <div class="status-label">用户角色</div>
+                        <div class="status-value" id="status-role">无</div>
+                    </div>
+                    <div class="status-item">
+                        <div class="status-label">会话ID</div>
+                        <div class="status-value" id="status-session">无</div>
+                    </div>
+                    <div class="status-item">
+                        <div class="status-label">登录时间</div>
+                        <div class="status-value" id="status-login-time">无</div>
+                    </div>
+                    <div class="status-item">
+                        <div class="status-label">存储方式</div>
+                        <div class="status-value" id="status-storage">localStorage</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 日志面板 -->
+            <div class="demo-card status-panel">
+                <h3>📋 操作日志</h3>
+                <div class="logs" id="logs-container">
+                    <div class="log-entry">[INFO] AuthBlock 演示页面已加载</div>
+                </div>
+                <div style="margin-top: 1rem;">
+                    <button class="btn btn-secondary" onclick="clearLogs()">清空日志</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 引入AuthBlock工具包 -->
+    <script src="../src/auth-block.js"></script>
+
+    <script>
+        // 初始化AuthBlock实例
+        const auth = new AuthBlock({
+            debug: true,
+            storagePrefix: 'demo_',
+            sessionTimeout: 300000, // 5分钟超时（演示用）
+            
+            // 事件回调
+            onLoginSuccess: (user) => {
+                showMessage('登录成功！欢迎 ' + user.name, 'success', 'login-messages');
+                updateStatus();
+                addLog('LOGIN', `用户 ${user.name} 登录成功`);
+            },
+            
+            onLoginFailure: (error) => {
+                showMessage('登录失败：' + error.message, 'error', 'login-messages');
+                addLog('ERROR', `登录失败: ${error.message}`);
+            },
+            
+            onLogout: (user) => {
+                showMessage('已退出登录', 'info', 'control-messages');
+                updateStatus();
+                addLog('LOGOUT', `用户 ${user.name} 已退出`);
+            },
+            
+            onSessionExpired: (user) => {
+                showMessage('会话已过期，请重新登录', 'error', 'control-messages');
+                updateStatus();
+                addLog('SESSION', `用户 ${user.name} 会话过期`);
+            }
+        });
+
+        // 监听AuthBlock事件
+        auth.on('auth:initialized', () => {
+            addLog('INIT', 'AuthBlock 初始化完成');
+            updateStatus();
+        });
+
+        auth.on('auth:login_success', (data) => {
+            addLog('EVENT', `auth:login_success 事件触发`);
+        });
+
+        auth.on('auth:logout', (data) => {
+            addLog('EVENT', `auth:logout 事件触发`);
+        });
+
+        auth.on('auth:session_refreshed', (data) => {
+            addLog('SESSION', '会话已刷新');
+        });
+
+        // DOM事件绑定
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const rememberMe = document.getElementById('remember-me').checked;
+            
+            addLog('LOGIN', `尝试登录用户: ${username}`);
+            
+            try {
+                const result = await auth.login(username, password, rememberMe);
+                // 成功/失败消息通过回调处理
+            } catch (error) {
+                showMessage('登录出错：' + error.message, 'error', 'login-messages');
+                addLog('ERROR', `登录异常: ${error.message}`);
+            }
+        });
+
+        // 工具函数
+        function showMessage(text, type, containerId) {
+            const container = document.getElementById(containerId);
+            const message = document.createElement('div');
+            message.className = `message ${type}`;
+            message.textContent = text;
+            
+            container.innerHTML = '';
+            container.appendChild(message);
+            
+            // 3秒后自动移除
+            setTimeout(() => {
+                if (message.parentNode) {
+                    message.parentNode.removeChild(message);
+                }
+            }, 3000);
+        }
+
+        function addLog(type, message) {
+            const logsContainer = document.getElementById('logs-container');
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.className = 'log-entry';
+            logEntry.textContent = `[${timestamp}] [${type}] ${message}`;
+            
+            logsContainer.appendChild(logEntry);
+            logsContainer.scrollTop = logsContainer.scrollHeight;
+            
+            // 限制日志条数
+            const entries = logsContainer.querySelectorAll('.log-entry');
+            if (entries.length > 50) {
+                entries[0].remove();
+            }
+        }
+
+        function updateStatus() {
+            const isLoggedIn = auth.isLoggedIn();
+            const user = auth.getCurrentUser();
+            
+            document.getElementById('status-logged-in').textContent = isLoggedIn ? '✅ 已登录' : '❌ 未登录';
+            document.getElementById('status-username').textContent = user ? user.name : '无';
+            document.getElementById('status-role').textContent = user ? user.role : '无';
+            document.getElementById('status-session').textContent = user ? user.sessionId?.substring(0, 8) + '...' : '无';
+            document.getElementById('status-login-time').textContent = user ? new Date(user.loginTime).toLocaleTimeString() : '无';
+            document.getElementById('status-storage').textContent = auth.config.storageType;
+        }
+
+        function checkLoginStatus() {
+            const isLoggedIn = auth.isLoggedIn();
+            const message = isLoggedIn ? '用户已登录' : '用户未登录';
+            showMessage(message, isLoggedIn ? 'success' : 'info', 'control-messages');
+            addLog('CHECK', `登录状态检查: ${message}`);
+        }
+
+        function getUserInfo() {
+            const userInfo = auth.getUserInfo();
+            if (userInfo) {
+                const info = `${userInfo.name} (${userInfo.role}) - ${userInfo.email}`;
+                showMessage(`用户信息：${info}`, 'info', 'control-messages');
+                addLog('INFO', `获取用户信息: ${info}`);
+            } else {
+                showMessage('用户未登录', 'error', 'control-messages');
+                addLog('INFO', '获取用户信息失败: 用户未登录');
+            }
+        }
+
+        function checkPermission(permission) {
+            const hasPermission = auth.hasPermission(permission);
+            const message = `${permission}权限检查: ${hasPermission ? '有权限' : '无权限'}`;
+            showMessage(message, hasPermission ? 'success' : 'error', 'control-messages');
+            addLog('PERM', message);
+        }
+
+        function refreshSession() {
+            const result = auth.refreshSession();
+            const message = result ? '会话刷新成功' : '会话刷新失败（用户未登录）';
+            showMessage(message, result ? 'success' : 'error', 'control-messages');
+            addLog('SESSION', message);
+        }
+
+        function changeStorageType() {
+            const newType = document.getElementById('storage-type').value;
+            
+            // 创建新的AuthBlock实例（实际使用中可能需要数据迁移）
+            const wasLoggedIn = auth.isLoggedIn();
+            const currentUser = auth.getCurrentUser();
+            
+            auth.destroy();
+            
+            // 重新创建实例
+            Object.assign(auth.config, { storageType: newType });
+            auth.storage = auth.getStorageAdapter();
+            
+            updateStatus();
+            addLog('CONFIG', `存储类型已切换为: ${newType}`);
+            showMessage(`存储类型已切换为: ${newType}`, 'info', 'control-messages');
+        }
+
+        function clearLogs() {
+            document.getElementById('logs-container').innerHTML = '<div class="log-entry">[INFO] 日志已清空</div>';
+        }
+
+        // 页面加载完成后更新状态
+        document.addEventListener('DOMContentLoaded', () => {
+            updateStatus();
+            addLog('READY', 'DOM 加载完成，页面准备就绪');
+        });
+    </script>
+</body>
+</html> 

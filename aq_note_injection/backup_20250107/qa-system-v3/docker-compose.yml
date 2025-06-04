@@ -1,0 +1,95 @@
+version: '3.8'
+
+services:
+  # 前端服务
+  qa-frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: qa-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - qa-backend
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    networks:
+      - qa-network
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - API_URL=http://qa-backend:8000
+
+  # 后端服务
+  qa-backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: qa-backend
+    ports:
+      - "8000:8000"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - qa-network
+    restart: unless-stopped
+    environment:
+      - DATABASE_URL=mysql://qa_user:qa_password@mysql:3306/qa_db
+      - JWT_SECRET_KEY=your-super-secret-jwt-key-change-in-production
+      - API_BASE_URL=http://localhost:8000
+      - CORS_ORIGINS=http://localhost:3000,http://localhost:8080
+      - DEBUG=false
+      - LOG_LEVEL=INFO
+    volumes:
+      - ./logs:/app/logs
+      - ./uploads:/app/uploads
+
+  # 数据库服务
+  mysql:
+    image: mysql:8.0
+    container_name: qa-mysql
+    ports:
+      - "3306:3306"
+    networks:
+      - qa-network
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: qa_db
+      MYSQL_USER: qa_user
+      MYSQL_PASSWORD: qa_password
+      MYSQL_ROOT_PASSWORD: root_password_change_in_production
+      MYSQL_CHARACTER_SET_SERVER: utf8mb4
+      MYSQL_COLLATION_SERVER: utf8mb4_unicode_ci
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+      interval: 10s
+      start_period: 30s
+
+  # Redis缓存服务（可选）
+  redis:
+    image: redis:7-alpine
+    container_name: qa-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - qa-network
+    restart: unless-stopped
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+
+networks:
+  qa-network:
+    driver: bridge
+
+volumes:
+  mysql_data:
+    driver: local
+  redis_data:
+    driver: local 
