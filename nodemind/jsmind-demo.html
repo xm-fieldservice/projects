@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>jsMind 思维导图示例（支持拖拽功能）</title>
+    <!-- 引入 jsMind 的 CSS 文件 -->
+    <link type="text/css" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsmind@0.8.7/style/jsmind.css" />
+    <!-- 引入 jsMind 的 JS 文件 -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/jsmind@0.8.7/es6/jsmind.js"></script>
+    <!-- 引入拖拽功能插件 -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/jsmind@0.8.7/es6/jsmind.draggable-node.js"></script>
+    
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        .main-container {
+            display: grid;
+            grid-template-columns: 300px 1fr 350px;
+            grid-template-rows: auto 1fr;
+            height: 100vh;
+            background: white;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+        
+        .header {
+            grid-column: 1 / -1;
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 15px 20px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            margin: 0 0 5px 0;
+            font-size: 24px;
+            font-weight: 600;
+        }
+        
+        .header .subtitle {
+            font-size: 14px;
+            opacity: 0.9;
+            margin: 0;
+        }
+        
+        /* 左侧节点列表区域 */
+        .left-panel {
+            background: #f8f9fa;
+            border-right: 2px solid #dee2e6;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .left-panel-header {
+            background: #343a40;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .help-toggle-btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .help-toggle-btn:hover {
+            background: #0056b3;
+        }
+        
+        .node-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+            min-height: 200px;
+        }
+        
+        .node-item {
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            padding: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .node-item:hover {
+            background: #e3f2fd;
+            border-color: #2196f3;
+            transform: translateX(2px);
+        }
+        
+        .node-item.active {
+            background: #2196f3;
+            color: white;
+            border-color: #1976d2;
+        }
+        
+        .node-item .node-title {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+        
+        .node-item .node-info {
+            font-size: 12px;
+            opacity: 0.7;
+        }
+        
+        /* 中间思维导图区域 */
+        .center-panel {
+            display: flex;
+            flex-direction: column;
+            background: #fff;
+        }
+        
+        .toolbar {
+            background: #f8f9fa;
+            padding: 10px;
+            border-bottom: 1px solid #dee2e6;
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+        
+        .btn:hover {
+            background: #0056b3;
+            transform: translateY(-1px);
+        }
+        
+        .btn-success { background: #28a745; }
+        .btn-success:hover { background: #1e7e34; }
+        
+        .btn-danger { background: #dc3545; }
+        .btn-danger:hover { background: #c82333; }
+        
+        .btn-warning { background: #ffc107; color: #212529; }
+        .btn-warning:hover { background: #e0a800; }
+        
+        .btn-secondary { background: #6c757d; }
+        .btn-secondary:hover { background: #545b62; }
+        
+        .btn-info { background: #17a2b8; }
+        .btn-info:hover { background: #138496; }
+        
+        #jsmind_container {
+            flex: 1;
+            background: #fff;
+        }
+        
+        /* 右侧详情面板 */
+        .right-panel {
+            background: #f8f9fa;
+            border-left: 2px solid #dee2e6;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .right-panel-header {
+            background: #343a40;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-weight: 600;
+        }
+        
+        .node-details {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .detail-section {
+            margin-bottom: 20px;
+        }
+        
+        .detail-label {
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        .detail-content {
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            padding: 12px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        .detail-content.editable {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .tag-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        
+        .tag {
+            background: #e3f2fd;
+            color: #1976d2;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            border: 1px solid #2196f3;
+        }
+        
+        .no-selection {
+            text-align: center;
+            color: #6c757d;
+            font-style: italic;
+            margin-top: 50px;
+        }
+        
+        @media (max-width: 1200px) {
+            .main-container {
+                grid-template-columns: 250px 1fr 300px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .main-container {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto auto 1fr auto;
+            }
+            
+            .left-panel, .right-panel {
+                border: none;
+                border-top: 1px solid #dee2e6;
+                border-bottom: 1px solid #dee2e6;
+            }
+        }
+        
+        /* 帮助区域样式 */
+        .help-section {
+            border-top: 1px solid #dee2e6;
+            background: #fff;
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+        
+        .help-header {
+            background: #17a2b8;
+            color: white;
+            padding: 10px 15px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .help-content {
+            padding: 10px;
+        }
+        
+        .help-item {
+            margin-bottom: 15px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            padding: 10px;
+            border-left: 3px solid #007bff;
+        }
+        
+        .help-title {
+            font-weight: 600;
+            font-size: 13px;
+            color: #495057;
+            margin-bottom: 8px;
+        }
+        
+        .help-list {
+            margin: 0;
+            padding-left: 20px;
+            font-size: 11px;
+            line-height: 1.4;
+        }
+        
+        .help-list li {
+            margin: 4px 0;
+            color: #666;
+        }
+        
+        .help-list li strong {
+            color: #d63384;
+        }
+        
+        .no-nodes {
+            text-align: center;
+            color: #6c757d;
+            font-style: italic;
+            padding: 20px;
+            margin: 10px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            border: 1px dashed #dee2e6;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <div class="header">
+            <h1>🧠 jsMind 节点管理系统</h1>
+            <p class="subtitle">左侧选择节点 | 中间查看脑图 | 右侧编辑详情</p>
+        </div>
+        
+        <!-- 左侧节点列表 -->
+        <div class="left-panel">
+            <div class="left-panel-header">
+                📋 节点列表
+                <div>
+                    <button class="help-toggle-btn" onclick="resetToOriginalView()" style="margin-right: 5px;">
+                        🏠 原始
+                    </button>
+                    <button class="help-toggle-btn" onclick="toggleHelp()" id="helpToggleBtn">
+                        📖 显示帮助
+                    </button>
+                </div>
+            </div>
+            <div class="node-list" id="nodeList">
+                <!-- 节点列表将通过JavaScript动态生成 -->
+            </div>
+            
+            <!-- 操作指南区域 -->
+            <div class="help-section" id="helpSection" style="display: none;">
+                <div class="help-header">📖 操作指南</div>
+                <div class="help-content">
+                    <div class="help-item">
+                        <div class="help-title">🖱️ 鼠标操作</div>
+                        <ul class="help-list">
+                            <li>单击节点选中</li>
+                            <li>双击节点编辑内容</li>
+                            <li>拖拽画布移动视图</li>
+                            <li>滚轮缩放思维导图</li>
+                            <li><strong>拖拽节点重新组织结构</strong></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="help-item">
+                        <div class="help-title">📋 列表操作</div>
+                        <ul class="help-list">
+                            <li><strong>点击列表项 - 设为中心节点</strong></li>
+                            <li>层级缩进显示节点结构</li>
+                            <li>显示节点ID和层级信息</li>
+                            <li>同步选中状态和详情</li>
+                            <li>🏠 原始按钮回到完整视图</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="help-item">
+                        <div class="help-title">⌨️ 快捷键</div>
+                        <ul class="help-list">
+                            <li>Ctrl+Enter - 添加子节点</li>
+                            <li>Enter - 添加兄弟节点</li>
+                            <li>F2 - 编辑节点内容</li>
+                            <li>Delete - 删除选中节点</li>
+                            <li>Space - 展开/收起节点</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="help-item">
+                        <div class="help-title">🔀 拖拽功能</div>
+                        <ul class="help-list">
+                            <li>按住鼠标左键拖拽节点</li>
+                            <li>拖拽到目标节点上释放</li>
+                            <li>被拖拽节点成为目标节点子节点</li>
+                            <li>支持跨分支拖拽移动</li>
+                            <li>可以通过按钮开启/关闭拖拽</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="help-item">
+                        <div class="help-title">🎨 主题和功能</div>
+                        <ul class="help-list">
+                            <li>15种内置精美主题</li>
+                            <li>支持自定义节点样式</li>
+                            <li>高清Canvas渲染</li>
+                            <li>响应式设计支持</li>
+                            <li>多种导出格式</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 中间思维导图 -->
+        <div class="center-panel">
+            <div class="toolbar">
+                <button class="btn" onclick="addNode()">➕ 添加节点</button>
+                <button class="btn btn-warning" onclick="editNode()">✏️ 编辑节点</button>
+                <button class="btn btn-danger" onclick="removeNode()">🗑️ 删除节点</button>
+                <button class="btn btn-success" onclick="expandAll()">📂 展开全部</button>
+                <button class="btn btn-secondary" onclick="collapseAll()">📁 收起全部</button>
+                <button class="btn btn-info" onclick="changeTheme()">🎨 切换主题</button>
+                <button class="btn btn-secondary" onclick="exportData()">💾 导出数据</button>
+                <button class="btn" onclick="toggleDrag()">🔀 <span id="dragStatus">禁用拖拽</span></button>
+                <button class="btn btn-info" onclick="resetToOriginalView()">🏠 原始视图</button>
+            </div>
+            
+            <div id="jsmind_container"></div>
+        </div>
+        
+        <!-- 右侧详情面板 -->
+        <div class="right-panel">
+            <div class="right-panel-header">
+                📝 节点详情
+            </div>
+            <div class="node-details" id="nodeDetails">
+                <div class="no-selection">
+                    请从左侧列表或思维导图中选择一个节点查看详情
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        // 思维导图数据
+        var mindData = {
+            meta: {
+                name: "jsMind拖拽演示",
+                author: "NodeMind Demo",
+                version: "1.0.0"
+            },
+            format: "node_tree",
+            data: {
+                id: "root",
+                topic: "🧠 jsMind 拖拽演示",
+                children: [
+                    {
+                        id: "features",
+                        topic: "🚀 核心特性",
+                        direction: "right",
+                        children: [
+                            { id: "feature1", topic: "纯JavaScript实现" },
+                            { id: "feature2", topic: "HTML5 Canvas渲染" },
+                            { id: "feature3", topic: "支持节点拖拽" },
+                            { id: "feature4", topic: "丰富的交互功能" }
+                        ]
+                    },
+                    {
+                        id: "drag",
+                        topic: "🔀 拖拽功能",
+                        direction: "right",
+                        children: [
+                            { id: "drag1", topic: "拖拽节点移动" },
+                            { id: "drag2", topic: "跨分支拖拽" },
+                            { id: "drag3", topic: "自动重新组织" },
+                            { id: "drag4", topic: "实时视觉反馈" }
+                        ]
+                    },
+                    {
+                        id: "usecases",
+                        topic: "📋 应用场景",
+                        direction: "right",
+                        children: [
+                            { id: "use1", topic: "知识管理系统" },
+                            { id: "use2", topic: "项目规划工具" },
+                            { id: "use3", topic: "学习笔记整理" },
+                            { id: "use4", topic: "团队协作平台" }
+                        ]
+                    },
+                    {
+                        id: "benefits",
+                        topic: "⭐ 主要优势",
+                        direction: "right",
+                        children: [
+                            { id: "benefit1", topic: "开源免费" },
+                            { id: "benefit2", topic: "易于集成" },
+                            { id: "benefit3", topic: "高性能渲染" },
+                            { id: "benefit4", topic: "多端兼容" }
+                        ]
+                    }
+                ]
+            }
+        };
+
+        // 配置选项，启用拖拽功能
+        var options = {
+            container: 'jsmind_container',
+            editable: true,
+            theme: 'primary',
+            view: {
+                engine: 'canvas',
+                hmargin: 120,
+                vmargin: 60,
+                line_width: 2,
+                line_color: '#566'
+            },
+            layout: {
+                hspace: 30,
+                vspace: 20,
+                pspace: 13
+            },
+            shortcut: {
+                enable: true,
+                handles: {},
+                mapping: {
+                    addchild: 4096 + 13,  // Ctrl+Enter 添加子节点
+                    addbrother: 13,  // Enter
+                    editnode: 113,   // F2
+                    delnode: 46,     // Delete
+                    toggle: 32,      // Space
+                    left: 37, up: 38, right: 39, down: 40
+                }
+            }
+        };
+
+        // 创建jsMind实例
+        var jm = new jsMind(options);
+        jm.show(mindData);
+
+        // 启用拖拽功能
+        jm.enable_draggable_node();
+
+        // 主题列表
+        var themes = [
+            { name: 'primary', label: '蓝色主题' },
+            { name: 'success', label: '成功绿' },
+            { name: 'warning', label: '警告橙' },
+            { name: 'danger', label: '危险红' },
+            { name: 'info', label: '信息青' },
+            { name: 'greensea', label: '海绿色' },
+            { name: 'nephritis', label: '翡翠绿' },
+            { name: 'belizehole', label: '深蓝色' },
+            { name: 'wisteria', label: '紫藤色' },
+            { name: 'asphalt', label: '沥青灰' },
+            { name: 'orange', label: '橙红色' },
+            { name: 'pumpkin', label: '南瓜色' },
+            { name: 'pomegranate', label: '石榴红' },
+            { name: 'clouds', label: '云朵白' },
+            { name: 'asbestos', label: '石棉灰' }
+        ];
+
+        var currentThemeIndex = 0;
+        var isDragEnabled = true;
+
+        // 添加节点
+        function addNode() {
+            var selected = jm.get_selected_node();
+            if (!selected) {
+                alert('请先选择一个节点');
+                return;
+            }
+            
+            var topic = prompt('请输入新节点的内容:', '新节点');
+            if (topic && topic.trim()) {
+                var nodeId = 'node_' + Date.now();
+                jm.add_node(selected, nodeId, topic.trim());
+                showMessage('已添加节点: ' + topic);
+                updateSelectedNodeDisplay();
+            }
+        }
+
+        // 编辑节点
+        function editNode() {
+            var selected = jm.get_selected_node();
+            if (!selected) {
+                alert('请先选择一个节点');
+                return;
+            }
+            
+            var newTopic = prompt('请输入新的节点内容:', selected.topic);
+            if (newTopic && newTopic.trim()) {
+                jm.update_node(selected.id, newTopic.trim());
+                showMessage('已更新节点: ' + newTopic);
+                updateSelectedNodeDisplay();
+            }
+        }
+
+        // 删除节点
+        function removeNode() {
+            var selected = jm.get_selected_node();
+            if (!selected) {
+                alert('请先选择一个节点');
+                return;
+            }
+            
+            if (selected.id === jm.get_root().id) {
+                alert('根节点不能删除');
+                return;
+            }
+            
+            if (confirm('确定要删除节点 "' + selected.topic + '" 及其所有子节点吗？')) {
+                var topic = selected.topic;
+                jm.remove_node(selected);
+                showMessage('已删除节点: ' + topic);
+                updateSelectedNodeDisplay();
+            }
+        }
+
+        // 展开全部
+        function expandAll() {
+            jm.expand_all();
+            showMessage('已展开所有节点');
+        }
+
+        // 收起全部
+        function collapseAll() {
+            var root = jm.get_root();
+            if (root.children) {
+                root.children.forEach(function(child) {
+                    jm.collapse_node(child);
+                });
+            }
+            showMessage('已收起所有子节点');
+        }
+
+        // 切换主题
+        function changeTheme() {
+            currentThemeIndex = (currentThemeIndex + 1) % themes.length;
+            var theme = themes[currentThemeIndex];
+            jm.set_theme(theme.name);
+            document.getElementById('currentTheme').textContent = theme.label;
+            showMessage('已切换到主题: ' + theme.label);
+        }
+
+        // 切换拖拽功能
+        function toggleDrag() {
+            if (isDragEnabled) {
+                jm.disable_draggable_node();
+                isDragEnabled = false;
+                document.getElementById('dragStatus').textContent = '启用拖拽';
+                document.getElementById('dragEnabled').textContent = '已禁用';
+                showMessage('已禁用拖拽功能');
+            } else {
+                jm.enable_draggable_node();
+                isDragEnabled = true;
+                document.getElementById('dragStatus').textContent = '禁用拖拽';
+                document.getElementById('dragEnabled').textContent = '已启用';
+                showMessage('已启用拖拽功能');
+            }
+        }
+
+        // 导出数据
+        function exportData() {
+            var data = jm.get_data('node_tree');
+            var jsonStr = JSON.stringify(data, null, 2);
+            
+            var newWindow = window.open('', '_blank', 'width=900,height=700');
+            var htmlContent = '<!DOCTYPE html><html><head><title>思维导图数据导出</title>';
+            htmlContent += '<style>body{font-family:Monaco,Consolas,monospace;margin:30px;background:#f8f9fa;}';
+            htmlContent += '.container{background:white;padding:25px;border-radius:8px;box-shadow:0 2px 10px rgba(0,0,0,0.1);}';
+            htmlContent += 'h2{color:#2c3e50;margin:0 0 20px 0;}';
+            htmlContent += 'pre{background:#f8f9fa;padding:20px;border-radius:6px;overflow:auto;border:1px solid #dee2e6;}</style>';
+            htmlContent += '</head><body><div class="container">';
+            htmlContent += '<h2>🧠 思维导图 JSON 数据</h2>';
+            htmlContent += '<pre>' + htmlContent.replace(/</g, '&lt;').replace(/>/g, '&gt;') + jsonStr + '</pre>';
+            htmlContent += '</div></body></html>';
+            
+            newWindow.document.write(htmlContent);
+            newWindow.document.close();
+        }
+
+        // 更新选中节点显示
+        function updateSelectedNodeDisplay() {
+            var selected = jm.get_selected_node();
+            var display = selected ? selected.topic : '无';
+            if (display.length > 15) {
+                display = display.substring(0, 15) + '...';
+            }
+            document.getElementById('selectedNode').textContent = display;
+        }
+
+        // 显示消息
+        function showMessage(message) {
+            console.log('jsMind: ' + message);
+            
+            // 创建临时消息提示
+            var toast = document.createElement('div');
+            toast.style.cssText = 'position:fixed;top:20px;right:20px;background:#28a745;color:white;padding:12px 20px;border-radius:6px;z-index:9999;font-size:14px;box-shadow:0 4px 12px rgba(0,0,0,0.15);';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            setTimeout(function() {
+                toast.style.opacity = '0';
+                toast.style.transition = 'opacity 0.3s ease';
+                setTimeout(function() {
+                    document.body.removeChild(toast);
+                }, 300);
+            }, 2000);
+        }
+
+        // 事件监听
+        jm.add_event_listener(function(type, data) {
+            if (type === 'select_node') {
+                updateSelectedNodeDisplay();
+                updateNodeDetails(data.node.id);
+                console.log('选中节点:', data.node.topic);
+                
+                // 同步左侧列表的选中状态
+                var allItems = document.querySelectorAll('.node-item');
+                allItems.forEach(function(item) {
+                    item.classList.remove('active');
+                });
+                var selectedItem = document.querySelector(`[data-node-id="${data.node.id}"]`);
+                if (selectedItem) {
+                    selectedItem.classList.add('active');
+                }
+            } else if (type === 'edit_node') {
+                console.log('编辑节点:', data.node.topic);
+                generateNodeList(); // 重新生成节点列表
+                updateNodeDetails(data.node.id); // 更新详情
+            } else if (type === 'move_node') {
+                showMessage('节点已移动: ' + data.node.topic);
+                console.log('移动节点:', data.node.topic, '到新位置');
+                generateNodeList(); // 重新生成节点列表
+            } else if (type === 'add_node') {
+                console.log('添加节点:', data.node.topic);
+                generateNodeList(); // 重新生成节点列表
+                showMessage('✅ 已添加节点: ' + data.node.topic);
+            } else if (type === 'remove_node') {
+                console.log('删除节点:', data.node.topic);
+                generateNodeList(); // 重新生成节点列表
+                // 清空详情面板
+                document.getElementById('nodeDetails').innerHTML = '<div class="no-selection">请选择一个节点查看详情</div>';
+                showMessage('🗑️ 已删除节点: ' + data.node.topic);
+            }
+        });
+
+        // 页面加载完成
+        window.addEventListener('load', function() {
+            updateSelectedNodeDisplay();
+            showMessage('🎉 jsMind 节点管理系统已启动！');
+            console.log('jsMind 节点管理系统已启动');
+            console.log('版本: 0.8.7');
+            console.log('拖拽功能: 已启用');
+            console.log('当前主题:', themes[currentThemeIndex].label);
+            
+            // 初始化节点列表 - 多次尝试确保生成成功
+            setTimeout(function() {
+                generateNodeList();
+                console.log('📋 第一次尝试生成节点列表');
+            }, 300);
+            
+            setTimeout(function() {
+                generateNodeList();
+                console.log('📋 第二次尝试生成节点列表');
+            }, 800);
+            
+            setTimeout(function() {
+                generateNodeList();
+                console.log('📋 第三次尝试生成节点列表');
+            }, 1500);
+        });
+
+        // 添加键盘支持提示
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'h') {
+                e.preventDefault();
+                alert('快捷键提示:\n\nCtrl+Enter - 添加子节点\nEnter - 添加兄弟节点\nF2 - 编辑节点\nDelete - 删除节点\nSpace - 展开/收起节点\n方向键 - 选择相邻节点\n\n鼠标操作:\n- 拖拽节点重新组织结构\n- 双击节点编辑内容\n- 滚轮缩放视图');
+            }
+        });
+
+        // 添加帮助按钮控制显示/隐藏功能
+        function toggleHelp() {
+            var helpSection = document.getElementById('helpSection');
+            var toggleBtn = document.getElementById('helpToggleBtn');
+            
+            if (helpSection.style.display === 'none') {
+                helpSection.style.display = 'block';
+                toggleBtn.textContent = '📖 隐藏帮助';
+                showMessage('📖 操作指南已显示');
+            } else {
+                helpSection.style.display = 'none';
+                toggleBtn.textContent = '📖 显示帮助';
+                showMessage('📖 操作指南已隐藏');
+            }
+        }
+
+        // 生成节点列表
+        function generateNodeList() {
+            console.log('🔧 开始生成节点列表...');
+            var nodeListContainer = document.getElementById('nodeList');
+            console.log('📍 nodeList容器:', nodeListContainer);
+            
+            var rootNode = jm.get_root();
+            console.log('🌳 根节点:', rootNode);
+            
+            if (!nodeListContainer) {
+                console.error('❌ 找不到nodeList容器！');
+                return;
+            }
+            
+            if (!rootNode) {
+                console.log('⚠️ 没有根节点，显示暂无节点');
+                nodeListContainer.innerHTML = '<div class="no-nodes">暂无节点</div>';
+                return;
+            }
+            
+            var nodeItems = [];
+            
+            function collectNodes(node, depth = 0) {
+                var indent = '　'.repeat(depth);
+                nodeItems.push({
+                    id: node.id,
+                    topic: node.topic,
+                    depth: depth,
+                    indent: indent,
+                    node: node
+                });
+                console.log('📝 收集节点:', depth, node.topic);
+                
+                if (node.children) {
+                    node.children.forEach(function(child) {
+                        collectNodes(child, depth + 1);
+                    });
+                }
+            }
+            
+            collectNodes(rootNode);
+            console.log('📊 总共收集到', nodeItems.length, '个节点');
+            
+            var html = '';
+            nodeItems.forEach(function(item) {
+                html += `
+                    <div class="node-item" onclick="selectNodeFromList('${item.id}')" data-node-id="${item.id}">
+                        <div class="node-title">${item.indent}${item.topic}</div>
+                        <div class="node-info">层级: ${item.depth} | ID: ${item.id}</div>
+                    </div>
+                `;
+            });
+            
+            nodeListContainer.innerHTML = html;
+            console.log('✅ 节点列表HTML已更新，长度:', html.length);
+            console.log('🎯 节点列表生成完成！');
+        }
+        
+        // 从列表选择节点
+        function selectNodeFromList(nodeId) {
+            // 移除之前的选中状态
+            var allItems = document.querySelectorAll('.node-item');
+            allItems.forEach(function(item) {
+                item.classList.remove('active');
+            });
+            
+            // 添加选中状态
+            var selectedItem = document.querySelector(`[data-node-id="${nodeId}"]`);
+            if (selectedItem) {
+                selectedItem.classList.add('active');
+            }
+            
+            // 在思维导图中选中节点
+            jm.select_node(nodeId);
+            
+            // 将选中的节点作为中心节点重新显示思维导图
+            var selectedNode = jm.get_node(nodeId);
+            if (selectedNode) {
+                // 创建以选中节点为根的新数据结构
+                var newMindData = createSubMindMap(selectedNode);
+                
+                // 重新显示思维导图
+                jm.show(newMindData);
+                
+                // 启用拖拽功能
+                jm.enable_draggable_node();
+                
+                showMessage('🎯 已将 "' + selectedNode.topic + '" 设为中心节点');
+                console.log('设置中心节点:', selectedNode.topic);
+            }
+            
+            // 更新详情面板
+            updateNodeDetails(nodeId);
+        }
+        
+        // 创建以指定节点为根的子思维导图
+        function createSubMindMap(centerNode) {
+            return {
+                meta: {
+                    name: "动态中心 - " + centerNode.topic,
+                    author: "NodeMind System", 
+                    version: "1.0.0"
+                },
+                format: "node_tree",
+                data: {
+                    id: centerNode.id,
+                    topic: centerNode.topic,
+                    children: centerNode.children || []
+                }
+            };
+        }
+        
+        // 添加"回到原始视图"按钮功能
+        function resetToOriginalView() {
+            jm.show(mindData);
+            jm.enable_draggable_node();
+            generateNodeList();
+            showMessage('🏠 已回到原始思维导图视图');
+            
+            // 清除左侧列表的选中状态
+            var allItems = document.querySelectorAll('.node-item');
+            allItems.forEach(function(item) {
+                item.classList.remove('active');
+            });
+            
+            // 清空详情面板
+            document.getElementById('nodeDetails').innerHTML = '<div class="no-selection">请从左侧列表或思维导图中选择一个节点查看详情</div>';
+        }
+        
+        // 更新节点详情面板
+        function updateNodeDetails(nodeId) {
+            var node = jm.get_node(nodeId);
+            var detailsContainer = document.getElementById('nodeDetails');
+            
+            if (!node) {
+                detailsContainer.innerHTML = '<div class="no-selection">节点不存在</div>';
+                return;
+            }
+            
+            // 模拟节点的详细信息（实际应用中可以从数据库获取）
+            var createTime = new Date().toLocaleString('zh-CN');
+            var tags = ['重要', '项目相关', '待处理']; // 示例标签
+            
+            var html = `
+                <div class="detail-section">
+                    <div class="detail-label">📝 标题</div>
+                    <div class="detail-content">${node.topic}</div>
+                </div>
+                
+                <div class="detail-section">
+                    <div class="detail-label">📄 内容描述</div>
+                    <textarea class="detail-content editable" placeholder="暂无内容描述，点击这里添加...">${node.topic}的详细描述内容...</textarea>
+                </div>
+                
+                <div class="detail-section">
+                    <div class="detail-label">🕐 创建时间</div>
+                    <div class="detail-content">${createTime}</div>
+                </div>
+                
+                <div class="detail-section">
+                    <div class="detail-label">🏷️ 标签</div>
+                    <div class="detail-content">
+                        <div class="tag-container">
+                            ${tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="detail-section">
+                    <div class="detail-label">📊 节点信息</div>
+                    <div class="detail-content">
+                        <div>节点ID: ${node.id}</div>
+                        <div>子节点数: ${node.children ? node.children.length : 0}</div>
+                        <div>层级深度: ${getNodeDepth(node)}</div>
+                    </div>
+                </div>
+            `;
+            
+            detailsContainer.innerHTML = html;
+        }
+        
+        // 获取节点深度
+        function getNodeDepth(targetNode) {
+            var rootNode = jm.get_root();
+            
+            function findDepth(node, depth = 0) {
+                if (node.id === targetNode.id) {
+                    return depth;
+                }
+                
+                if (node.children) {
+                    for (var i = 0; i < node.children.length; i++) {
+                        var result = findDepth(node.children[i], depth + 1);
+                        if (result !== -1) {
+                            return result;
+                        }
+                    }
+                }
+                
+                return -1;
+            }
+            
+            return findDepth(rootNode);
+        }
+    </script>
+</body>
+</html> 

@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>jsMind 本地版演示（支持拖拽功能）</title>
+    <!-- 引入本地安装的 jsMind -->
+    <link type="text/css" rel="stylesheet" href="./node_modules/jsmind/style/jsmind.css" />
+    <script type="text/javascript" src="./node_modules/jsmind/es6/jsmind.js"></script>
+    <!-- 引入本地拖拽功能插件 -->
+    <script type="text/javascript" src="./node_modules/jsmind/es6/jsmind.draggable-node.js"></script>
+    
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            margin: 0 0 10px 0;
+            font-size: 28px;
+            font-weight: 600;
+        }
+        
+        .header .subtitle {
+            font-size: 16px;
+            opacity: 0.9;
+            margin: 0 0 15px 0;
+        }
+        
+        .feature-highlight {
+            background: rgba(255,255,255,0.1);
+            padding: 12px 18px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .toolbar {
+            background: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            border-bottom: 2px solid #dee2e6;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .btn:hover {
+            background: #0056b3;
+            transform: translateY(-1px);
+        }
+        
+        .btn-success { background: #28a745; }
+        .btn-success:hover { background: #1e7e34; }
+        
+        .btn-danger { background: #dc3545; }
+        .btn-danger:hover { background: #c82333; }
+        
+        .btn-warning { background: #ffc107; color: #212529; }
+        .btn-warning:hover { background: #e0a800; }
+        
+        .btn-secondary { background: #6c757d; }
+        .btn-secondary:hover { background: #545b62; }
+        
+        .btn-info { background: #17a2b8; }
+        .btn-info:hover { background: #138496; }
+        
+        #jsmind_container {
+            width: 100%;
+            height: 650px;
+            background: #fff;
+        }
+        
+        .drag-hint {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 15px;
+            margin: 20px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 500;
+        }
+        
+        .drag-hint strong {
+            color: #d63384;
+        }
+        
+        .status {
+            background: linear-gradient(135deg, #343a40 0%, #495057 100%);
+            color: white;
+            padding: 12px 20px;
+            font-size: 13px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #28a745;
+        }
+        
+        .help {
+            padding: 25px;
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+        }
+        
+        .help h3 {
+            margin: 0 0 20px 0;
+            color: #1565c0;
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .help-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        
+        .help-item {
+            background: rgba(255,255,255,0.9);
+            padding: 18px;
+            border-radius: 8px;
+            border-left: 4px solid;
+        }
+        
+        .help-item.mouse { border-left-color: #007bff; }
+        .help-item.keyboard { border-left-color: #28a745; }
+        .help-item.drag { border-left-color: #fd7e14; }
+        .help-item.features { border-left-color: #6f42c1; }
+        
+        .help-item h4 {
+            margin: 0 0 12px 0;
+            color: #2c3e50;
+            font-size: 15px;
+            font-weight: 600;
+        }
+        
+        .help-item ul {
+            margin: 0;
+            padding-left: 20px;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+        
+        .help-item li {
+            margin: 6px 0;
+        }
+        
+        @media (max-width: 768px) {
+            .toolbar {
+                padding: 15px;
+                gap: 8px;
+            }
+            
+            .btn {
+                padding: 8px 14px;
+                font-size: 13px;
+            }
+            
+            #jsmind_container {
+                height: 500px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧠 jsMind 本地版演示</h1>
+            <p class="subtitle">基于本地安装的 jsMind v0.8.7 思维导图框架</p>
+            <div class="feature-highlight">
+                ✨ <strong>新增功能：</strong> 支持拖拽节点重新组织思维导图结构
+            </div>
+        </div>
+        
+        <div class="toolbar">
+            <button class="btn" onclick="addNode()">
+                ➕ 添加节点
+            </button>
+            <button class="btn btn-warning" onclick="editNode()">
+                ✏️ 编辑节点
+            </button>
+            <button class="btn btn-danger" onclick="removeNode()">
+                🗑️ 删除节点
+            </button>
+            <button class="btn btn-success" onclick="expandAll()">
+                📂 展开全部
+            </button>
+            <button class="btn btn-secondary" onclick="collapseAll()">
+                📁 收起全部
+            </button>
+            <button class="btn btn-info" onclick="changeTheme()">
+                🎨 切换主题
+            </button>
+            <button class="btn btn-secondary" onclick="exportData()">
+                💾 导出数据
+            </button>
+            <button class="btn" onclick="toggleDrag()">
+                🔀 <span id="dragStatus">禁用拖拽</span>
+            </button>
+        </div>
+        
+        <div class="drag-hint">
+            <strong>🎯 拖拽操作指南：</strong> 按住鼠标左键拖拽任意节点到其他节点上，松开鼠标后被拖拽的节点会成为目标节点的子节点！
+        </div>
+        
+        <div id="jsmind_container"></div>
+        
+        <div class="status">
+            <div class="status-item">
+                <div class="status-indicator"></div>
+                <span>jsMind 本地版本已加载</span>
+            </div>
+            <div class="status-item">
+                当前主题: <span id="currentTheme">primary</span>
+            </div>
+            <div class="status-item">
+                选中节点: <span id="selectedNode">无</span>
+            </div>
+            <div class="status-item">
+                拖拽状态: <span id="dragEnabled">已启用</span>
+            </div>
+        </div>
+        
+        <div class="help">
+            <h3>📖 完整操作指南</h3>
+            <div class="help-grid">
+                <div class="help-item mouse">
+                    <h4>🖱️ 鼠标操作</h4>
+                    <ul>
+                        <li>单击节点选中</li>
+                        <li>双击节点编辑内容</li>
+                        <li>拖拽画布移动视图</li>
+                        <li>滚轮缩放思维导图</li>
+                        <li><strong>拖拽节点重新组织结构</strong></li>
+                    </ul>
+                </div>
+                <div class="help-item keyboard">
+                    <h4>⌨️ 快捷键</h4>
+                    <ul>
+                        <li>Ctrl+Enter - 添加子节点</li>
+                        <li>Enter - 添加兄弟节点</li>
+                        <li>F2 - 编辑节点</li>
+                        <li>Delete - 删除节点</li>
+                        <li>Space - 展开/收起节点</li>
+                        <li>方向键 - 选择相邻节点</li>
+                    </ul>
+                </div>
+                <div class="help-item drag">
+                    <h4>🔀 拖拽功能详解</h4>
+                    <ul>
+                        <li>按住鼠标左键开始拖拽</li>
+                        <li>拖拽到目标节点上方</li>
+                        <li>释放鼠标完成移动</li>
+                        <li>支持跨分支拖拽移动</li>
+                        <li>可开启/关闭拖拽功能</li>
+                        <li>自动重新排列布局</li>
+                    </ul>
+                </div>
+                <div class="help-item features">
+                    <h4>🎨 高级功能</h4>
+                    <ul>
+                        <li>15种内置主题</li>
+                        <li>自定义节点样式</li>
+                        <li>JSON数据导出</li>
+                        <li>移动端支持</li>
+                        <li>快捷键操作</li>
+                        <li>实时状态反馈</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        // 思维导图数据
+        var mindData = {
+            meta: {
+                name: "jsMind本地拖拽演示",
+                author: "NodeMind Demo",
+                version: "1.0.0"
+            },
+            format: "node_tree",
+            data: {
+                id: "root",
+                topic: "🧠 jsMind 本地拖拽演示",
+                children: [
+                    {
+                        id: "features",
+                        topic: "🚀 核心特性",
+                        direction: "right",
+                        children: [
+                            { id: "feature1", topic: "纯JavaScript实现" },
+                            { id: "feature2", topic: "HTML5 Canvas渲染" },
+                            { id: "feature3", topic: "节点拖拽功能" },
+                            { id: "feature4", topic: "本地库文件支持" }
+                        ]
+                    },
+                    {
+                        id: "drag_features",
+                        topic: "🔀 拖拽特性",
+                        direction: "right",
+                        children: [
+                            { id: "drag1", topic: "拖拽节点移动" },
+                            { id: "drag2", topic: "跨分支重组" },
+                            { id: "drag3", topic: "实时视觉反馈" },
+                            { id: "drag4", topic: "自动布局调整" }
+                        ]
+                    },
+                    {
+                        id: "applications",
+                        topic: "📋 应用场景",
+                        direction: "right",
+                        children: [
+                            { id: "app1", topic: "知识管理" },
+                            { id: "app2", topic: "项目规划" },
+                            { id: "app3", topic: "学习笔记" },
+                            { id: "app4", topic: "团队协作" }
+                        ]
+                    },
+                    {
+                        id: "advantages",
+                        topic: "⭐ 技术优势",
+                        direction: "right",
+                        children: [
+                            { id: "adv1", topic: "离线使用" },
+                            { id: "adv2", topic: "高性能渲染" },
+                            { id: "adv3", topic: "易于集成" },
+                            { id: "adv4", topic: "开源免费" }
+                        ]
+                    }
+                ]
+            }
+        };
+
+        // 配置选项，启用拖拽功能
+        var options = {
+            container: 'jsmind_container',
+            editable: true,
+            theme: 'primary',
+            view: {
+                engine: 'canvas',
+                hmargin: 120,
+                vmargin: 60,
+                line_width: 2,
+                line_color: '#566'
+            },
+            layout: {
+                hspace: 30,
+                vspace: 20,
+                pspace: 13
+            },
+            shortcut: {
+                enable: true,
+                handles: {},
+                mapping: {
+                    addchild: 4096 + 13,  // Ctrl+Enter 添加子节点
+                    addbrother: 13,  // Enter
+                    editnode: 113,   // F2
+                    delnode: 46,     // Delete
+                    toggle: 32,      // Space
+                    left: 37, up: 38, right: 39, down: 40
+                }
+            }
+        };
+
+        // 创建jsMind实例
+        var jm = new jsMind(options);
+        jm.show(mindData);
+
+        // 启用拖拽功能
+        jm.enable_draggable_node();
+
+        // 主题列表
+        var themes = [
+            { name: 'primary', label: '蓝色主题' },
+            { name: 'success', label: '成功绿' },
+            { name: 'warning', label: '警告橙' },
+            { name: 'danger', label: '危险红' },
+            { name: 'info', label: '信息青' },
+            { name: 'greensea', label: '海绿色' },
+            { name: 'nephritis', label: '翡翠绿' },
+            { name: 'belizehole', label: '深蓝色' },
+            { name: 'wisteria', label: '紫藤色' },
+            { name: 'asphalt', label: '沥青灰' },
+            { name: 'orange', label: '橙红色' },
+            { name: 'pumpkin', label: '南瓜色' },
+            { name: 'pomegranate', label: '石榴红' },
+            { name: 'clouds', label: '云朵白' },
+            { name: 'asbestos', label: '石棉灰' }
+        ];
+
+        var currentThemeIndex = 0;
+        var isDragEnabled = true;
+
+        // 添加节点
+        function addNode() {
+            var selected = jm.get_selected_node();
+            if (!selected) {
+                alert('请先选择一个节点');
+                return;
+            }
+            
+            var topic = prompt('请输入新节点的内容:', '新节点');
+            if (topic && topic.trim()) {
+                var nodeId = 'node_' + Date.now();
+                jm.add_node(selected, nodeId, topic.trim());
+                showMessage('已添加节点: ' + topic);
+                updateSelectedNodeDisplay();
+            }
+        }
+
+        // 编辑节点
+        function editNode() {
+            var selected = jm.get_selected_node();
+            if (!selected) {
+                alert('请先选择一个节点');
+                return;
+            }
+            
+            var newTopic = prompt('请输入新的节点内容:', selected.topic);
+            if (newTopic && newTopic.trim()) {
+                jm.update_node(selected.id, newTopic.trim());
+                showMessage('已更新节点: ' + newTopic);
+                updateSelectedNodeDisplay();
+            }
+        }
+
+        // 删除节点
+        function removeNode() {
+            var selected = jm.get_selected_node();
+            if (!selected) {
+                alert('请先选择一个节点');
+                return;
+            }
+            
+            if (selected.id === jm.get_root().id) {
+                alert('根节点不能删除');
+                return;
+            }
+            
+            if (confirm('确定要删除节点 "' + selected.topic + '" 及其所有子节点吗？')) {
+                var topic = selected.topic;
+                jm.remove_node(selected);
+                showMessage('已删除节点: ' + topic);
+                updateSelectedNodeDisplay();
+            }
+        }
+
+        // 展开全部
+        function expandAll() {
+            jm.expand_all();
+            showMessage('已展开所有节点');
+        }
+
+        // 收起全部
+        function collapseAll() {
+            var root = jm.get_root();
+            if (root.children) {
+                root.children.forEach(function(child) {
+                    jm.collapse_node(child);
+                });
+            }
+            showMessage('已收起所有子节点');
+        }
+
+        // 切换主题
+        function changeTheme() {
+            currentThemeIndex = (currentThemeIndex + 1) % themes.length;
+            var theme = themes[currentThemeIndex];
+            jm.set_theme(theme.name);
+            document.getElementById('currentTheme').textContent = theme.label;
+            showMessage('已切换到主题: ' + theme.label);
+        }
+
+        // 切换拖拽功能
+        function toggleDrag() {
+            if (isDragEnabled) {
+                jm.disable_draggable_node();
+                isDragEnabled = false;
+                document.getElementById('dragStatus').textContent = '启用拖拽';
+                document.getElementById('dragEnabled').textContent = '已禁用';
+                showMessage('已禁用拖拽功能');
+            } else {
+                jm.enable_draggable_node();
+                isDragEnabled = true;
+                document.getElementById('dragStatus').textContent = '禁用拖拽';
+                document.getElementById('dragEnabled').textContent = '已启用';
+                showMessage('已启用拖拽功能');
+            }
+        }
+
+        // 导出数据
+        function exportData() {
+            var data = jm.get_data('node_tree');
+            var jsonStr = JSON.stringify(data, null, 2);
+            
+            var newWindow = window.open('', '_blank', 'width=900,height=700');
+            var htmlContent = '<!DOCTYPE html><html><head><title>本地版思维导图数据导出</title>';
+            htmlContent += '<style>body{font-family:Monaco,Consolas,monospace;margin:30px;background:#f8f9fa;}';
+            htmlContent += '.container{background:white;padding:25px;border-radius:8px;box-shadow:0 2px 10px rgba(0,0,0,0.1);}';
+            htmlContent += 'h2{color:#2c3e50;margin:0 0 20px 0;}';
+            htmlContent += 'pre{background:#f8f9fa;padding:20px;border-radius:6px;overflow:auto;border:1px solid #dee2e6;}</style>';
+            htmlContent += '</head><body><div class="container">';
+            htmlContent += '<h2>🧠 jsMind 本地版数据导出</h2>';
+            htmlContent += '<pre>' + jsonStr + '</pre>';
+            htmlContent += '</div></body></html>';
+            
+            newWindow.document.write(htmlContent);
+            newWindow.document.close();
+        }
+
+        // 更新选中节点显示
+        function updateSelectedNodeDisplay() {
+            var selected = jm.get_selected_node();
+            var display = selected ? selected.topic : '无';
+            if (display.length > 15) {
+                display = display.substring(0, 15) + '...';
+            }
+            document.getElementById('selectedNode').textContent = display;
+        }
+
+        // 显示消息
+        function showMessage(message) {
+            console.log('jsMind: ' + message);
+            
+            // 创建临时消息提示
+            var toast = document.createElement('div');
+            toast.style.cssText = 'position:fixed;top:20px;right:20px;background:#28a745;color:white;padding:12px 20px;border-radius:6px;z-index:9999;font-size:14px;box-shadow:0 4px 12px rgba(0,0,0,0.15);opacity:0;transition:opacity 0.3s ease;';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            // 显示动画
+            setTimeout(function() {
+                toast.style.opacity = '1';
+            }, 10);
+            
+            // 隐藏动画
+            setTimeout(function() {
+                toast.style.opacity = '0';
+                setTimeout(function() {
+                    if (document.body.contains(toast)) {
+                        document.body.removeChild(toast);
+                    }
+                }, 300);
+            }, 2500);
+        }
+
+        // 事件监听
+        jm.add_event_listener(function(type, data) {
+            if (type === 'select_node') {
+                updateSelectedNodeDisplay();
+                console.log('选中节点:', data.node.topic);
+            } else if (type === 'edit_node') {
+                console.log('编辑节点:', data.node.topic);
+            } else if (type === 'move_node') {
+                showMessage('🔀 节点已移动: ' + data.node.topic);
+                console.log('移动节点:', data.node.topic, '到新位置');
+                updateSelectedNodeDisplay();
+            }
+        });
+
+        // 页面加载完成
+        window.addEventListener('load', function() {
+            updateSelectedNodeDisplay();
+            showMessage('🎉 jsMind 本地拖拽演示已启动！');
+            console.log('jsMind 本地拖拽版本演示已启动');
+            console.log('版本: 0.8.7 (本地版本)');
+            console.log('拖拽功能: 已启用');
+            console.log('当前主题:', themes[currentThemeIndex].label);
+        });
+
+        // 添加键盘帮助
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'h') {
+                e.preventDefault();
+                alert('jsMind 拖拽演示 - 快捷键帮助:\n\n基本操作:\n• Ctrl+Enter - 添加子节点\n• Enter - 添加兄弟节点\n• F2 - 编辑节点内容\n• Delete - 删除节点\n• Space - 展开/收起节点\n• 方向键 - 选择相邻节点\n\n拖拽操作:\n• 鼠标左键拖拽节点移动\n• 拖拽到目标节点上释放\n• 支持跨分支拖拽\n• 实时视觉反馈\n\nCtrl+H - 显示此帮助');
+            }
+        });
+    </script>
+</body>
+</html> 

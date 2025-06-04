@@ -1,0 +1,30 @@
+{
+  "name": "jsmind-demo",
+  "version": "1.0.0",
+  "description": "jsMind思维导图演示项目",
+  "main": "jsmind-demo.html",
+  "scripts": {
+    "start": "npx http-server . -p 8080 -o",
+    "dev": "npx http-server . -p 8080 -o jsmind-demo.html"
+  },
+  "dependencies": {
+    "jsmind": "^0.8.7"
+  },
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  },
+  "keywords": [
+    "jsmind",
+    "mindmap",
+    "思维导图",
+    "javascript",
+    "canvas"
+  ],
+  "author": "demo",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hizzgdev/jsmind"
+  },
+  "homepage": "https://hizzgdev.github.io/jsmind/"
+} 
