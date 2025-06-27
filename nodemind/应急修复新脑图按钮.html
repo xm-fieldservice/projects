@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>应急修复新脑图按钮</title>
+</head>
+<body>
+    <h1>🚨 应急修复新脑图按钮</h1>
+    <p>这个页面将修复主页面的新脑图按钮问题。</p>
+    
+    <button onclick="applyFix()" style="background: #28a745; color: white; padding: 15px 30px; border: none; border-radius: 5px; font-size: 16px; cursor: pointer;">
+        🔧 立即修复新脑图按钮
+    </button>
+    
+    <div id="status" style="margin: 20px 0; padding: 15px; border-radius: 5px; background: #f8f9fa;">
+        等待修复...
+    </div>
+
+    <script>
+        function applyFix() {
+            const status = document.getElementById('status');
+            status.innerHTML = '🔄 正在应用修复...';
+            status.style.background = '#fff3cd';
+            
+            try {
+                // 创建修复脚本
+                const fixScript = `
+                    // 🆕 新脑图按钮处理函数（应急修复）
+                    window.handleNewMindmap = function() {
+                        console.log('🆕 新脑图按钮被点击！');
+                        
+                        if (confirm('确定要创建一个全新的空白脑图吗？\\n\\n⚠️ 所有未保存的数据将被清除！')) {
+                            try {
+                                console.log('🔄 用户确认，开始清除数据...');
+                                
+                                // 显示处理消息
+                                const messageDiv = document.createElement('div');
+                                messageDiv.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #007bff; color: white; padding: 15px 20px; border-radius: 5px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); z-index: 10000; font-family: Arial, sans-serif; font-size: 14px;';
+                                messageDiv.textContent = '🔄 正在清除数据并创建新脑图...';
+                                document.body.appendChild(messageDiv);
+                                
+                                setTimeout(() => {
+                                    localStorage.clear();
+                                    console.log('✅ localStorage已清除');
+                                    messageDiv.textContent = '✅ 数据已清除，正在重新加载...';
+                                    messageDiv.style.background = '#28a745';
+                                    setTimeout(() => { window.location.reload(); }, 1000);
+                                }, 500);
+                                
+                            } catch (error) {
+                                console.error('❌ 创建新脑图时发生错误:', error);
+                                alert('❌ 创建新脑图失败，请手动刷新页面');
+                            }
+                        } else {
+                            console.log('ℹ️ 用户取消了新脑图操作');
+                        }
+                    };
+                    
+                    console.log('✅ 新脑图按钮修复已应用！');
+                `;
+                
+                // 在当前页面执行修复
+                eval(fixScript);
+                
+                // 将修复代码保存到localStorage，以便在主页面使用
+                localStorage.setItem('nodemind_button_fix', fixScript);
+                
+                status.innerHTML = '✅ 修复成功！现在请刷新主页面 (index.html) 来应用修复。';
+                status.style.background = '#d4edda';
+                status.style.color = '#155724';
+                
+                // 提供快速链接
+                setTimeout(() => {
+                    status.innerHTML += '<br><br><a href="index.html" style="background: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">🚀 打开主页面</a>';
+                }, 1000);
+                
+            } catch (error) {
+                status.innerHTML = `❌ 修复失败: ${error.message}`;
+                status.style.background = '#f8d7da';
+                status.style.color = '#721c24';
+            }
+        }
+        
+        // 检查是否已经修复
+        window.addEventListener('load', function() {
+            const existingFix = localStorage.getItem('nodemind_button_fix');
+            if (existingFix) {
+                document.getElementById('status').innerHTML = 'ℹ️ 检测到已有修复代码。如果主页面仍有问题，请重新应用修复。';
+                document.getElementById('status').style.background = '#d1ecf1';
+            }
+        });
+    </script>
+</body>
+</html> 

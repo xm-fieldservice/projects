@@ -1,0 +1,23 @@
+{
+    "mcpServers": {
+        "task-master-ai": {
+            "command": "npx",
+            "args": [
+                "-y",
+                "--package=task-master-ai",
+                "task-master-ai"
+            ],
+            "env": {
+                "ANTHROPIC_API_KEY": "ANTHROPIC_API_KEY_HERE",
+                "PERPLEXITY_API_KEY": "PERPLEXITY_API_KEY_HERE",
+                "OPENAI_API_KEY": "OPENAI_API_KEY_HERE",
+                "GOOGLE_API_KEY": "AIzaSyAlH3nmiyX4aYY72UiLucB-Nug5a4DDLSo",
+                "XAI_API_KEY": "XAI_API_KEY_HERE",
+                "OPENROUTER_API_KEY": "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",
+                "MISTRAL_API_KEY": "MISTRAL_API_KEY_HERE",
+                "AZURE_OPENAI_API_KEY": "AZURE_OPENAI_API_KEY_HERE",
+                "OLLAMA_API_KEY": "OLLAMA_API_KEY_HERE"
+            }
+        }
+    }
+}

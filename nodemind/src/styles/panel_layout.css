@@ -1,0 +1,131 @@
+/* 面板布局样式 - 模块化CSS */
+/* 创建日期: 2025-01-XX */
+
+/* 节点信息面板主容器标注 - 浅蓝色边框 */
+#injection-info-content {
+    border: 3px solid #87CEEB;
+    box-shadow: 0 0 10px rgba(135, 206, 235, 0.3);
+    padding-bottom: 200px;
+}
+
+/* 左侧面板标注 - 红色边框 */
+.left-panel, #left-panel {
+    border: 3px solid #FF0000 !important;
+    box-shadow: 0 0 10px rgba(255, 0, 0, 0.3) !important;
+    padding-bottom: 200px !important;
+}
+
+/* 三标签页组件样式调整 */
+.tags-section {
+    margin-top: 190px;
+}
+
+/* 内部标签页切换样式增强 */
+.inner-tab-button {
+    transition: all 0.3s ease;
+}
+
+.inner-tab-button:hover {
+    background: #f8f9fa;
+    color: #495057;
+}
+
+.inner-tab-button.active {
+    background: #fff;
+    color: #007bff;
+    font-weight: 600;
+}
+
+.inner-tab-button.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: #007bff;
+}
+
+/* 会话列表和模板列表容器样式 */
+.sessions-container,
+.templates-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    gap: 8px;
+    padding: 10px 0;
+}
+
+/* 空白列表项样式 */
+.session-item-empty,
+.template-item-empty {
+    background: #f8f9fa !important;
+    border: 1px dashed #dee2e6 !important;
+    color: #6c757d;
+    opacity: 0.7;
+    transition: all 0.2s ease;
+}
+
+.session-item-empty:hover,
+.template-item-empty:hover {
+    background: #e9ecef !important;
+    border-color: #adb5bd !important;
+    opacity: 1;
+    transform: none;
+    box-shadow: none;
+}
+
+/* 空白项目文本样式 */
+.session-item-empty .session-title,
+.session-item-empty .session-time,
+.template-item-empty .template-title,
+.template-item-empty .template-desc {
+    color: #adb5bd;
+    font-style: italic;
+}
+
+/* 确保6行均匀分布 */
+.sessions-container .session-item,
+.templates-container .template-item {
+    flex: 1;
+    min-height: 50px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    cursor: pointer;
+}
+
+/* 选中状态样式 */
+.session-item.session-selected {
+    background: #e3f2fd !important;
+    border-color: #2196f3 !important;
+    border-style: solid !important;
+    box-shadow: 0 2px 8px rgba(33, 150, 243, 0.2) !important;
+}
+
+.template-item.template-selected {
+    background: #e8f5e8 !important;
+    border-color: #4caf50 !important;
+    border-style: solid !important;
+    box-shadow: 0 2px 8px rgba(76, 175, 80, 0.2) !important;
+}
+
+/* 选中状态文字样式 */
+.session-item.session-selected .session-title,
+.session-item.session-selected .session-time {
+    color: #1976d2 !important;
+    font-weight: 600;
+}
+
+.template-item.template-selected .template-title,
+.template-item.template-selected .template-desc {
+    color: #388e3c !important;
+    font-weight: 600;
+}
+
+/* 点击反馈动画 */
+.session-item:active,
+.template-item:active {
+    transform: scale(0.98);
+    transition: transform 0.1s ease;
+} 

@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>清空按钮功能测试</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .btn { padding: 10px 20px; margin: 10px; border: none; border-radius: 4px; cursor: pointer; }
+        .btn-info { background: #17a2b8; color: white; }
+        .btn-warning { background: #ffc107; color: black; }
+        .content-editor { width: 100%; height: 200px; padding: 10px; border: 1px solid #ccc; border-radius: 4px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .log { background: #f8f9fa; padding: 10px; border-radius: 4px; font-family: monospace; white-space: pre-wrap; max-height: 200px; overflow-y: auto; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧹 清空按钮功能测试</h1>
+        
+        <div class="test-section">
+            <h3>📝 内容编辑器测试</h3>
+            <div class="button-group">
+                <button class="btn btn-info" onclick="clearContentEditor()" title="清空内容编辑器">🧹 清空</button>
+                <button class="btn btn-secondary" onclick="fillTestContent()" title="填入测试内容">📝 填入测试内容</button>
+                <button class="btn btn-secondary" onclick="checkElements()" title="检查元素">🔍 检查元素</button>
+            </div>
+            <br>
+            <textarea class="content-editor" id="content-editor" placeholder="在这里编辑节点内容...">这是一些测试内容，用于验证清空功能是否正常工作。</textarea>
+        </div>
+        
+        <div class="test-section">
+            <h3>📊 调试日志</h3>
+            <div id="debug-log" class="log">等待测试...</div>
+            <button class="btn" onclick="clearLog()">清除日志</button>
+        </div>
+        
+        <div class="test-section">
+            <h3>🧪 手动测试步骤</h3>
+            <ol>
+                <li>点击"填入测试内容"按钮，确保编辑器有内容</li>
+                <li>点击"🧹 清空"按钮，观察内容是否被清空</li>
+                <li>再次点击按钮（应该变为"🔄 恢复"），观察内容是否恢复</li>
+                <li>查看调试日志了解详细执行情况</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        // 清空内容编辑器（视觉清空，保留原始数据）
+        let originalContentBackup = ''; // 用于保存原始内容
+        let isContentCleared = false; // 标记是否已清空
+        
+        function log(message) {
+            const timestamp = new Date().toLocaleTimeString();
+            const logElement = document.getElementById('debug-log');
+            logElement.textContent += `[${timestamp}] ${message}\n`;
+            logElement.scrollTop = logElement.scrollHeight;
+            console.log(message);
+        }
+        
+        function clearContentEditor() {
+            log('🧹 [清空功能] 开始清空内容编辑器');
+            const contentEditor = document.getElementById('content-editor');
+            const clearButton = document.querySelector('button[onclick="clearContentEditor()"]');
+            
+            log('🔍 [检查] 内容编辑器元素: ' + (contentEditor ? '找到' : '未找到'));
+            log('🔍 [检查] 清空按钮元素: ' + (clearButton ? '找到' : '未找到'));
+            
+            if (!contentEditor) {
+                log('❌ [清空功能] 找不到内容编辑器元素');
+                return;
+            }
+            
+            log('📝 [状态] 当前清空状态: ' + (isContentCleared ? '已清空' : '未清空'));
+            log('📝 [状态] 当前内容长度: ' + contentEditor.value.length);
+            
+            // 如果还没有清空，则保存当前内容并清空显示
+            if (!isContentCleared) {
+                originalContentBackup = contentEditor.value;
+                contentEditor.value = '';
+                contentEditor.placeholder = '请输入新的会话内容...（原内容已保存）';
+                isContentCleared = true;
+                
+                // 更新按钮状态
+                if (clearButton) {
+                    clearButton.innerHTML = '🔄 恢复';
+                    clearButton.title = '恢复原始内容';
+                    clearButton.className = 'btn btn-warning';
+                }
+                
+                log('✅ [清空功能] 内容已视觉清空，原内容已备份');
+                log('📝 [清空功能] 备份内容长度: ' + originalContentBackup.length);
+            } else {
+                // 如果已经清空，则恢复原内容
+                contentEditor.value = originalContentBackup;
+                contentEditor.placeholder = '在这里编辑节点内容...';
+                isContentCleared = false;
+                
+                // 恢复按钮状态
+                if (clearButton) {
+                    clearButton.innerHTML = '🧹 清空';
+                    clearButton.title = '清空内容编辑器';
+                    clearButton.className = 'btn btn-info';
+                }
+                
+                log('🔄 [清空功能] 已恢复原始内容');
+            }
+            
+            // 聚焦到编辑器，方便用户输入
+            contentEditor.focus();
+            log('🎯 [清空功能] 已聚焦到编辑器');
+        }
+        
+        function fillTestContent() {
+            const contentEditor = document.getElementById('content-editor');
+            if (contentEditor) {
+                contentEditor.value = '这是一些测试内容，用于验证清空功能是否正常工作。\n\n包含多行文本和一些特殊字符：!@#$%^&*()';
+                log('📝 [测试] 已填入测试内容');
+            }
+        }
+        
+        function checkElements() {
+            log('🔍 [检查] 开始检查页面元素...');
+            
+            const contentEditor = document.getElementById('content-editor');
+            const clearButton = document.querySelector('button[onclick="clearContentEditor()"]');
+            
+            log('📝 content-editor 元素: ' + (contentEditor ? '存在' : '不存在'));
+            if (contentEditor) {
+                log('   - ID: ' + contentEditor.id);
+                log('   - 标签名: ' + contentEditor.tagName);
+                log('   - 内容长度: ' + contentEditor.value.length);
+                log('   - Placeholder: ' + contentEditor.placeholder);
+            }
+            
+            log('🔘 清空按钮元素: ' + (clearButton ? '存在' : '不存在'));
+            if (clearButton) {
+                log('   - 文本: ' + clearButton.textContent);
+                log('   - 类名: ' + clearButton.className);
+                log('   - onclick: ' + clearButton.getAttribute('onclick'));
+            }
+            
+            log('🎯 全局变量状态:');
+            log('   - isContentCleared: ' + isContentCleared);
+            log('   - originalContentBackup 长度: ' + originalContentBackup.length);
+        }
+        
+        function clearLog() {
+            document.getElementById('debug-log').textContent = '';
+        }
+        
+        // 页面加载完成后的初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            log('🚀 页面加载完成，清空功能测试页面已准备就绪');
+            checkElements();
+        });
+    </script>
+</body>
+</html> 

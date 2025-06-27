@@ -1,0 +1,4289 @@
+{
+  "timestamp": "2025-06-21T19:11:36.759Z",
+  "currentState": {
+    "totalLines": 9829,
+    "totalSize": 388896,
+    "scriptLines": 7850,
+    "styleLines": 0,
+    "htmlLines": 1979,
+    "functions": [
+      {
+        "name": "initializeNodeEventListeners",
+        "line": 1645,
+        "size": 0
+      },
+      {
+        "name": "initModularEvents",
+        "line": 1699,
+        "size": 0
+      },
+      {
+        "name": "initInnerTabSwitching",
+        "line": 1712,
+        "size": 0
+      },
+      {
+        "name": "bindTabEvents",
+        "line": 1765,
+        "size": 0
+      },
+      {
+        "name": "initMindmaps",
+        "line": 2304,
+        "size": 0
+      },
+      {
+        "name": "traverseAndSyncNode",
+        "line": 2339,
+        "size": 0
+      },
+      {
+        "name": "bindNodeEvents",
+        "line": 2393,
+        "size": 0
+      },
+      {
+        "name": "handleNodeSelect",
+        "line": 2486,
+        "size": 0
+      },
+      {
+        "name": "highlightSelectedNode",
+        "line": 2529,
+        "size": 0
+      },
+      {
+        "name": "showNodeSelectionFeedback",
+        "line": 2546,
+        "size": 0
+      },
+      {
+        "name": "clearOtherTabContents",
+        "line": 2693,
+        "size": 0
+      },
+      {
+        "name": "switchToDetailTab",
+        "line": 2755,
+        "size": 0
+      },
+      {
+        "name": "switchDetailTab",
+        "line": 2760,
+        "size": 0
+      },
+      {
+        "name": "showTabSwitchFeedback",
+        "line": 2809,
+        "size": 0
+      },
+      {
+        "name": "clearNodeFormFromTab",
+        "line": 2815,
+        "size": 0
+      },
+      {
+        "name": "updateNodeTitle",
+        "line": 2828,
+        "size": 0
+      },
+      {
+        "name": "updateNodeContent",
+        "line": 2851,
+        "size": 0
+      },
+      {
+        "name": "parseContentToSessions",
+        "line": 2883,
+        "size": 0
+      },
+      {
+        "name": "updateNodeAuthor",
+        "line": 2948,
+        "size": 0
+      },
+      {
+        "name": "updateNodeContentIcon",
+        "line": 2956,
+        "size": 0
+      },
+      {
+        "name": "saveNodeDetails",
+        "line": 2973,
+        "size": 0
+      },
+      {
+        "name": "toggleQAMode",
+        "line": 3151,
+        "size": 0
+      },
+      {
+        "name": "copyContentFromEditor",
+        "line": 3200,
+        "size": 0
+      },
+      {
+        "name": "pasteContentToEditor",
+        "line": 3228,
+        "size": 0
+      },
+      {
+        "name": "createSessionBlock",
+        "line": 3260,
+        "size": 0
+      },
+      {
+        "name": "generateSessionId",
+        "line": 3304,
+        "size": 0
+      },
+      {
+        "name": "extractTagsFromContent",
+        "line": 3309,
+        "size": 0
+      },
+      {
+        "name": "initializeNodeSessions",
+        "line": 3325,
+        "size": 0
+      },
+      {
+        "name": "addSessionToNode",
+        "line": 3337,
+        "size": 0
+      },
+      {
+        "name": "getNodeSessions",
+        "line": 3357,
+        "size": 0
+      },
+      {
+        "name": "getActiveSession",
+        "line": 3363,
+        "size": 0
+      },
+      {
+        "name": "setActiveSession",
+        "line": 3371,
+        "size": 0
+      },
+      {
+        "name": "buildSessionDisplayContent",
+        "line": 3391,
+        "size": 0
+      },
+      {
+        "name": "formatDetailedTime",
+        "line": 3432,
+        "size": 0
+      },
+      {
+        "name": "updateSessionsList",
+        "line": 3445,
+        "size": 0
+      },
+      {
+        "name": "formatSessionTime",
+        "line": 3496,
+        "size": 0
+      },
+      {
+        "name": "handleSessionClick",
+        "line": 3514,
+        "size": 0
+      },
+      {
+        "name": "toggleSessionFavorite",
+        "line": 3519,
+        "size": 0
+      },
+      {
+        "name": "deleteSession",
+        "line": 3538,
+        "size": 0
+      },
+      {
+        "name": "saveSessionData",
+        "line": 3571,
+        "size": 0
+      },
+      {
+        "name": "loadSessionData",
+        "line": 3580,
+        "size": 0
+      },
+      {
+        "name": "updateProjectInfoNodeAuthor",
+        "line": 3604,
+        "size": 0
+      },
+      {
+        "name": "updateCurrentNodeAuthor",
+        "line": 3612,
+        "size": 0
+      },
+      {
+        "name": "performCalibration",
+        "line": 3690,
+        "size": 0
+      },
+      {
+        "name": "initializeTemplateManagerContent",
+        "line": 3701,
+        "size": 0
+      },
+      {
+        "name": "bindTemplateManagerEvents",
+        "line": 3906,
+        "size": 0
+      },
+      {
+        "name": "closeTemplateManager",
+        "line": 3941,
+        "size": 0
+      },
+      {
+        "name": "addNewTemplate",
+        "line": 4192,
+        "size": 0
+      },
+      {
+        "name": "toggleTemplateSelection",
+        "line": 4205,
+        "size": 0
+      },
+      {
+        "name": "editTemplate",
+        "line": 4211,
+        "size": 0
+      },
+      {
+        "name": "deleteTemplate",
+        "line": 4228,
+        "size": 0
+      },
+      {
+        "name": "closeTemplateEditModal",
+        "line": 4246,
+        "size": 0
+      },
+      {
+        "name": "saveTemplate",
+        "line": 4251,
+        "size": 0
+      },
+      {
+        "name": "importTemplates",
+        "line": 4285,
+        "size": 0
+      },
+      {
+        "name": "exportTemplates",
+        "line": 4314,
+        "size": 0
+      },
+      {
+        "name": "updateSelectedTemplatesList",
+        "line": 4335,
+        "size": 0
+      },
+      {
+        "name": "syncTemplateManagerSelection",
+        "line": 4342,
+        "size": 0
+      },
+      {
+        "name": "useSelectedTemplate",
+        "line": 4358,
+        "size": 0
+      },
+      {
+        "name": "removeSelectedTemplate",
+        "line": 4402,
+        "size": 0
+      },
+      {
+        "name": "toggleFilterTag",
+        "line": 4422,
+        "size": 0
+      },
+      {
+        "name": "filterTemplates",
+        "line": 4484,
+        "size": 0
+      },
+      {
+        "name": "getFilterDisplayNames",
+        "line": 4498,
+        "size": 0
+      },
+      {
+        "name": "getCurrentJsMind",
+        "line": 4511,
+        "size": 0
+      },
+      {
+        "name": "switchMindmapTab",
+        "line": 4516,
+        "size": 0
+      },
+      {
+        "name": "autoSaveData",
+        "line": 4559,
+        "size": 0
+      },
+      {
+        "name": "loadSavedData",
+        "line": 4588,
+        "size": 0
+      },
+      {
+        "name": "setupAutoSave",
+        "line": 4645,
+        "size": 0
+      },
+      {
+        "name": "initializeTagManagement",
+        "line": 4662,
+        "size": 0
+      },
+      {
+        "name": "toggleTag",
+        "line": 4693,
+        "size": 0
+      },
+      {
+        "name": "addTagToNode",
+        "line": 4724,
+        "size": 0
+      },
+      {
+        "name": "removeTagFromNode",
+        "line": 4748,
+        "size": 0
+      },
+      {
+        "name": "restoreTagStates",
+        "line": 4772,
+        "size": 0
+      },
+      {
+        "name": "triggerImportFile",
+        "line": 4797,
+        "size": 0
+      },
+      {
+        "name": "handleFileImport",
+        "line": 4806,
+        "size": 0
+      },
+      {
+        "name": "traverseAndInitNodes",
+        "line": 4873,
+        "size": 0
+      },
+      {
+        "name": "initializeContextMenu",
+        "line": 4991,
+        "size": 0
+      },
+      {
+        "name": "showContextMenu",
+        "line": 5048,
+        "size": 0
+      },
+      {
+        "name": "hideContextMenu",
+        "line": 5065,
+        "size": 0
+      },
+      {
+        "name": "shouldShowSyncOption",
+        "line": 5073,
+        "size": 0
+      },
+      {
+        "name": "updateContextMenuVisibility",
+        "line": 5086,
+        "size": 0
+      },
+      {
+        "name": "handleContextMenuSync",
+        "line": 5102,
+        "size": 0
+      },
+      {
+        "name": "focusNodeToWorkspace",
+        "line": 5121,
+        "size": 0
+      },
+      {
+        "name": "syncTemplatesFromCurrentList",
+        "line": 5161,
+        "size": 0
+      },
+      {
+        "name": "findNodeByTopic",
+        "line": 5201,
+        "size": 0
+      },
+      {
+        "name": "updateRightPanelTemplateList",
+        "line": 5221,
+        "size": 0
+      },
+      {
+        "name": "getTemplateIcon",
+        "line": 5262,
+        "size": 0
+      },
+      {
+        "name": "getTemplateDescription",
+        "line": 5282,
+        "size": 0
+      },
+      {
+        "name": "bindDetailInputEvents",
+        "line": 5302,
+        "size": 0
+      },
+      {
+        "name": "showUserGuide",
+        "line": 5332,
+        "size": 0
+      },
+      {
+        "name": "generateDefaultTagHTML",
+        "line": 5481,
+        "size": 0
+      },
+      {
+        "name": "getTagsFromWorkspace",
+        "line": 5512,
+        "size": 0
+      },
+      {
+        "name": "getDefaultTagGroups",
+        "line": 5621,
+        "size": 0
+      },
+      {
+        "name": "generateTagGroupsHTML",
+        "line": 5630,
+        "size": 0
+      },
+      {
+        "name": "addTagLoadingStyles",
+        "line": 5737,
+        "size": 0
+      },
+      {
+        "name": "initializeTagsFromMindmap",
+        "line": 5803,
+        "size": 0
+      },
+      {
+        "name": "loadTagsFromMindmap",
+        "line": 5830,
+        "size": 0
+      },
+      {
+        "name": "showLoadingError",
+        "line": 5864,
+        "size": 0
+      },
+      {
+        "name": "handleAnalyzeTagData",
+        "line": 5879,
+        "size": 0
+      },
+      {
+        "name": "analyzeTagComponentDataSource",
+        "line": 5900,
+        "size": 0
+      },
+      {
+        "name": "syncTagsFromWorkspace",
+        "line": 6024,
+        "size": 0
+      },
+      {
+        "name": "updateTaskManagement",
+        "line": 6129,
+        "size": 0
+      },
+      {
+        "name": "processNodeForTaskManagement",
+        "line": 6144,
+        "size": 0
+      },
+      {
+        "name": "applyCompletedNodeStyle",
+        "line": 6183,
+        "size": 0
+      },
+      {
+        "name": "updateProjectProgress",
+        "line": 6203,
+        "size": 0
+      },
+      {
+        "name": "restoreNodeStyle",
+        "line": 6251,
+        "size": 0
+      },
+      {
+        "name": "clearProjectProgress",
+        "line": 6271,
+        "size": 0
+      },
+      {
+        "name": "forceUpdateNodeDetails",
+        "line": 6468,
+        "size": 0
+      },
+      {
+        "name": "saveNodeData",
+        "line": 6510,
+        "size": 0
+      },
+      {
+        "name": "addNewSession",
+        "line": 6530,
+        "size": 0
+      },
+      {
+        "name": "selectSession",
+        "line": 6567,
+        "size": 0
+      },
+      {
+        "name": "viewAllSessions",
+        "line": 6586,
+        "size": 0
+      },
+      {
+        "name": "clearAllSessions",
+        "line": 6602,
+        "size": 0
+      },
+      {
+        "name": "showMessage",
+        "line": 6636,
+        "size": 0
+      },
+      {
+        "name": "showInjectionHelp",
+        "line": 6713,
+        "size": 0
+      },
+      {
+        "name": "getCurrentSelectedNodeId",
+        "line": 6743,
+        "size": 0
+      },
+      {
+        "name": "onQAModeChange",
+        "line": 7136,
+        "size": 0
+      },
+      {
+        "name": "updateSubmitButtonTexts",
+        "line": 7149,
+        "size": 0
+      },
+      {
+        "name": "fourComponentUpdateTitle",
+        "line": 7179,
+        "size": 0
+      },
+      {
+        "name": "fourComponentCopyContent",
+        "line": 7182,
+        "size": 0
+      },
+      {
+        "name": "fourComponentPasteContent",
+        "line": 7190,
+        "size": 0
+      },
+      {
+        "name": "fourComponentSubmitContent",
+        "line": 7200,
+        "size": 0
+      },
+      {
+        "name": "fourComponentToggleTag",
+        "line": 7368,
+        "size": 0
+      },
+      {
+        "name": "restoreFourComponentTagStates",
+        "line": 7429,
+        "size": 0
+      },
+      {
+        "name": "saveFourComponentData",
+        "line": 7471,
+        "size": 0
+      },
+      {
+        "name": "loadFourComponentData",
+        "line": 7498,
+        "size": 0
+      },
+      {
+        "name": "clearFourComponentData",
+        "line": 7550,
+        "size": 0
+      },
+      {
+        "name": "openFourComponentTemplateManager",
+        "line": 7567,
+        "size": 0
+      },
+      {
+        "name": "initializeFourComponents",
+        "line": 7580,
+        "size": 0
+      },
+      {
+        "name": "restoreFourComponentGlobalState",
+        "line": 7587,
+        "size": 0
+      },
+      {
+        "name": "updateFourComponentsForNode",
+        "line": 7617,
+        "size": 0
+      },
+      {
+        "name": "bindFourComponentInputEvents",
+        "line": 7695,
+        "size": 0
+      },
+      {
+        "name": "updateFourComponentNodeTitle",
+        "line": 7751,
+        "size": 0
+      },
+      {
+        "name": "updateFourComponentNodeContent",
+        "line": 7813,
+        "size": 0
+      },
+      {
+        "name": "initializeCategoryManagementSystem",
+        "line": 7935,
+        "size": 0
+      },
+      {
+        "name": "initializeCategoryMindmap",
+        "line": 7946,
+        "size": 0
+      },
+      {
+        "name": "setupCategoryEventListeners",
+        "line": 8012,
+        "size": 0
+      },
+      {
+        "name": "handleCategoryNodeSelect",
+        "line": 8024,
+        "size": 0
+      },
+      {
+        "name": "loadContentMindmap",
+        "line": 8048,
+        "size": 0
+      },
+      {
+        "name": "buildContentMindmapData",
+        "line": 8078,
+        "size": 0
+      },
+      {
+        "name": "addNewCategory",
+        "line": 8114,
+        "size": 0
+      },
+      {
+        "name": "addNewContentItem",
+        "line": 8136,
+        "size": 0
+      },
+      {
+        "name": "saveCategoryMindmap",
+        "line": 8167,
+        "size": 0
+      },
+      {
+        "name": "saveContentMindmap",
+        "line": 8178,
+        "size": 0
+      },
+      {
+        "name": "syncTagsToComponents",
+        "line": 8188,
+        "size": 0
+      },
+      {
+        "name": "initThirdReconstructionArchitecture",
+        "line": 8239,
+        "size": 0
+      },
+      {
+        "name": "createMockMDDirectService",
+        "line": 8333,
+        "size": 0
+      },
+      {
+        "name": "closeMDDirectPanel",
+        "line": 8450,
+        "size": 0
+      },
+      {
+        "name": "clearMDPanel",
+        "line": 8516,
+        "size": 0
+      },
+      {
+        "name": "parseImportedMDNodes_NEW",
+        "line": 8695,
+        "size": 0
+      },
+      {
+        "name": "generateNodeId",
+        "line": 8701,
+        "size": 0
+      },
+      {
+        "name": "processNodeData",
+        "line": 8709,
+        "size": 0
+      },
+      {
+        "name": "traverseAndSyncNode",
+        "line": 9110,
+        "size": 0
+      },
+      {
+        "name": "traverseAndSyncNode",
+        "line": 9205,
+        "size": 0
+      },
+      {
+        "name": "generateNodeMindStandardDocument",
+        "line": 9260,
+        "size": 0
+      },
+      {
+        "name": "countNodesInMap",
+        "line": 9546,
+        "size": 0
+      },
+      {
+        "name": "showSaveFormatDialog",
+        "line": 9559,
+        "size": 0
+      },
+      {
+        "name": "initStandardParser",
+        "line": 9766,
+        "size": 0
+      }
+    ],
+    "classes": [
+      {
+        "name": "GlobalStateManager",
+        "line": 6839
+      },
+      {
+        "name": "NodeStateManager",
+        "line": 6934
+      },
+      {
+        "name": "NodeIdManager",
+        "line": 8843
+      },
+      {
+        "name": "NodePathManager",
+        "line": 8981
+      }
+    ],
+    "globalVars": [
+      {
+        "name": "buttons",
+        "type": "const",
+        "line": 1649
+      },
+      {
+        "name": "btn",
+        "type": "const",
+        "line": 1660
+      },
+      {
+        "name": "tabButtons",
+        "type": "const",
+        "line": 1667
+      },
+      {
+        "name": "tab",
+        "type": "const",
+        "line": 1676
+      },
+      {
+        "name": "innerTabButtons",
+        "type": "const",
+        "line": 1715
+      },
+      {
+        "name": "innerTabContents",
+        "type": "const",
+        "line": 1716
+      },
+      {
+        "name": "tabName",
+        "type": "const",
+        "line": 1733
+      },
+      {
+        "name": "targetContent",
+        "type": "const",
+        "line": 1753
+      },
+      {
+        "name": "buttons",
+        "type": "const",
+        "line": 1766
+      },
+      {
+        "name": "tabName",
+        "type": "const",
+        "line": 1769
+      },
+      {
+        "name": "targetContent",
+        "type": "const",
+        "line": 1780
+      },
+      {
+        "name": "clickedButton",
+        "type": "const",
+        "line": 2155
+      },
+      {
+        "name": "targetId",
+        "type": "const",
+        "line": 2163
+      },
+      {
+        "name": "targetContent",
+        "type": "const",
+        "line": 2164
+      },
+      {
+        "name": "mindmapData",
+        "type": "var",
+        "line": 2180
+      },
+      {
+        "name": "baseOptions",
+        "type": "var",
+        "line": 2262
+      },
+      {
+        "name": "mindmaps",
+        "type": "var",
+        "line": 2272
+      },
+      {
+        "name": "currentMindmap",
+        "type": "var",
+        "line": 2273
+      },
+      {
+        "name": "selectedNodeId",
+        "type": "var",
+        "line": 2274
+      },
+      {
+        "name": "nodeDatabase",
+        "type": "var",
+        "line": 2275
+      },
+      {
+        "name": "lastSavedFilePath",
+        "type": "var",
+        "line": 2276
+      },
+      {
+        "name": "projectInfo",
+        "type": "var",
+        "line": 2279
+      },
+      {
+        "name": "STORAGE_KEYS",
+        "type": "var",
+        "line": 2288
+      },
+      {
+        "name": "nodeId",
+        "type": "const",
+        "line": 2342
+      },
+      {
+        "name": "cleanTitle",
+        "type": "const",
+        "line": 2343
+      },
+      {
+        "name": "existingNode",
+        "type": "const",
+        "line": 2361
+      },
+      {
+        "name": "mindmap",
+        "type": "const",
+        "line": 2396
+      },
+      {
+        "name": "containers",
+        "type": "const",
+        "line": 2414
+      },
+      {
+        "name": "container",
+        "type": "const",
+        "line": 2416
+      },
+      {
+        "name": "nodeElement",
+        "type": "let",
+        "line": 2421
+      },
+      {
+        "name": "nodeId",
+        "type": "const",
+        "line": 2430
+      },
+      {
+        "name": "mapId",
+        "type": "const",
+        "line": 2431
+      },
+      {
+        "name": "mindmap",
+        "type": "const",
+        "line": 2432
+      },
+      {
+        "name": "node",
+        "type": "const",
+        "line": 2436
+      },
+      {
+        "name": "nodeElement",
+        "type": "let",
+        "line": 2455
+      },
+      {
+        "name": "nodeId",
+        "type": "const",
+        "line": 2456
+      },
+      {
+        "name": "mapId",
+        "type": "let",
+        "line": 2461
+      },
+      {
+        "name": "containers",
+        "type": "const",
+        "line": 2462
+      },
+      {
+        "name": "container",
+        "type": "const",
+        "line": 2465
+      },
+      {
+        "name": "node",
+        "type": "const",
+        "line": 2473
+      },
+      {
+        "name": "statusElement",
+        "type": "const",
+        "line": 2508
+      },
+      {
+        "name": "container",
+        "type": "const",
+        "line": 2536
+      },
+      {
+        "name": "nodeElement",
+        "type": "const",
+        "line": 2538
+      },
+      {
+        "name": "cleanTitle",
+        "type": "const",
+        "line": 2557
+      },
+      {
+        "name": "service",
+        "type": "const",
+        "line": 2594
+      },
+      {
+        "name": "existingData",
+        "type": "const",
+        "line": 2597
+      },
+      {
+        "name": "mdContent",
+        "type": "const",
+        "line": 2598
+      },
+      {
+        "name": "result",
+        "type": "const",
+        "line": 2601
+      },
+      {
+        "name": "mindmap",
+        "type": "const",
+        "line": 2619
+      },
+      {
+        "name": "hasContent",
+        "type": "const",
+        "line": 2622
+      },
+      {
+        "name": "displayTitle",
+        "type": "const",
+        "line": 2623
+      },
+      {
+        "name": "currentNodeId",
+        "type": "const",
+        "line": 2638
+      },
+      {
+        "name": "cleanTitle",
+        "type": "const",
+        "line": 2644
+      },
+      {
+        "name": "contentEditor",
+        "type": "const",
+        "line": 2677
+      },
+      {
+        "name": "projectContent",
+        "type": "const",
+        "line": 2697
+      },
+      {
+        "name": "tabButton",
+        "type": "const",
+        "line": 2778
+      },
+      {
+        "name": "tabContent",
+        "type": "const",
+        "line": 2779
+      },
+      {
+        "name": "forms",
+        "type": "const",
+        "line": 2818
+      },
+      {
+        "name": "currentMindmapInstance",
+        "type": "const",
+        "line": 2834
+      },
+      {
+        "name": "node",
+        "type": "const",
+        "line": 2836
+      },
+      {
+        "name": "hasContent",
+        "type": "const",
+        "line": 2839
+      },
+      {
+        "name": "displayTitle",
+        "type": "const",
+        "line": 2840
+      },
+      {
+        "name": "sessionListContainer",
+        "type": "const",
+        "line": 2896
+      },
+      {
+        "name": "sections",
+        "type": "const",
+        "line": 2905
+      },
+      {
+        "name": "sessions",
+        "type": "const",
+        "line": 2906
+      },
+      {
+        "name": "lines",
+        "type": "const",
+        "line": 2909
+      },
+      {
+        "name": "title",
+        "type": "const",
+        "line": 2910
+      },
+      {
+        "name": "sessionContent",
+        "type": "const",
+        "line": 2911
+      },
+      {
+        "name": "existingSession",
+        "type": "let",
+        "line": 2914
+      },
+      {
+        "name": "newSession",
+        "type": "const",
+        "line": 2923
+      },
+      {
+        "name": "sessionListContainer",
+        "type": "const",
+        "line": 2938
+      },
+      {
+        "name": "currentMindmapInstance",
+        "type": "const",
+        "line": 2957
+      },
+      {
+        "name": "node",
+        "type": "const",
+        "line": 2959
+      },
+      {
+        "name": "hasContent",
+        "type": "const",
+        "line": 2961
+      },
+      {
+        "name": "originalTopic",
+        "type": "const",
+        "line": 2962
+      },
+      {
+        "name": "newTopic",
+        "type": "const",
+        "line": 2963
+      },
+      {
+        "name": "contentEditor",
+        "type": "const",
+        "line": 2982
+      },
+      {
+        "name": "content",
+        "type": "const",
+        "line": 2988
+      },
+      {
+        "name": "nodeData",
+        "type": "const",
+        "line": 2991
+      },
+      {
+        "name": "nodeTitle",
+        "type": "const",
+        "line": 2992
+      },
+      {
+        "name": "qaToggle",
+        "type": "const",
+        "line": 2995
+      },
+      {
+        "name": "isQAMode",
+        "type": "const",
+        "line": 2996
+      },
+      {
+        "name": "timestamp",
+        "type": "const",
+        "line": 3012
+      },
+      {
+        "name": "newContent",
+        "type": "const",
+        "line": 3013
+      },
+      {
+        "name": "logEntry",
+        "type": "const",
+        "line": 3027
+      },
+      {
+        "name": "injectionContent",
+        "type": "let",
+        "line": 3035
+      },
+      {
+        "name": "submitButton",
+        "type": "const",
+        "line": 3054
+      },
+      {
+        "name": "originalText",
+        "type": "const",
+        "line": 3055
+      },
+      {
+        "name": "injectionData",
+        "type": "const",
+        "line": 3078
+      },
+      {
+        "name": "clipboardContent",
+        "type": "const",
+        "line": 3090
+      },
+      {
+        "name": "newContent",
+        "type": "const",
+        "line": 3111
+      },
+      {
+        "name": "logEntry",
+        "type": "const",
+        "line": 3123
+      },
+      {
+        "name": "submitButton",
+        "type": "const",
+        "line": 3142
+      },
+      {
+        "name": "contentEditor",
+        "type": "const",
+        "line": 3152
+      },
+      {
+        "name": "templateSection",
+        "type": "const",
+        "line": 3153
+      },
+      {
+        "name": "templateItems",
+        "type": "const",
+        "line": 3170
+      },
+      {
+        "name": "templateItems",
+        "type": "const",
+        "line": 3188
+      },
+      {
+        "name": "contentEditor",
+        "type": "const",
+        "line": 3201
+      },
+      {
+        "name": "contentEditor",
+        "type": "const",
+        "line": 3229
+      },
+      {
+        "name": "sessionDatabase",
+        "type": "let",
+        "line": 3257
+      },
+      {
+        "name": "sessionId",
+        "type": "const",
+        "line": 3261
+      },
+      {
+        "name": "timestamp",
+        "type": "const",
+        "line": 3262
+      },
+      {
+        "name": "title",
+        "type": "let",
+        "line": 3265
+      },
+      {
+        "name": "lines",
+        "type": "const",
+        "line": 3272
+      },
+      {
+        "name": "questionLine",
+        "type": "const",
+        "line": 3273
+      },
+      {
+        "name": "tags",
+        "type": "const",
+        "line": 3283
+      },
+      {
+        "name": "tagRegex",
+        "type": "const",
+        "line": 3310
+      },
+      {
+        "name": "tags",
+        "type": "const",
+        "line": 3311
+      },
+      {
+        "name": "match",
+        "type": "let",
+        "line": 3312
+      },
+      {
+        "name": "tag",
+        "type": "const",
+        "line": 3315
+      },
+      {
+        "name": "sessionBlock",
+        "type": "const",
+        "line": 3341
+      },
+      {
+        "name": "nodeSessions",
+        "type": "const",
+        "line": 3364
+      },
+      {
+        "name": "session",
+        "type": "const",
+        "line": 3376
+      },
+      {
+        "name": "contentEditor",
+        "type": "const",
+        "line": 3378
+      },
+      {
+        "name": "sessionInfo",
+        "type": "const",
+        "line": 3381
+      },
+      {
+        "name": "lines",
+        "type": "const",
+        "line": 3392
+      },
+      {
+        "name": "typeText",
+        "type": "const",
+        "line": 3395
+      },
+      {
+        "name": "date",
+        "type": "const",
+        "line": 3433
+      },
+      {
+        "name": "sessionsContainer",
+        "type": "const",
+        "line": 3448
+      },
+      {
+        "name": "sessions",
+        "type": "const",
+        "line": 3451
+      },
+      {
+        "name": "activeSessionId",
+        "type": "const",
+        "line": 3452
+      },
+      {
+        "name": "sortedSessions",
+        "type": "const",
+        "line": 3467
+      },
+      {
+        "name": "isActive",
+        "type": "const",
+        "line": 3470
+      },
+      {
+        "name": "timeStr",
+        "type": "const",
+        "line": 3471
+      },
+      {
+        "name": "typeIcon",
+        "type": "const",
+        "line": 3472
+      },
+      {
+        "name": "tagsHtml",
+        "type": "const",
+        "line": 3473
+      },
+      {
+        "name": "date",
+        "type": "const",
+        "line": 3497
+      },
+      {
+        "name": "now",
+        "type": "const",
+        "line": 3498
+      },
+      {
+        "name": "diffMs",
+        "type": "const",
+        "line": 3499
+      },
+      {
+        "name": "diffDays",
+        "type": "const",
+        "line": 3500
+      },
+      {
+        "name": "nodeSessions",
+        "type": "const",
+        "line": 3522
+      },
+      {
+        "name": "session",
+        "type": "const",
+        "line": 3525
+      },
+      {
+        "name": "nodeSessions",
+        "type": "const",
+        "line": 3543
+      },
+      {
+        "name": "sessionIndex",
+        "type": "const",
+        "line": 3546
+      },
+      {
+        "name": "session",
+        "type": "const",
+        "line": 3549
+      },
+      {
+        "name": "contentEditor",
+        "type": "const",
+        "line": 3559
+      },
+      {
+        "name": "savedData",
+        "type": "const",
+        "line": 3582
+      },
+      {
+        "name": "authorInput",
+        "type": "const",
+        "line": 3605
+      },
+      {
+        "name": "templateManager",
+        "type": "var",
+        "line": 3621
+      },
+      {
+        "name": "modalBody",
+        "type": "const",
+        "line": 3703
+      },
+      {
+        "name": "backButton",
+        "type": "const",
+        "line": 3908
+      },
+      {
+        "name": "closeButton",
+        "type": "const",
+        "line": 3914
+      },
+      {
+        "name": "backdrop",
+        "type": "const",
+        "line": 3920
+      },
+      {
+        "name": "container",
+        "type": "const",
+        "line": 3928
+      },
+      {
+        "name": "editModal",
+        "type": "const",
+        "line": 3929
+      },
+      {
+        "name": "templateManagerContainer",
+        "type": "const",
+        "line": 3942
+      },
+      {
+        "name": "GLOBAL_MODULAR_PREFIX",
+        "type": "const",
+        "line": 3952
+      },
+      {
+        "name": "GLOBAL_MODULAR_SUFFIX",
+        "type": "const",
+        "line": 4001
+      },
+      {
+        "name": "currentEditingTemplate",
+        "type": "let",
+        "line": 4189
+      },
+      {
+        "name": "template",
+        "type": "const",
+        "line": 4212
+      },
+      {
+        "name": "template",
+        "type": "const",
+        "line": 4229
+      },
+      {
+        "name": "name",
+        "type": "const",
+        "line": 4252
+      },
+      {
+        "name": "category",
+        "type": "const",
+        "line": 4253
+      },
+      {
+        "name": "prefix",
+        "type": "const",
+        "line": 4254
+      },
+      {
+        "name": "suffix",
+        "type": "const",
+        "line": 4255
+      },
+      {
+        "name": "description",
+        "type": "const",
+        "line": 4256
+      },
+      {
+        "name": "templateId",
+        "type": "const",
+        "line": 4264
+      },
+      {
+        "name": "isNew",
+        "type": "const",
+        "line": 4274
+      },
+      {
+        "name": "input",
+        "type": "const",
+        "line": 4286
+      },
+      {
+        "name": "file",
+        "type": "const",
+        "line": 4290
+      },
+      {
+        "name": "reader",
+        "type": "const",
+        "line": 4292
+      },
+      {
+        "name": "importedData",
+        "type": "const",
+        "line": 4295
+      },
+      {
+        "name": "dataStr",
+        "type": "const",
+        "line": 4316
+      },
+      {
+        "name": "dataUri",
+        "type": "const",
+        "line": 4317
+      },
+      {
+        "name": "exportFileDefaultName",
+        "type": "const",
+        "line": 4319
+      },
+      {
+        "name": "linkElement",
+        "type": "const",
+        "line": 4321
+      },
+      {
+        "name": "templateCard",
+        "type": "const",
+        "line": 4350
+      },
+      {
+        "name": "template",
+        "type": "const",
+        "line": 4359
+      },
+      {
+        "name": "injectionText",
+        "type": "let",
+        "line": 4366
+      },
+      {
+        "name": "index",
+        "type": "const",
+        "line": 4403
+      },
+      {
+        "name": "template",
+        "type": "const",
+        "line": 4405
+      },
+      {
+        "name": "templateCard",
+        "type": "const",
+        "line": 4409
+      },
+      {
+        "name": "activeFilters",
+        "type": "let",
+        "line": 4420
+      },
+      {
+        "name": "category",
+        "type": "const",
+        "line": 4423
+      },
+      {
+        "name": "allTag",
+        "type": "const",
+        "line": 4458
+      },
+      {
+        "name": "allTag",
+        "type": "const",
+        "line": 4465
+      },
+      {
+        "name": "allCards",
+        "type": "const",
+        "line": 4485
+      },
+      {
+        "name": "cardCategory",
+        "type": "const",
+        "line": 4488
+      },
+      {
+        "name": "nameMap",
+        "type": "const",
+        "line": 4499
+      },
+      {
+        "name": "container",
+        "type": "const",
+        "line": 4520
+      },
+      {
+        "name": "tabContent",
+        "type": "const",
+        "line": 4521
+      },
+      {
+        "name": "targetContainer",
+        "type": "const",
+        "line": 4530
+      },
+      {
+        "name": "targetTabContent",
+        "type": "const",
+        "line": 4531
+      },
+      {
+        "name": "instance",
+        "type": "const",
+        "line": 4538
+      },
+      {
+        "name": "activeTab",
+        "type": "const",
+        "line": 4552
+      },
+      {
+        "name": "mindmapDataToSave",
+        "type": "const",
+        "line": 4562
+      },
+      {
+        "name": "savedMindmapData",
+        "type": "const",
+        "line": 4591
+      },
+      {
+        "name": "parsedData",
+        "type": "const",
+        "line": 4593
+      },
+      {
+        "name": "savedNodeDatabase",
+        "type": "const",
+        "line": 4598
+      },
+      {
+        "name": "savedSessionData",
+        "type": "const",
+        "line": 4604
+      },
+      {
+        "name": "savedProjectInfo",
+        "type": "const",
+        "line": 4612
+      },
+      {
+        "name": "savedSelectedNode",
+        "type": "const",
+        "line": 4618
+      },
+      {
+        "name": "nodeData",
+        "type": "const",
+        "line": 4663
+      },
+      {
+        "name": "tagContainer",
+        "type": "const",
+        "line": 4672
+      },
+      {
+        "name": "html",
+        "type": "const",
+        "line": 4676
+      },
+      {
+        "name": "insertedTags",
+        "type": "const",
+        "line": 4680
+      },
+      {
+        "name": "nodeData",
+        "type": "const",
+        "line": 4694
+      },
+      {
+        "name": "tagName",
+        "type": "const",
+        "line": 4697
+      },
+      {
+        "name": "tagGroup",
+        "type": "const",
+        "line": 4698
+      },
+      {
+        "name": "targetArray",
+        "type": "let",
+        "line": 4726
+      },
+      {
+        "name": "targetArray",
+        "type": "let",
+        "line": 4750
+      },
+      {
+        "name": "index",
+        "type": "const",
+        "line": 4765
+      },
+      {
+        "name": "nodeData",
+        "type": "const",
+        "line": 4773
+      },
+      {
+        "name": "allSelectedTags",
+        "type": "const",
+        "line": 4777
+      },
+      {
+        "name": "tagContainer",
+        "type": "const",
+        "line": 4784
+      },
+      {
+        "name": "tagItems",
+        "type": "const",
+        "line": 4786
+      },
+      {
+        "name": "tagName",
+        "type": "const",
+        "line": 4788
+      },
+      {
+        "name": "fileInput",
+        "type": "const",
+        "line": 4798
+      },
+      {
+        "name": "file",
+        "type": "const",
+        "line": 4807
+      },
+      {
+        "name": "reader",
+        "type": "const",
+        "line": 4812
+      },
+      {
+        "name": "content",
+        "type": "const",
+        "line": 4815
+      },
+      {
+        "name": "importedData",
+        "type": "let",
+        "line": 4816
+      },
+      {
+        "name": "projectMindmap",
+        "type": "const",
+        "line": 4842
+      },
+      {
+        "name": "rootNode",
+        "type": "const",
+        "line": 4847
+      },
+      {
+        "name": "result",
+        "type": "const",
+        "line": 4944
+      },
+      {
+        "name": "userChoice",
+        "type": "const",
+        "line": 4958
+      },
+      {
+        "name": "contextMenuTargetNode",
+        "type": "let",
+        "line": 4987
+      },
+      {
+        "name": "contextMenuTargetNodeId",
+        "type": "let",
+        "line": 4988
+      },
+      {
+        "name": "containers",
+        "type": "const",
+        "line": 5006
+      },
+      {
+        "name": "container",
+        "type": "const",
+        "line": 5008
+      },
+      {
+        "name": "nodeElement",
+        "type": "let",
+        "line": 5014
+      },
+      {
+        "name": "nodeId",
+        "type": "const",
+        "line": 5023
+      },
+      {
+        "name": "mapId",
+        "type": "const",
+        "line": 5024
+      },
+      {
+        "name": "mindmap",
+        "type": "const",
+        "line": 5025
+      },
+      {
+        "name": "node",
+        "type": "const",
+        "line": 5028
+      },
+      {
+        "name": "shouldShowSync",
+        "type": "const",
+        "line": 5034
+      },
+      {
+        "name": "menu",
+        "type": "const",
+        "line": 5049
+      },
+      {
+        "name": "rect",
+        "type": "const",
+        "line": 5055
+      },
+      {
+        "name": "menu",
+        "type": "const",
+        "line": 5066
+      },
+      {
+        "name": "topic",
+        "type": "const",
+        "line": 5076
+      },
+      {
+        "name": "syncItem",
+        "type": "const",
+        "line": 5087
+      },
+      {
+        "name": "syncDivider",
+        "type": "const",
+        "line": 5088
+      },
+      {
+        "name": "topic",
+        "type": "const",
+        "line": 5108
+      },
+      {
+        "name": "nodeTree",
+        "type": "const",
+        "line": 5129
+      },
+      {
+        "name": "workspaceData",
+        "type": "const",
+        "line": 5135
+      },
+      {
+        "name": "knowledgeData",
+        "type": "const",
+        "line": 5142
+      },
+      {
+        "name": "currentTemplateListNode",
+        "type": "let",
+        "line": 5165
+      },
+      {
+        "name": "mindmap",
+        "type": "const",
+        "line": 5169
+      },
+      {
+        "name": "data",
+        "type": "const",
+        "line": 5171
+      },
+      {
+        "name": "foundNode",
+        "type": "const",
+        "line": 5173
+      },
+      {
+        "name": "templateNodes",
+        "type": "const",
+        "line": 5187
+      },
+      {
+        "name": "found",
+        "type": "const",
+        "line": 5212
+      },
+      {
+        "name": "templatesContainer",
+        "type": "const",
+        "line": 5222
+      },
+      {
+        "name": "templateItem",
+        "type": "const",
+        "line": 5233
+      },
+      {
+        "name": "iconMap",
+        "type": "const",
+        "line": 5263
+      },
+      {
+        "name": "descMap",
+        "type": "const",
+        "line": 5283
+      },
+      {
+        "name": "titleInput",
+        "type": "const",
+        "line": 5303
+      },
+      {
+        "name": "contentInput",
+        "type": "const",
+        "line": 5304
+      },
+      {
+        "name": "authorInput",
+        "type": "const",
+        "line": 5305
+      },
+      {
+        "name": "guideContent",
+        "type": "var",
+        "line": 5333
+      },
+      {
+        "name": "modal",
+        "type": "var",
+        "line": 5378
+      },
+      {
+        "name": "modalContent",
+        "type": "var",
+        "line": 5381
+      },
+      {
+        "name": "closeButton",
+        "type": "var",
+        "line": 5385
+      },
+      {
+        "name": "projectMindmap",
+        "type": "const",
+        "line": 5410
+      },
+      {
+        "name": "mind_data",
+        "type": "const",
+        "line": 5416
+      },
+      {
+        "name": "exportData",
+        "type": "var",
+        "line": 5423
+      },
+      {
+        "name": "dataStr",
+        "type": "var",
+        "line": 5435
+      },
+      {
+        "name": "fileName",
+        "type": "var",
+        "line": 5436
+      },
+      {
+        "name": "fileHandle",
+        "type": "const",
+        "line": 5452
+      },
+      {
+        "name": "writable",
+        "type": "const",
+        "line": 5464
+      },
+      {
+        "name": "workspaceMindmap",
+        "type": "const",
+        "line": 5515
+      },
+      {
+        "name": "workspaceData",
+        "type": "const",
+        "line": 5520
+      },
+      {
+        "name": "tagStructure",
+        "type": "const",
+        "line": 5526
+      },
+      {
+        "name": "nodeName",
+        "type": "const",
+        "line": 5535
+      },
+      {
+        "name": "targetArray",
+        "type": "let",
+        "line": 5540
+      },
+      {
+        "name": "childName",
+        "type": "const",
+        "line": 5547
+      },
+      {
+        "name": "childTargetArray",
+        "type": "let",
+        "line": 5549
+      },
+      {
+        "name": "tagName",
+        "type": "const",
+        "line": 5565
+      },
+      {
+        "name": "tagName",
+        "type": "const",
+        "line": 5590
+      },
+      {
+        "name": "totalTags",
+        "type": "const",
+        "line": 5607
+      },
+      {
+        "name": "finalTagGroups",
+        "type": "const",
+        "line": 5633
+      },
+      {
+        "name": "html",
+        "type": "let",
+        "line": 5638
+      },
+      {
+        "name": "defaultGroups",
+        "type": "const",
+        "line": 5699
+      },
+      {
+        "name": "fallbackHtml",
+        "type": "let",
+        "line": 5700
+      },
+      {
+        "name": "style",
+        "type": "const",
+        "line": 5738
+      },
+      {
+        "name": "checkMindmapReady",
+        "type": "const",
+        "line": 5809
+      },
+      {
+        "name": "workspaceMindmap",
+        "type": "const",
+        "line": 5810
+      },
+      {
+        "name": "tagGroups",
+        "type": "const",
+        "line": 5834
+      },
+      {
+        "name": "tagsHTML",
+        "type": "const",
+        "line": 5837
+      },
+      {
+        "name": "tagContainer",
+        "type": "const",
+        "line": 5840
+      },
+      {
+        "name": "groups",
+        "type": "const",
+        "line": 5845
+      },
+      {
+        "name": "totalTags",
+        "type": "let",
+        "line": 5846
+      },
+      {
+        "name": "items",
+        "type": "const",
+        "line": 5848
+      },
+      {
+        "name": "tagContainer",
+        "type": "const",
+        "line": 5865
+      },
+      {
+        "name": "requiredFunctions",
+        "type": "const",
+        "line": 5912
+      },
+      {
+        "name": "tagContainer",
+        "type": "const",
+        "line": 5923
+      },
+      {
+        "name": "pageTagData",
+        "type": "const",
+        "line": 5924
+      },
+      {
+        "name": "groups",
+        "type": "const",
+        "line": 5928
+      },
+      {
+        "name": "titleElement",
+        "type": "const",
+        "line": 5931
+      },
+      {
+        "name": "items",
+        "type": "const",
+        "line": 5932
+      },
+      {
+        "name": "title",
+        "type": "const",
+        "line": 5935
+      },
+      {
+        "name": "tags",
+        "type": "const",
+        "line": 5936
+      },
+      {
+        "name": "workspace",
+        "type": "const",
+        "line": 5950
+      },
+      {
+        "name": "brainMapData",
+        "type": "let",
+        "line": 5951
+      },
+      {
+        "name": "data",
+        "type": "const",
+        "line": 5955
+      },
+      {
+        "name": "name",
+        "type": "const",
+        "line": 5961
+      },
+      {
+        "name": "childCount",
+        "type": "const",
+        "line": 5962
+      },
+      {
+        "name": "defaultResult",
+        "type": "let",
+        "line": 5976
+      },
+      {
+        "name": "groupNames",
+        "type": "const",
+        "line": 5992
+      },
+      {
+        "name": "displayName",
+        "type": "const",
+        "line": 5995
+      },
+      {
+        "name": "pageData",
+        "type": "const",
+        "line": 5996
+      },
+      {
+        "name": "defData",
+        "type": "const",
+        "line": 5998
+      },
+      {
+        "name": "pageVsFunc",
+        "type": "const",
+        "line": 6002
+      },
+      {
+        "name": "funcVsDefault",
+        "type": "const",
+        "line": 6003
+      },
+      {
+        "name": "tagGroups",
+        "type": "const",
+        "line": 6038
+      },
+      {
+        "name": "fourComponentTagsContainer",
+        "type": "const",
+        "line": 6041
+      },
+      {
+        "name": "newTagsHTML",
+        "type": "let",
+        "line": 6045
+      },
+      {
+        "name": "groupMappings",
+        "type": "const",
+        "line": 6048
+      },
+      {
+        "name": "tags",
+        "type": "const",
+        "line": 6055
+      },
+      {
+        "name": "groupDisplayName",
+        "type": "const",
+        "line": 6058
+      },
+      {
+        "name": "allTagContainers",
+        "type": "const",
+        "line": 6080
+      },
+      {
+        "name": "tagItems",
+        "type": "const",
+        "line": 6089
+      },
+      {
+        "name": "nodeId",
+        "type": "const",
+        "line": 6092
+      },
+      {
+        "name": "currentMindmapInstance",
+        "type": "const",
+        "line": 6107
+      },
+      {
+        "name": "currentNode",
+        "type": "const",
+        "line": 6109
+      },
+      {
+        "name": "currentMindmapInstance",
+        "type": "const",
+        "line": 6132
+      },
+      {
+        "name": "mindmapData",
+        "type": "const",
+        "line": 6136
+      },
+      {
+        "name": "nodeId",
+        "type": "const",
+        "line": 6147
+      },
+      {
+        "name": "nodeInfo",
+        "type": "const",
+        "line": 6148
+      },
+      {
+        "name": "isCompleted",
+        "type": "const",
+        "line": 6152
+      },
+      {
+        "name": "isProject",
+        "type": "const",
+        "line": 6155
+      },
+      {
+        "name": "nodeElement",
+        "type": "const",
+        "line": 6190
+      },
+      {
+        "name": "totalChildren",
+        "type": "let",
+        "line": 6205
+      },
+      {
+        "name": "completedChildren",
+        "type": "let",
+        "line": 6206
+      },
+      {
+        "name": "childInfo",
+        "type": "const",
+        "line": 6211
+      },
+      {
+        "name": "projectInfo",
+        "type": "const",
+        "line": 6218
+      },
+      {
+        "name": "originalTitle",
+        "type": "let",
+        "line": 6219
+      },
+      {
+        "name": "progressText",
+        "type": "const",
+        "line": 6225
+      },
+      {
+        "name": "newTitle",
+        "type": "const",
+        "line": 6226
+      },
+      {
+        "name": "projectInfo",
+        "type": "const",
+        "line": 6233
+      },
+      {
+        "name": "nodeElement",
+        "type": "const",
+        "line": 6258
+      },
+      {
+        "name": "projectInfo",
+        "type": "const",
+        "line": 6273
+      },
+      {
+        "name": "originalTitle",
+        "type": "const",
+        "line": 6276
+      },
+      {
+        "name": "currentMindmapInstance",
+        "type": "const",
+        "line": 6344
+      },
+      {
+        "name": "selectedNode",
+        "type": "const",
+        "line": 6346
+      },
+      {
+        "name": "contentEditor",
+        "type": "const",
+        "line": 6349
+      },
+      {
+        "name": "currentMindmapInstance",
+        "type": "const",
+        "line": 6368
+      },
+      {
+        "name": "selectedNode",
+        "type": "const",
+        "line": 6370
+      },
+      {
+        "name": "contentEditor",
+        "type": "const",
+        "line": 6372
+      },
+      {
+        "name": "containers",
+        "type": "const",
+        "line": 6407
+      },
+      {
+        "name": "container",
+        "type": "const",
+        "line": 6410
+      },
+      {
+        "name": "nodeElement",
+        "type": "let",
+        "line": 6420
+      },
+      {
+        "name": "nodeId",
+        "type": "let",
+        "line": 6421
+      },
+      {
+        "name": "mapId",
+        "type": "const",
+        "line": 6438
+      },
+      {
+        "name": "mindmap",
+        "type": "const",
+        "line": 6442
+      },
+      {
+        "name": "node",
+        "type": "const",
+        "line": 6443
+      },
+      {
+        "name": "notice",
+        "type": "const",
+        "line": 6458
+      },
+      {
+        "name": "statusElement",
+        "type": "const",
+        "line": 6472
+      },
+      {
+        "name": "cleanTitle",
+        "type": "const",
+        "line": 6483
+      },
+      {
+        "name": "nodeData",
+        "type": "const",
+        "line": 6497
+      },
+      {
+        "name": "titleInput",
+        "type": "const",
+        "line": 6511
+      },
+      {
+        "name": "contentTextarea",
+        "type": "const",
+        "line": 6512
+      },
+      {
+        "name": "notice",
+        "type": "const",
+        "line": 6520
+      },
+      {
+        "name": "nodeData",
+        "type": "const",
+        "line": 6536
+      },
+      {
+        "name": "newSession",
+        "type": "const",
+        "line": 6541
+      },
+      {
+        "name": "sessionList",
+        "type": "const",
+        "line": 6552
+      },
+      {
+        "name": "sessionHtml",
+        "type": "const",
+        "line": 6554
+      },
+      {
+        "name": "session",
+        "type": "const",
+        "line": 6573
+      },
+      {
+        "name": "notice",
+        "type": "const",
+        "line": 6578
+      },
+      {
+        "name": "sessions",
+        "type": "const",
+        "line": 6592
+      },
+      {
+        "name": "notice",
+        "type": "const",
+        "line": 6595
+      },
+      {
+        "name": "sessionList",
+        "type": "const",
+        "line": 6612
+      },
+      {
+        "name": "notice",
+        "type": "const",
+        "line": 6623
+      },
+      {
+        "name": "notice",
+        "type": "const",
+        "line": 6637
+      },
+      {
+        "name": "backgroundColor",
+        "type": "let",
+        "line": 6639
+      },
+      {
+        "name": "contentEditor",
+        "type": "const",
+        "line": 6674
+      },
+      {
+        "name": "content",
+        "type": "const",
+        "line": 6680
+      },
+      {
+        "name": "nodeData",
+        "type": "const",
+        "line": 6686
+      },
+      {
+        "name": "nodeTitle",
+        "type": "const",
+        "line": 6687
+      },
+      {
+        "name": "injectionData",
+        "type": "const",
+        "line": 6691
+      },
+      {
+        "name": "clipboardContent",
+        "type": "const",
+        "line": 6701
+      },
+      {
+        "name": "helpContent",
+        "type": "const",
+        "line": 6714
+      },
+      {
+        "name": "activeEditor",
+        "type": "const",
+        "line": 6750
+      },
+      {
+        "name": "match",
+        "type": "const",
+        "line": 6752
+      },
+      {
+        "name": "allEditors",
+        "type": "const",
+        "line": 6759
+      },
+      {
+        "name": "lastEditor",
+        "type": "const",
+        "line": 6761
+      },
+      {
+        "name": "match",
+        "type": "const",
+        "line": 6762
+      },
+      {
+        "name": "nodeId",
+        "type": "const",
+        "line": 6777
+      },
+      {
+        "name": "contentEditor",
+        "type": "const",
+        "line": 6780
+      },
+      {
+        "name": "nodeId",
+        "type": "const",
+        "line": 6796
+      },
+      {
+        "name": "contentEditor",
+        "type": "const",
+        "line": 6798
+      },
+      {
+        "name": "tagText",
+        "type": "const",
+        "line": 6849
+      },
+      {
+        "name": "template",
+        "type": "const",
+        "line": 6873
+      },
+      {
+        "name": "editor",
+        "type": "const",
+        "line": 6875
+      },
+      {
+        "name": "container",
+        "type": "const",
+        "line": 6883
+      },
+      {
+        "name": "selectedTemplates",
+        "type": "let",
+        "line": 6887
+      },
+      {
+        "name": "mainNodeData",
+        "type": "const",
+        "line": 6946
+      },
+      {
+        "name": "nodeData",
+        "type": "const",
+        "line": 6967
+      },
+      {
+        "name": "nodeTitleElement",
+        "type": "const",
+        "line": 6974
+      },
+      {
+        "name": "contentEditor",
+        "type": "const",
+        "line": 6981
+      },
+      {
+        "name": "metaInfo",
+        "type": "const",
+        "line": 6988
+      },
+      {
+        "name": "titleInput",
+        "type": "const",
+        "line": 6998
+      },
+      {
+        "name": "contentEditor",
+        "type": "const",
+        "line": 6999
+      },
+      {
+        "name": "title",
+        "type": "const",
+        "line": 7002
+      },
+      {
+        "name": "content",
+        "type": "const",
+        "line": 7003
+      },
+      {
+        "name": "metaInfo",
+        "type": "const",
+        "line": 7010
+      },
+      {
+        "name": "contentEditor",
+        "type": "const",
+        "line": 7025
+      },
+      {
+        "name": "content",
+        "type": "const",
+        "line": 7031
+      },
+      {
+        "name": "nodeData",
+        "type": "const",
+        "line": 7034
+      },
+      {
+        "name": "nodeTitle",
+        "type": "const",
+        "line": 7035
+      },
+      {
+        "name": "qaToggle",
+        "type": "const",
+        "line": 7038
+      },
+      {
+        "name": "isQAMode",
+        "type": "const",
+        "line": 7039
+      },
+      {
+        "name": "injectionContent",
+        "type": "let",
+        "line": 7043
+      },
+      {
+        "name": "injectionData",
+        "type": "const",
+        "line": 7062
+      },
+      {
+        "name": "clipboardContent",
+        "type": "const",
+        "line": 7074
+      },
+      {
+        "name": "submitButton",
+        "type": "const",
+        "line": 7082
+      },
+      {
+        "name": "originalText",
+        "type": "const",
+        "line": 7084
+      },
+      {
+        "name": "sessionType",
+        "type": "const",
+        "line": 7097
+      },
+      {
+        "name": "sessionContent",
+        "type": "const",
+        "line": 7098
+      },
+      {
+        "name": "newSession",
+        "type": "const",
+        "line": 7101
+      },
+      {
+        "name": "logEntry",
+        "type": "const",
+        "line": 7115
+      },
+      {
+        "name": "fourComponentGlobalState",
+        "type": "const",
+        "line": 7132
+      },
+      {
+        "name": "fourComponentNodeState",
+        "type": "const",
+        "line": 7133
+      },
+      {
+        "name": "qaToggle",
+        "type": "const",
+        "line": 7137
+      },
+      {
+        "name": "qaMode",
+        "type": "const",
+        "line": 7140
+      },
+      {
+        "name": "fourComponentButton",
+        "type": "const",
+        "line": 7151
+      },
+      {
+        "name": "submitButtons",
+        "type": "const",
+        "line": 7163
+      },
+      {
+        "name": "contentEditor",
+        "type": "const",
+        "line": 7183
+      },
+      {
+        "name": "contentEditor",
+        "type": "const",
+        "line": 7192
+      },
+      {
+        "name": "qaToggle",
+        "type": "const",
+        "line": 7203
+      },
+      {
+        "name": "isQAMode",
+        "type": "const",
+        "line": 7204
+      },
+      {
+        "name": "contentEditor",
+        "type": "const",
+        "line": 7208
+      },
+      {
+        "name": "content",
+        "type": "const",
+        "line": 7214
+      },
+      {
+        "name": "currentNodeId",
+        "type": "const",
+        "line": 7222
+      },
+      {
+        "name": "nodeTitle",
+        "type": "let",
+        "line": 7223
+      },
+      {
+        "name": "nodeData",
+        "type": "const",
+        "line": 7226
+      },
+      {
+        "name": "timestamp",
+        "type": "const",
+        "line": 7246
+      },
+      {
+        "name": "newContent",
+        "type": "const",
+        "line": 7247
+      },
+      {
+        "name": "logEntry",
+        "type": "const",
+        "line": 7256
+      },
+      {
+        "name": "injectionContent",
+        "type": "let",
+        "line": 7264
+      },
+      {
+        "name": "submitButton",
+        "type": "const",
+        "line": 7273
+      },
+      {
+        "name": "originalText",
+        "type": "const",
+        "line": 7274
+      },
+      {
+        "name": "injectionData",
+        "type": "const",
+        "line": 7296
+      },
+      {
+        "name": "clipboardContent",
+        "type": "const",
+        "line": 7308
+      },
+      {
+        "name": "newContent",
+        "type": "const",
+        "line": 7335
+      },
+      {
+        "name": "logEntry",
+        "type": "const",
+        "line": 7341
+      },
+      {
+        "name": "submitButton",
+        "type": "const",
+        "line": 7360
+      },
+      {
+        "name": "currentNodeId",
+        "type": "const",
+        "line": 7371
+      },
+      {
+        "name": "tagName",
+        "type": "const",
+        "line": 7379
+      },
+      {
+        "name": "tagGroup",
+        "type": "const",
+        "line": 7380
+      },
+      {
+        "name": "contentEditor",
+        "type": "const",
+        "line": 7385
+      },
+      {
+        "name": "content",
+        "type": "let",
+        "line": 7392
+      },
+      {
+        "name": "tagString",
+        "type": "const",
+        "line": 7394
+      },
+      {
+        "name": "isCurrentlySelected",
+        "type": "const",
+        "line": 7397
+      },
+      {
+        "name": "beforeRemove",
+        "type": "const",
+        "line": 7403
+      },
+      {
+        "name": "beforeAdd",
+        "type": "const",
+        "line": 7408
+      },
+      {
+        "name": "finalContent",
+        "type": "const",
+        "line": 7424
+      },
+      {
+        "name": "contentEditor",
+        "type": "const",
+        "line": 7441
+      },
+      {
+        "name": "content",
+        "type": "const",
+        "line": 7446
+      },
+      {
+        "name": "tagMatches",
+        "type": "const",
+        "line": 7449
+      },
+      {
+        "name": "restoredCount",
+        "type": "let",
+        "line": 7453
+      },
+      {
+        "name": "tagName",
+        "type": "const",
+        "line": 7455
+      },
+      {
+        "name": "tagElement",
+        "type": "const",
+        "line": 7456
+      },
+      {
+        "name": "fourComponentData",
+        "type": "const",
+        "line": 7474
+      },
+      {
+        "name": "fourComponentGlobalData",
+        "type": "const",
+        "line": 7482
+      },
+      {
+        "name": "savedFourComponentData",
+        "type": "const",
+        "line": 7501
+      },
+      {
+        "name": "parsedData",
+        "type": "const",
+        "line": 7503
+      },
+      {
+        "name": "savedGlobalState",
+        "type": "const",
+        "line": 7518
+      },
+      {
+        "name": "parsedGlobalData",
+        "type": "const",
+        "line": 7520
+      },
+      {
+        "name": "templates",
+        "type": "const",
+        "line": 7570
+      },
+      {
+        "name": "randomTemplate",
+        "type": "const",
+        "line": 7575
+      },
+      {
+        "name": "qaToggle",
+        "type": "const",
+        "line": 7589
+      },
+      {
+        "name": "tagContainers",
+        "type": "const",
+        "line": 7602
+      },
+      {
+        "name": "tagItems",
+        "type": "const",
+        "line": 7604
+      },
+      {
+        "name": "tagName",
+        "type": "const",
+        "line": 7606
+      },
+      {
+        "name": "node",
+        "type": "let",
+        "line": 7627
+      },
+      {
+        "name": "cleanTitle",
+        "type": "let",
+        "line": 7628
+      },
+      {
+        "name": "currentMindmapInstance",
+        "type": "const",
+        "line": 7631
+      },
+      {
+        "name": "nodeData",
+        "type": "const",
+        "line": 7640
+      },
+      {
+        "name": "savedNodeData",
+        "type": "const",
+        "line": 7653
+      },
+      {
+        "name": "finalTitle",
+        "type": "const",
+        "line": 7659
+      },
+      {
+        "name": "finalContent",
+        "type": "const",
+        "line": 7660
+      },
+      {
+        "name": "contentEditor",
+        "type": "const",
+        "line": 7677
+      },
+      {
+        "name": "contentEditor",
+        "type": "const",
+        "line": 7696
+      },
+      {
+        "name": "content",
+        "type": "const",
+        "line": 7706
+      },
+      {
+        "name": "currentMindmapInstance",
+        "type": "const",
+        "line": 7786
+      },
+      {
+        "name": "node",
+        "type": "const",
+        "line": 7788
+      },
+      {
+        "name": "hasContent",
+        "type": "const",
+        "line": 7791
+      },
+      {
+        "name": "displayTitle",
+        "type": "const",
+        "line": 7792
+      },
+      {
+        "name": "nodeTitleElement",
+        "type": "const",
+        "line": 7798
+      },
+      {
+        "name": "currentNode",
+        "type": "const",
+        "line": 7866
+      },
+      {
+        "name": "categoryMindmap",
+        "type": "let",
+        "line": 7902
+      },
+      {
+        "name": "contentMindmap",
+        "type": "let",
+        "line": 7903
+      },
+      {
+        "name": "currentSelectedCategory",
+        "type": "let",
+        "line": 7904
+      },
+      {
+        "name": "categoryData",
+        "type": "const",
+        "line": 7907
+      },
+      {
+        "name": "container",
+        "type": "const",
+        "line": 7947
+      },
+      {
+        "name": "categoryMindmapData",
+        "type": "const",
+        "line": 7954
+      },
+      {
+        "name": "categoryOptions",
+        "type": "const",
+        "line": 7990
+      },
+      {
+        "name": "node",
+        "type": "const",
+        "line": 8026
+      },
+      {
+        "name": "titleElement",
+        "type": "const",
+        "line": 8034
+      },
+      {
+        "name": "container",
+        "type": "const",
+        "line": 8050
+      },
+      {
+        "name": "emptyState",
+        "type": "const",
+        "line": 8054
+      },
+      {
+        "name": "contentData",
+        "type": "const",
+        "line": 8060
+      },
+      {
+        "name": "contentOptions",
+        "type": "const",
+        "line": 8066
+      },
+      {
+        "name": "contentItems",
+        "type": "const",
+        "line": 8079
+      },
+      {
+        "name": "rootTopic",
+        "type": "let",
+        "line": 8081
+      },
+      {
+        "name": "children",
+        "type": "const",
+        "line": 8089
+      },
+      {
+        "name": "categoryName",
+        "type": "const",
+        "line": 8115
+      },
+      {
+        "name": "categoryId",
+        "type": "const",
+        "line": 8118
+      },
+      {
+        "name": "categoryType",
+        "type": "const",
+        "line": 8119
+      },
+      {
+        "name": "itemName",
+        "type": "const",
+        "line": 8142
+      },
+      {
+        "name": "itemId",
+        "type": "const",
+        "line": 8145
+      },
+      {
+        "name": "data",
+        "type": "const",
+        "line": 8170
+      },
+      {
+        "name": "data",
+        "type": "const",
+        "line": 8181
+      },
+      {
+        "name": "tagsData",
+        "type": "const",
+        "line": 8190
+      },
+      {
+        "name": "tagContainer",
+        "type": "const",
+        "line": 8191
+      },
+      {
+        "name": "tagGroups",
+        "type": "const",
+        "line": 8198
+      },
+      {
+        "name": "group",
+        "type": "const",
+        "line": 8200
+      },
+      {
+        "name": "tagsHTML",
+        "type": "let",
+        "line": 8208
+      },
+      {
+        "name": "universalDataService",
+        "type": "let",
+        "line": 8234
+      },
+      {
+        "name": "smartMDParser",
+        "type": "let",
+        "line": 8235
+      },
+      {
+        "name": "uiIntegrationAdapter",
+        "type": "let",
+        "line": 8236
+      },
+      {
+        "name": "mdDirectService",
+        "type": "let",
+        "line": 8285
+      },
+      {
+        "name": "nodeId",
+        "type": "const",
+        "line": 8296
+      },
+      {
+        "name": "lines",
+        "type": "const",
+        "line": 8297
+      },
+      {
+        "name": "title",
+        "type": "const",
+        "line": 8298
+      },
+      {
+        "name": "actualContent",
+        "type": "const",
+        "line": 8299
+      },
+      {
+        "name": "lines",
+        "type": "const",
+        "line": 8338
+      },
+      {
+        "name": "title",
+        "type": "const",
+        "line": 8339
+      },
+      {
+        "name": "actualContent",
+        "type": "const",
+        "line": 8340
+      },
+      {
+        "name": "nodeId",
+        "type": "const",
+        "line": 8379
+      },
+      {
+        "name": "nodeData",
+        "type": "const",
+        "line": 8380
+      },
+      {
+        "name": "lines",
+        "type": "const",
+        "line": 8421
+      },
+      {
+        "name": "title",
+        "type": "const",
+        "line": 8422
+      },
+      {
+        "name": "actualContent",
+        "type": "const",
+        "line": 8423
+      },
+      {
+        "name": "type",
+        "type": "let",
+        "line": 8425
+      },
+      {
+        "name": "content",
+        "type": "const",
+        "line": 8455
+      },
+      {
+        "name": "service",
+        "type": "const",
+        "line": 8461
+      },
+      {
+        "name": "result",
+        "type": "const",
+        "line": 8462
+      },
+      {
+        "name": "content",
+        "type": "const",
+        "line": 8477
+      },
+      {
+        "name": "service",
+        "type": "const",
+        "line": 8484
+      },
+      {
+        "name": "result",
+        "type": "const",
+        "line": 8485
+      },
+      {
+        "name": "fileInput",
+        "type": "const",
+        "line": 8531
+      },
+      {
+        "name": "file",
+        "type": "const",
+        "line": 8538
+      },
+      {
+        "name": "content",
+        "type": "const",
+        "line": 8547
+      },
+      {
+        "name": "result",
+        "type": "const",
+        "line": 8550
+      },
+      {
+        "name": "parsedNodes",
+        "type": "const",
+        "line": 8590
+      },
+      {
+        "name": "importedCount",
+        "type": "let",
+        "line": 8594
+      },
+      {
+        "name": "skippedCount",
+        "type": "let",
+        "line": 8595
+      },
+      {
+        "name": "nodeId",
+        "type": "const",
+        "line": 8605
+      },
+      {
+        "name": "nodeData",
+        "type": "const",
+        "line": 8608
+      },
+      {
+        "name": "timestamp",
+        "type": "const",
+        "line": 8703
+      },
+      {
+        "name": "random",
+        "type": "const",
+        "line": 8704
+      },
+      {
+        "name": "titleHash",
+        "type": "const",
+        "line": 8705
+      },
+      {
+        "name": "result",
+        "type": "const",
+        "line": 8758
+      },
+      {
+        "name": "injectionTab",
+        "type": "const",
+        "line": 8777
+      },
+      {
+        "name": "nodeDatabase",
+        "type": "const",
+        "line": 8801
+      },
+      {
+        "name": "sessionDatabase",
+        "type": "const",
+        "line": 8802
+      },
+      {
+        "name": "mindmapData",
+        "type": "const",
+        "line": 8803
+      },
+      {
+        "name": "fourComponentData",
+        "type": "const",
+        "line": 8804
+      },
+      {
+        "name": "projectInfo",
+        "type": "const",
+        "line": 8806
+      },
+      {
+        "name": "mdContent",
+        "type": "const",
+        "line": 8814
+      },
+      {
+        "name": "fileName",
+        "type": "const",
+        "line": 8824
+      },
+      {
+        "name": "pinyinMap",
+        "type": "const",
+        "line": 8853
+      },
+      {
+        "name": "pinyin",
+        "type": "let",
+        "line": 8865
+      },
+      {
+        "name": "pinyin",
+        "type": "const",
+        "line": 8887
+      },
+      {
+        "name": "prefix",
+        "type": "const",
+        "line": 8888
+      },
+      {
+        "name": "prefix",
+        "type": "const",
+        "line": 8901
+      },
+      {
+        "name": "counter",
+        "type": "let",
+        "line": 8909
+      },
+      {
+        "name": "nodeId",
+        "type": "const",
+        "line": 8913
+      },
+      {
+        "name": "standardPattern",
+        "type": "const",
+        "line": 8925
+      },
+      {
+        "name": "prefix",
+        "type": "const",
+        "line": 8958
+      },
+      {
+        "name": "prefix",
+        "type": "const",
+        "line": 8968
+      },
+      {
+        "name": "count",
+        "type": "const",
+        "line": 8969
+      },
+      {
+        "name": "parts",
+        "type": "const",
+        "line": 8993
+      },
+      {
+        "name": "parts",
+        "type": "const",
+        "line": 9008
+      },
+      {
+        "name": "parts",
+        "type": "const",
+        "line": 9023
+      },
+      {
+        "name": "storedNodeDB",
+        "type": "const",
+        "line": 9049
+      },
+      {
+        "name": "nodeDatabase",
+        "type": "let",
+        "line": 9050
+      },
+      {
+        "name": "mindmapData",
+        "type": "const",
+        "line": 9053
+      },
+      {
+        "name": "storedSessionDB",
+        "type": "const",
+        "line": 9065
+      },
+      {
+        "name": "storedMindmapData",
+        "type": "const",
+        "line": 9075
+      },
+      {
+        "name": "storedFourComponentData",
+        "type": "const",
+        "line": 9085
+      },
+      {
+        "name": "syncCount",
+        "type": "let",
+        "line": 9096
+      },
+      {
+        "name": "newCount",
+        "type": "let",
+        "line": 9097
+      },
+      {
+        "name": "pathUpdateCount",
+        "type": "let",
+        "line": 9098
+      },
+      {
+        "name": "relationUpdateCount",
+        "type": "let",
+        "line": 9099
+      },
+      {
+        "name": "mapData",
+        "type": "const",
+        "line": 9103
+      },
+      {
+        "name": "nodeId",
+        "type": "const",
+        "line": 9111
+      },
+      {
+        "name": "cleanTitle",
+        "type": "const",
+        "line": 9112
+      },
+      {
+        "name": "oldPath",
+        "type": "const",
+        "line": 9140
+      },
+      {
+        "name": "childrenIds",
+        "type": "const",
+        "line": 9150
+      },
+      {
+        "name": "oldRelations",
+        "type": "const",
+        "line": 9154
+      },
+      {
+        "name": "childPath",
+        "type": "const",
+        "line": 9176
+      },
+      {
+        "name": "mapData",
+        "type": "const",
+        "line": 9198
+      },
+      {
+        "name": "nodeId",
+        "type": "const",
+        "line": 9206
+      },
+      {
+        "name": "parentId",
+        "type": "const",
+        "line": 9229
+      },
+      {
+        "name": "childrenPaths",
+        "type": "const",
+        "line": 9230
+      },
+      {
+        "name": "childrenIds",
+        "type": "const",
+        "line": 9233
+      },
+      {
+        "name": "childPath",
+        "type": "const",
+        "line": 9250
+      },
+      {
+        "name": "lines",
+        "type": "const",
+        "line": 9261
+      },
+      {
+        "name": "currentTime",
+        "type": "const",
+        "line": 9262
+      },
+      {
+        "name": "isoTime",
+        "type": "const",
+        "line": 9263
+      },
+      {
+        "name": "projectName",
+        "type": "const",
+        "line": 9264
+      },
+      {
+        "name": "totalNodes",
+        "type": "const",
+        "line": 9291
+      },
+      {
+        "name": "fourComponentNodes",
+        "type": "const",
+        "line": 9292
+      },
+      {
+        "name": "sessionNodes",
+        "type": "const",
+        "line": 9293
+      },
+      {
+        "name": "totalSessions",
+        "type": "const",
+        "line": 9294
+      },
+      {
+        "name": "mindmapStats",
+        "type": "const",
+        "line": 9298
+      },
+      {
+        "name": "mapData",
+        "type": "const",
+        "line": 9300
+      },
+      {
+        "name": "mapData",
+        "type": "const",
+        "line": 9323
+      },
+      {
+        "name": "mapName",
+        "type": "const",
+        "line": 9324
+      },
+      {
+        "name": "sortedNodes",
+        "type": "const",
+        "line": 9338
+      },
+      {
+        "name": "pathA",
+        "type": "const",
+        "line": 9339
+      },
+      {
+        "name": "pathB",
+        "type": "const",
+        "line": 9340
+      },
+      {
+        "name": "nodesByMap",
+        "type": "const",
+        "line": 9345
+      },
+      {
+        "name": "mapId",
+        "type": "const",
+        "line": 9347
+      },
+      {
+        "name": "mapData",
+        "type": "const",
+        "line": 9356
+      },
+      {
+        "name": "mapName",
+        "type": "const",
+        "line": 9357
+      },
+      {
+        "name": "level",
+        "type": "const",
+        "line": 9364
+      },
+      {
+        "name": "headerPrefix",
+        "type": "const",
+        "line": 9365
+      },
+      {
+        "name": "nodeTitle",
+        "type": "const",
+        "line": 9366
+      },
+      {
+        "name": "isStandardId",
+        "type": "const",
+        "line": 9382
+      },
+      {
+        "name": "idPrefix",
+        "type": "const",
+        "line": 9384
+      },
+      {
+        "name": "idNumber",
+        "type": "const",
+        "line": 9385
+      },
+      {
+        "name": "parentId",
+        "type": "const",
+        "line": 9392
+      },
+      {
+        "name": "childrenIds",
+        "type": "const",
+        "line": 9393
+      },
+      {
+        "name": "allTags",
+        "type": "const",
+        "line": 9426
+      },
+      {
+        "name": "nodeSessions",
+        "type": "const",
+        "line": 9470
+      },
+      {
+        "name": "count",
+        "type": "let",
+        "line": 9549
+      },
+      {
+        "name": "dialog",
+        "type": "const",
+        "line": 9560
+      },
+      {
+        "name": "nodeDatabase",
+        "type": "let",
+        "line": 9587
+      },
+      {
+        "name": "sessionDatabase",
+        "type": "const",
+        "line": 9588
+      },
+      {
+        "name": "mindmapData",
+        "type": "let",
+        "line": 9589
+      },
+      {
+        "name": "fourComponentData",
+        "type": "const",
+        "line": 9590
+      },
+      {
+        "name": "nodeCount",
+        "type": "const",
+        "line": 9596
+      },
+      {
+        "name": "sessionCount",
+        "type": "const",
+        "line": 9597
+      },
+      {
+        "name": "mindmapCount",
+        "type": "const",
+        "line": 9598
+      },
+      {
+        "name": "pathValidationCount",
+        "type": "let",
+        "line": 9606
+      },
+      {
+        "name": "relationValidationCount",
+        "type": "let",
+        "line": 9607
+      },
+      {
+        "name": "projectInfo",
+        "type": "const",
+        "line": 9616
+      },
+      {
+        "name": "mdContent",
+        "type": "const",
+        "line": 9627
+      },
+      {
+        "name": "timestamp",
+        "type": "const",
+        "line": 9642
+      },
+      {
+        "name": "fileName",
+        "type": "const",
+        "line": 9643
+      },
+      {
+        "name": "fileHandle",
+        "type": "const",
+        "line": 9681
+      },
+      {
+        "name": "writable",
+        "type": "const",
+        "line": 9695
+      },
+      {
+        "name": "fileHandle",
+        "type": "const",
+        "line": 9730
+      },
+      {
+        "name": "writable",
+        "type": "const",
+        "line": 9743
+      },
+      {
+        "name": "standardParser",
+        "type": "let",
+        "line": 9763
+      },
+      {
+        "name": "result",
+        "type": "const",
+        "line": 9773
+      },
+      {
+        "name": "nodes",
+        "type": "const",
+        "line": 9776
+      },
+      {
+        "name": "success",
+        "type": "const",
+        "line": 9815
+      }
+    ],
+    "largeBlocks": [
+      {
+        "type": "script",
+        "start": 1629,
+        "end": 1795,
+        "lines": 166,
+        "size": 6058
+      },
+      {
+        "type": "script",
+        "start": 1629,
+        "end": 1796,
+        "lines": 166,
+        "size": 6058
+      },
+      {
+        "type": "script",
+        "start": 1629,
+        "end": 2123,
+        "lines": 166,
+        "size": 6058
+      },
+      {
+        "type": "script",
+        "start": 1629,
+        "end": 2124,
+        "lines": 166,
+        "size": 6058
+      },
+      {
+        "type": "script",
+        "start": 1629,
+        "end": 2125,
+        "lines": 166,
+        "size": 6058
+      },
+      {
+        "type": "script",
+        "start": 1629,
+        "end": 2128,
+        "lines": 166,
+        "size": 6058
+      },
+      {
+        "type": "script",
+        "start": 2139,
+        "end": 6396,
+        "lines": 4257,
+        "size": 180174
+      },
+      {
+        "type": "script",
+        "start": 6399,
+        "end": 9826,
+        "lines": 3427,
+        "size": 138682
+      }
+    ]
+  },
+  "separableContent": {
+    "functions": {
+      "count": 157,
+      "estimatedLines": 2355,
+      "categories": {
+        "mindmapCore": 39,
+        "nodeManagement": 31,
+        "uiInteraction": 28,
+        "dataProcessing": 23,
+        "utilities": 18,
+        "eventHandling": 15
+      }
+    },
+    "globalVars": {
+      "count": 642,
+      "estimatedLines": 1284,
+      "canCentralize": 513
+    },
+    "largeBlocks": [
+      {
+        "type": "script",
+        "start": 1629,
+        "end": 1795,
+        "lines": 166,
+        "size": 6058
+      },
+      {
+        "type": "script",
+        "start": 1629,
+        "end": 1796,
+        "lines": 166,
+        "size": 6058
+      },
+      {
+        "type": "script",
+        "start": 1629,
+        "end": 2123,
+        "lines": 166,
+        "size": 6058
+      },
+      {
+        "type": "script",
+        "start": 1629,
+        "end": 2124,
+        "lines": 166,
+        "size": 6058
+      },
+      {
+        "type": "script",
+        "start": 1629,
+        "end": 2125,
+        "lines": 166,
+        "size": 6058
+      },
+      {
+        "type": "script",
+        "start": 1629,
+        "end": 2128,
+        "lines": 166,
+        "size": 6058
+      },
+      {
+        "type": "script",
+        "start": 2139,
+        "end": 6396,
+        "lines": 4257,
+        "size": 180174
+      },
+      {
+        "type": "script",
+        "start": 6399,
+        "end": 9826,
+        "lines": 3427,
+        "size": 138682
+      }
+    ],
+    "totalSeparableLines": 12319,
+    "totalSeparableSize": 355204
+  },
+  "slimmingEffect": {
+    "before": {
+      "lines": 9829,
+      "size": 388896,
+      "jsRatio": "79.9"
+    },
+    "separatedContent": {
+      "lines": 12319,
+      "size": 355204,
+      "percentage": "125.3"
+    },
+    "after": {
+      "lines": -2490,
+      "size": 33692,
+      "jsRatio": "179.5"
+    },
+    "newFiles": [
+      {
+        "name": "src/core/app_core.js",
+        "lines": 200,
+        "desc": "应用核心逻辑"
+      },
+      {
+        "name": "src/services/mindmap_core_service.js",
+        "lines": 585,
+        "desc": "脑图核心功能"
+      },
+      {
+        "name": "src/services/node_management_service.js",
+        "lines": 465,
+        "desc": "节点管理"
+      },
+      {
+        "name": "src/services/ui_interaction_service.js",
+        "lines": 420,
+        "desc": "UI交互"
+      },
+      {
+        "name": "src/services/data_processing_service.js",
+        "lines": 345,
+        "desc": "数据处理"
+      },
+      {
+        "name": "src/core/global_state.js",
+        "lines": 1026,
+        "desc": "全局状态管理"
+      },
+      {
+        "name": "src/utils/utility_functions.js",
+        "lines": 270,
+        "desc": "工具函数"
+      }
+    ]
+  },
+  "implementationPlan": {
+    "phases": [
+      {
+        "name": "第一阶段：核心逻辑分离",
+        "priority": "高",
+        "risk": "低",
+        "duration": "1-2天",
+        "tasks": [
+          "创建 src/core/app_core.js",
+          "分离应用初始化逻辑",
+          "分离全局事件处理",
+          "测试核心功能完整性"
+        ],
+        "expectedReduction": "500-800行"
+      },
+      {
+        "name": "第二阶段：功能模块分离",
+        "priority": "高",
+        "risk": "中",
+        "duration": "3-5天",
+        "tasks": [
+          "按功能域分离157个函数",
+          "创建6个主要服务模块",
+          "建立模块间接口",
+          "逐步测试每个模块"
+        ],
+        "expectedReduction": "2000-3000行"
+      },
+      {
+        "name": "第三阶段：状态管理优化",
+        "priority": "中",
+        "risk": "中",
+        "duration": "2-3天",
+        "tasks": [
+          "创建全局状态管理器",
+          "整合642个全局变量",
+          "实现状态访问器",
+          "优化数据流"
+        ],
+        "expectedReduction": "1000-1500行"
+      },
+      {
+        "name": "第四阶段：代码块优化",
+        "priority": "中",
+        "risk": "低",
+        "duration": "1-2天",
+        "tasks": [
+          "提取大型代码块",
+          "优化重复代码",
+          "清理冗余逻辑",
+          "性能优化"
+        ],
+        "expectedReduction": "500-1000行"
+      }
+    ],
+    "totalReduction": {
+      "min": 4000,
+      "max": 6300,
+      "percentage": {
+        "min": "40.7",
+        "max": "64.1"
+      }
+    }
+  },
+  "summary": {
+    "currentSize": "379.8KB",
+    "currentLines": 9829,
+    "expectedReduction": "40.7%-64.1%",
+    "newModules": 7,
+    "implementationTime": "7-12天"
+  }
+}

@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NodeMind ID标准化测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .test-section h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        button {
+            background: #007cba;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #005a87;
+        }
+        .result {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
+            white-space: pre-wrap;
+            font-family: monospace;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .success {
+            border-color: #28a745;
+            background-color: #d4edda;
+        }
+        .error {
+            border-color: #dc3545;
+            background-color: #f8d7da;
+        }
+        .info {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .demo-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+        }
+        .demo-table th, .demo-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        .demo-table th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🆔 NodeMind ID标准化 + 隐性固定结构化测试</h1>
+        <p>测试项目拼音前缀 + 递增编号的ID标准化方案，以及隐性固定结构化MD生成</p>
+        
+        <div class="info">
+            <strong>新的数据结构规则：</strong>
+            <ul>
+                <li><strong>🔒 固定必须有的</strong>：ID，标题+内容，父子关系，时间戳</li>
+                <li><strong>📝 可选显示的</strong>：标签，其他关系，是否展开子节点，会话块等</li>
+                <li><strong>💡 隐性结构化</strong>：空属性不显示，只呈现有值的属性</li>
+                <li><strong>🆔 ID标准化</strong>：项目拼音前5字符 + 3位递增编号</li>
+            </ul>
+        </div>
+
+        <div class="test-section">
+            <h3>📝 项目前缀测试</h3>
+            <button onclick="testProjectPrefix()">测试项目前缀生成</button>
+            <div id="projectPrefixResult" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>🆔 ID生成测试</h3>
+            <button onclick="testIdGeneration()">测试ID生成</button>
+            <button onclick="testBatchIdGeneration()">批量生成测试</button>
+            <div id="idGenerationResult" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>✅ ID验证测试</h3>
+            <button onclick="testIdValidation()">测试ID格式验证</button>
+            <div id="idValidationResult" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>📊 隐性结构化MD生成测试</h3>
+            <button onclick="testStructuredMDGeneration()">测试结构化MD生成</button>
+            <div id="structuredMDResult" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>🎯 完整演示</h3>
+            <button onclick="runCompleteDemo()">运行完整演示</button>
+            <div id="completeDemoResult" class="result"></div>
+        </div>
+    </div>
+
+    <script>
+        // 🆔 ID标准化管理器
+        class NodeIdManager {
+            static projectPrefixCache = new Map();
+            static nodeCounters = new Map();
+            
+            static chineseToPinyin(chinese) {
+                const pinyinMap = {
+                    '项': 'xiang', '目': 'mu', '管': 'guan', '理': 'li', '思': 'si', '维': 'wei', 
+                    '导': 'dao', '图': 'tu', '系': 'xi', '统': 'tong', '脑': 'nao', '图': 'tu',
+                    '会': 'hui', '话': 'hua', '笔': 'bi', '记': 'ji', '任': 'ren', '务': 'wu',
+                    '计': 'ji', '划': 'hua', '方': 'fang', '案': 'an', '设': 'she', '计': 'ji',
+                    '开': 'kai', '发': 'fa', '测': 'ce', '试': 'shi', '部': 'bu', '署': 'shu',
+                    '学': 'xue', '习': 'xi', '研': 'yan', '究': 'jiu', '文': 'wen', '档': 'dang',
+                    '知': 'zhi', '识': 'shi', '库': 'ku', '数': 'shu', '据': 'ju', '分': 'fen',
+                    '析': 'xi', '报': 'bao', '告': 'gao', '流': 'liu', '程': 'cheng', '业': 'ye',
+                    '标': 'biao', '签': 'qian', '节': 'jie', '点': 'dian', '内': 'nei', '容': 'rong'
+                };
+                
+                let pinyin = '';
+                for (let char of chinese) {
+                    if (pinyinMap[char]) {
+                        pinyin += pinyinMap[char];
+                    } else if (/[a-zA-Z0-9]/.test(char)) {
+                        pinyin += char.toLowerCase();
+                    }
+                }
+                return pinyin;
+            }
+            
+            static getProjectPrefix(projectName) {
+                if (this.projectPrefixCache.has(projectName)) {
+                    return this.projectPrefixCache.get(projectName);
+                }
+                
+                const pinyin = this.chineseToPinyin(projectName);
+                const prefix = pinyin.substring(0, 5).padEnd(5, 'x');
+                
+                this.projectPrefixCache.set(projectName, prefix);
+                return prefix;
+            }
+            
+            static generateNodeId(projectName = 'NodeMind项目') {
+                const prefix = this.getProjectPrefix(projectName);
+                
+                if (!this.nodeCounters.has(prefix)) {
+                    this.nodeCounters.set(prefix, 0);
+                }
+                
+                let counter = this.nodeCounters.get(prefix) + 1;
+                this.nodeCounters.set(prefix, counter);
+                
+                const nodeId = `${prefix}${counter}`;
+                return nodeId;
+            }
+            
+            static isStandardId(nodeId) {
+                const standardPattern = /^[a-z]{5}\d+$/;
+                return standardPattern.test(nodeId);
+            }
+            
+            static extractProjectPrefix(nodeId) {
+                return this.isStandardId(nodeId) ? nodeId.substring(0, 5) : null;
+            }
+            
+            static extractNodeNumber(nodeId) {
+                return this.isStandardId(nodeId) ? parseInt(nodeId.substring(5), 10) : null;
+            }
+            
+            static resetCounter(projectName) {
+                const prefix = this.getProjectPrefix(projectName);
+                this.nodeCounters.set(prefix, 0);
+            }
+            
+            static getProjectStats(projectName) {
+                const prefix = this.getProjectPrefix(projectName);
+                const count = this.nodeCounters.get(prefix) || 0;
+                
+                return {
+                    projectName,
+                    prefix,
+                    nodeCount: count,
+                    nextId: `${prefix}${count + 1}`
+                };
+            }
+        }
+
+        // 📝 隐性固定结构化MD生成器
+        class StructuredMDGenerator {
+            /**
+             * 生成隐性固定结构化的节点MD
+             * @param {object} nodeData - 节点数据
+             * @returns {string} MD格式文本
+             */
+            static generateNodeMD(nodeData) {
+                const lines = [];
+                
+                // 🔒 固定必须有的部分
+                const level = Math.max(3, Math.min((nodeData.level || 1) + 2, 6));
+                const headerPrefix = '#'.repeat(level);
+                lines.push(`${headerPrefix} ${nodeData.title || '未命名节点'}`);
+                lines.push('');
+                
+                // 核心元数据表格（固定必须有）
+                lines.push('**核心信息**:');
+                lines.push('');
+                lines.push('| 属性 | 值 |');
+                lines.push('|------|-----|');
+                lines.push(`| 节点ID | \`${nodeData.id}\` |`);
+                
+                // ID格式检查
+                if (NodeIdManager.isStandardId(nodeData.id)) {
+                    const prefix = NodeIdManager.extractProjectPrefix(nodeData.id);
+                    const number = NodeIdManager.extractNodeNumber(nodeData.id);
+                    lines.push(`| ID格式 | ✅ 标准 (${prefix}-${number}) |`);
+                }
+                
+                // 父子关系（固定必须有）
+                if (nodeData.relations) {
+                    const parentId = nodeData.relations.parent;
+                    const childrenIds = nodeData.relations.children || [];
+                    
+                    if (parentId) {
+                        lines.push(`| 父节点 | \`${parentId}\` |`);
+                    } else {
+                        lines.push(`| 父节点 | 无（根节点） |`);
+                    }
+                    
+                    if (childrenIds.length > 0) {
+                        lines.push(`| 子节点 | ${childrenIds.map(id => `\`${id}\``).join(', ')} |`);
+                        lines.push(`| 子节点数 | ${childrenIds.length} |`);
+                    } else {
+                        lines.push(`| 子节点 | 无 |`);
+                    }
+                }
+                
+                // 时间戳（固定必须有）
+                if (nodeData.created) {
+                    lines.push(`| 创建时间 | ${nodeData.created} |`);
+                }
+                if (nodeData.modified) {
+                    lines.push(`| 修改时间 | ${nodeData.modified} |`);
+                }
+                
+                lines.push('');
+                
+                // 📝 可选部分（有值才显示）
+                
+                // 路径信息（如果有）
+                if (nodeData.path) {
+                    lines.push('**路径信息**:');
+                    lines.push('');
+                    lines.push(`- 节点路径: \`${nodeData.path}\``);
+                    lines.push(`- 节点层级: ${nodeData.level || '未定义'}`);
+                    if (nodeData.mapId) {
+                        lines.push(`- 所属脑图: ${nodeData.mapId}`);
+                    }
+                    if (nodeData.direction) {
+                        lines.push(`- 方向: ${nodeData.direction}`);
+                    }
+                    lines.push('');
+                }
+                
+                // 标签系统（如果有）
+                if (nodeData.tags) {
+                    const allTags = [
+                        ...(nodeData.tags.categories || []).map(tag => `#${tag}(分类)`),
+                        ...(nodeData.tags.technical || []).map(tag => `#${tag}(技术)`),
+                        ...(nodeData.tags.status || []).map(tag => `#${tag}(状态)`),
+                        ...(nodeData.tags.custom || []).map(tag => `#${tag}(自定义)`)
+                    ];
+                    
+                    if (allTags.length > 0) {
+                        lines.push('**标签分类**:');
+                        lines.push('');
+                        lines.push(allTags.join(' '));
+                        lines.push('');
+                    }
+                }
+                
+                // 展开状态（如果有）
+                if (nodeData.expanded !== undefined) {
+                    lines.push('**展开状态**:');
+                    lines.push('');
+                    lines.push(`- 子节点展开: ${nodeData.expanded ? '✅ 已展开' : '❌ 已折叠'}`);
+                    lines.push('');
+                }
+                
+                // 作者信息（如果有）
+                if (nodeData.author && nodeData.author !== 'NodeMind') {
+                    lines.push('**作者信息**:');
+                    lines.push('');
+                    lines.push(`- 作者: ${nodeData.author}`);
+                    lines.push('');
+                }
+                
+                // 节点内容（固定必须有）
+                lines.push('**节点内容**:');
+                lines.push('');
+                if (nodeData.content && nodeData.content.trim()) {
+                    lines.push('```text');
+                    lines.push(nodeData.content.trim());
+                    lines.push('```');
+                } else {
+                    lines.push('*暂无内容*');
+                }
+                lines.push('');
+                
+                return lines.join('\n');
+            }
+            
+            /**
+             * 生成会话块MD（如果有会话）
+             * @param {object} sessionData - 会话数据
+             * @returns {string} MD格式文本
+             */
+            static generateSessionBlockMD(sessionData) {
+                if (!sessionData || !sessionData.sessions || sessionData.sessions.length === 0) {
+                    return '';
+                }
+                
+                const lines = [];
+                lines.push('**会话记录**:');
+                lines.push('');
+                
+                sessionData.sessions.forEach((session, index) => {
+                    lines.push(`**会话 ${index + 1}**: ${session.title || '无标题'}`);
+                    lines.push('');
+                    lines.push(`- 会话ID: \`${session.id}\``);
+                    lines.push(`- 会话类型: ${session.type || 'note'}`);
+                    lines.push(`- 创建时间: ${session.timestamp || '未知'}`);
+                    if (session.isFavorited) {
+                        lines.push(`- 状态: ⭐ 已收藏`);
+                    }
+                    lines.push('');
+                    
+                    if (session.content && session.content.trim()) {
+                        lines.push('```text');
+                        lines.push(session.content.trim());
+                        lines.push('```');
+                    } else {
+                        lines.push('*暂无会话内容*');
+                    }
+                    lines.push('');
+                });
+                
+                return lines.join('\n');
+            }
+        }
+
+        // 测试函数
+        function testProjectPrefix() {
+            const result = document.getElementById('projectPrefixResult');
+            try {
+                const testProjects = [
+                    'NodeMind项目管理',
+                    '思维导图系统', 
+                    '会话笔记',
+                    '任务计划',
+                    'React开发',
+                    '测试'
+                ];
+
+                let output = "🔍 项目前缀生成测试：\n\n";
+                
+                testProjects.forEach(projectName => {
+                    const prefix = NodeIdManager.getProjectPrefix(projectName);
+                    const pinyin = NodeIdManager.chineseToPinyin(projectName);
+                    output += `项目: ${projectName}\n`;
+                    output += `拼音: ${pinyin}\n`;
+                    output += `前缀: ${prefix}\n`;
+                    output += `示例: ${prefix}001, ${prefix}002\n\n`;
+                });
+
+                result.textContent = output;
+                result.className = 'result success';
+            } catch (error) {
+                result.textContent = `❌ 测试失败: ${error.message}`;
+                result.className = 'result error';
+            }
+        }
+
+        function testIdGeneration() {
+            const result = document.getElementById('idGenerationResult');
+            try {
+                const projectName = 'NodeMind项目管理';
+                let output = `🆔 ID生成测试 - 项目: ${projectName}\n\n`;
+                
+                for (let i = 1; i <= 8; i++) {
+                    const nodeId = NodeIdManager.generateNodeId(projectName);
+                    output += `${i.toString().padStart(2, '0')}. ${nodeId}\n`;
+                }
+                
+                const stats = NodeIdManager.getProjectStats(projectName);
+                output += `\n统计: 前缀=${stats.prefix}, 节点数=${stats.nodeCount}\n`;
+
+                result.textContent = output;
+                result.className = 'result success';
+            } catch (error) {
+                result.textContent = `❌ 测试失败: ${error.message}`;
+                result.className = 'result error';
+            }
+        }
+
+        function testBatchIdGeneration() {
+            const result = document.getElementById('idGenerationResult');
+            try {
+                const projects = ['思维导图系统', '会话笔记', 'React开发'];
+                let output = "🚀 批量ID生成测试：\n\n";
+                
+                projects.forEach(projectName => {
+                    output += `=== ${projectName} ===\n`;
+                    for (let i = 1; i <= 3; i++) {
+                        const nodeId = NodeIdManager.generateNodeId(projectName);
+                        output += `${nodeId}\n`;
+                    }
+                    output += '\n';
+                });
+
+                result.textContent = output;
+                result.className = 'result success';
+            } catch (error) {
+                result.textContent = `❌ 测试失败: ${error.message}`;
+                result.className = 'result error';
+            }
+        }
+
+        function testIdValidation() {
+            const result = document.getElementById('idValidationResult');
+            try {
+                const testIds = [
+                    'nodem001',  // ✅ 标准格式
+                    'siwei005',  // ✅ 标准格式  
+                    '757ec59b0fb95687',  // ❌ 非标准格式
+                    'virtual_center_123',  // ❌ 非标准格式
+                    'react012'   // ✅ 标准格式
+                ];
+
+                let output = "✅ ID格式验证测试：\n\n";
+                
+                testIds.forEach(nodeId => {
+                    const isStandard = NodeIdManager.isStandardId(nodeId);
+                    const prefix = NodeIdManager.extractProjectPrefix(nodeId);
+                    const number = NodeIdManager.extractNodeNumber(nodeId);
+                    const status = isStandard ? '✅ 标准' : '❌ 非标准';
+                    
+                    output += `ID: ${nodeId}\n`;
+                    output += `格式: ${status}\n`;
+                    if (isStandard) {
+                        output += `前缀: ${prefix}, 编号: ${number}\n`;
+                    }
+                    output += '\n';
+                });
+
+                result.textContent = output;
+                result.className = 'result success';
+            } catch (error) {
+                result.textContent = `❌ 测试失败: ${error.message}`;
+                result.className = 'result error';
+            }
+        }
+
+        function testStructuredMDGeneration() {
+            const result = document.getElementById('structuredMDResult');
+            try {
+                // 创建测试节点数据
+                const testNodes = [
+                    {
+                        id: NodeIdManager.generateNodeId('NodeMind项目管理'),
+                        title: '项目根节点',
+                        content: '这是项目管理的根节点，包含项目的基本信息和规划。',
+                        level: 1,
+                        relations: {
+                            parent: null,
+                            children: ['nodem002', 'nodem003']
+                        },
+                        created: '2024-01-01T10:00:00.000Z',
+                        modified: '2024-01-01T15:30:00.000Z',
+                        path: 'project/nodem001',
+                        mapId: 'project',
+                        tags: {
+                            categories: ['管理', '项目'],
+                            technical: [],
+                            status: ['active'],
+                            custom: []
+                        },
+                        expanded: true,
+                        author: '张三'
+                    },
+                    {
+                        id: NodeIdManager.generateNodeId('NodeMind项目管理'),
+                        title: '需求分析',
+                        content: '',  // 空内容测试
+                        level: 2,
+                        relations: {
+                            parent: 'nodem001',
+                            children: []
+                        },
+                        created: '2024-01-02T09:00:00.000Z',
+                        modified: '2024-01-02T09:00:00.000Z'
+                        // 没有标签、路径等可选属性
+                    }
+                ];
+
+                let output = "📝 隐性固定结构化MD生成测试：\n\n";
+                output += "=".repeat(50) + "\n\n";
+                
+                testNodes.forEach((nodeData, index) => {
+                    output += `=== 节点 ${index + 1}: ${nodeData.title} ===\n\n`;
+                    const nodeMD = StructuredMDGenerator.generateNodeMD(nodeData);
+                    output += nodeMD;
+                    output += "\n" + "-".repeat(30) + "\n\n";
+                });
+
+                result.textContent = output;
+                result.className = 'result success';
+            } catch (error) {
+                result.textContent = `❌ 测试失败: ${error.message}`;
+                result.className = 'result error';
+            }
+        }
+
+        function runCompleteDemo() {
+            const result = document.getElementById('completeDemoResult');
+            try {
+                let output = "🎯 NodeMind完整演示\n\n";
+                
+                output += "=== 1. ID标准化演示 ===\n";
+                const projectName = 'NodeMind项目管理';
+                const nodeId1 = NodeIdManager.generateNodeId(projectName);
+                const nodeId2 = NodeIdManager.generateNodeId(projectName);
+                output += `项目: ${projectName}\n`;
+                output += `生成ID: ${nodeId1}, ${nodeId2}\n\n`;
+                
+                output += "=== 2. 隐性结构化演示 ===\n";
+                const sampleNode = {
+                    id: nodeId1,
+                    title: '示例节点',
+                    content: '这是一个示例节点内容',
+                    level: 2,
+                    relations: {
+                        parent: 'nodem000',
+                        children: [nodeId2]
+                    },
+                    created: new Date().toISOString(),
+                    modified: new Date().toISOString(),
+                    tags: {
+                        categories: ['示例'],
+                        status: ['测试']
+                    }
+                };
+                
+                output += "生成的MD结构：\n";
+                output += StructuredMDGenerator.generateNodeMD(sampleNode);
+                
+                output += "\n=== 3. 优势总结 ===\n";
+                output += "✅ ID标准化: 语义化前缀 + 有序编号\n";
+                output += "✅ 结构清晰: 固定必须项 + 可选显示项\n";
+                output += "✅ 简洁高效: 空属性不显示，避免冗余\n";
+                output += "✅ 易于解析: 结构化程度高，便于程序处理\n";
+
+                result.textContent = output;
+                result.className = 'result success';
+            } catch (error) {
+                result.textContent = `❌ 演示失败: ${error.message}`;
+                result.className = 'result error';
+            }
+        }
+    </script>
+</body>
+</html> 

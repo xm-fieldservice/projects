@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NodeMind文档格式化工具</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 20px;
+            line-height: 1.6;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .input-section, .output-section {
+            margin-bottom: 30px;
+        }
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #34495e;
+        }
+        textarea {
+            width: 100%;
+            height: 300px;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            resize: vertical;
+        }
+        button {
+            background: #3498db;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background: #2980b9;
+        }
+        .success {
+            background: #27ae60;
+        }
+        .success:hover {
+            background: #229954;
+        }
+        .stats {
+            background: #ecf0f1;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 20px 0;
+        }
+        .stats h3 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+        .log {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            height: 200px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔄 NodeMind文档格式化工具</h1>
+        
+        <div class="input-section">
+            <label for="inputText">📝 输入原始MD文档内容：</label>
+            <textarea id="inputText" placeholder="请粘贴nodemind_jsmind.md的内容..."></textarea>
+            <button onclick="loadSampleData()">📋 加载示例数据</button>
+            <button onclick="formatDocument()">🔄 开始格式化</button>
+        </div>
+        
+        <div class="stats" id="stats" style="display: none;">
+            <h3>📊 处理统计</h3>
+            <div id="statsContent"></div>
+        </div>
+        
+        <div class="output-section">
+            <label for="outputText">✅ 格式化后的文档：</label>
+            <textarea id="outputText" placeholder="格式化结果将显示在这里..."></textarea>
+            <button onclick="copyOutput()" class="success">📋 复制结果</button>
+            <button onclick="downloadOutput()" class="success">💾 下载文件</button>
+        </div>
+        
+        <div>
+            <label>📋 处理日志：</label>
+            <div id="log" class="log"></div>
+        </div>
+    </div>
+
+    <script>
+        // 状态映射表
+        const statusMapping = {
+            '展开': 'active',
+            '折叠': 'collapsed',
+            '完成': 'done',
+            '进行中': 'in-progress',
+            '待处理': 'pending',
+            '已完成': 'done'
+        };
+
+        // 优先级推断规则
+        const priorityRules = {
+            high: ['紧急', '重要', '必须', '立刻', '马上', '核心', '关键', '中心', '重构', '修复', 'PROJECT'],
+            medium: ['需要', '应该', '考虑', '建议', '优化', '改进', '增加', '实现', '详情', '功能'],
+            low: ['可以', '或许', '将来', '未来', '备用', '临时', '测试', '笔记', '经验']
+        };
+
+        function log(message) {
+            const logElement = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            logElement.textContent += `[${timestamp}] ${message}\n`;
+            logElement.scrollTop = logElement.scrollHeight;
+        }
+
+        function inferPriority(title, content = '') {
+            const text = (title + ' ' + content).toLowerCase();
+            
+            for (const [priority, keywords] of Object.entries(priorityRules)) {
+                if (keywords.some(keyword => text.includes(keyword))) {
+                    return priority;
+                }
+            }
+            
+            return 'medium'; // 默认优先级
+        }
+
+        function generateTimestamp(baseTime, offset = 0) {
+            const date = new Date(baseTime.getTime() + offset);
+            return date.toISOString();
+        }
+
+        function formatDocument() {
+            log('🔄 开始格式化文档...');
+            
+            const inputText = document.getElementById('inputText').value;
+            if (!inputText.trim()) {
+                alert('请先输入MD文档内容！');
+                return;
+            }
+
+            const lines = inputText.split('\n');
+            const processedLines = [];
+            
+            let nodeCount = 0;
+            let statusConversions = 0;
+            let baseTime = new Date('2025-06-15T14:00:00.000Z');
+            
+            log(`📖 开始处理，总行数: ${lines.length}`);
+
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i];
+                
+                // 检测节点标题
+                const titleMatch = line.match(/^(#{2,6})\s+(.+)$/);
+                if (titleMatch) {
+                    nodeCount++;
+                    const title = titleMatch[2].trim();
+                    const priority = inferPriority(title);
+                    
+                    log(`📍 处理节点 ${nodeCount}: ${title} (优先级: ${priority})`);
+                    
+                    processedLines.push(line); // 保持标题不变
+                    
+                    // 查找后续的节点信息行
+                    let j = i + 1;
+                    let addedTimestamp = false;
+                    
+                    while (j < lines.length) {
+                        const nextLine = lines[j];
+                        
+                        // 遇到空行
+                        if (!nextLine.trim()) {
+                            processedLines.push(nextLine);
+                            j++;
+                            continue;
+                        }
+                        
+                        // 遇到下一个标题
+                        if (nextLine.match(/^#{2,6}\s+/)) {
+                            break;
+                        }
+                        
+                        // 处理节点信息行
+                        if (nextLine.includes('**')) {
+                            // 转换展开状态为状态
+                            if (nextLine.includes('**展开状态**:')) {
+                                const statusMatch = nextLine.match(/\*\*展开状态\*\*:\s*(.+)/);
+                                if (statusMatch) {
+                                    const originalStatus = statusMatch[1].trim();
+                                    const mappedStatus = statusMapping[originalStatus] || 'pending';
+                                    const newLine = nextLine.replace('**展开状态**:', '**状态**:').replace(originalStatus, mappedStatus);
+                                    processedLines.push(newLine);
+                                    statusConversions++;
+                                    
+                                    // 添加时间戳和优先级（只添加一次）
+                                    if (!addedTimestamp) {
+                                        const createdTime = generateTimestamp(baseTime, nodeCount * 300000); // 每个节点间隔5分钟
+                                        const modifiedTime = generateTimestamp(new Date(), nodeCount * 1000); // 修改时间稍有差异
+                                        
+                                        processedLines.push(`**创建时间**: ${createdTime}  `);
+                                        processedLines.push(`**修改时间**: ${modifiedTime}  `);
+                                        processedLines.push(`**优先级**: ${priority}  `);
+                                        addedTimestamp = true;
+                                    }
+                                } else {
+                                    processedLines.push(nextLine);
+                                }
+                            } else {
+                                processedLines.push(nextLine);
+                            }
+                        } else {
+                            processedLines.push(nextLine);
+                        }
+                        
+                        j++;
+                    }
+                    
+                    i = j - 1; // 调整主循环的索引
+                } else {
+                    processedLines.push(line);
+                }
+            }
+
+            const formattedContent = processedLines.join('\n');
+            document.getElementById('outputText').value = formattedContent;
+            
+            // 显示统计信息
+            const statsElement = document.getElementById('stats');
+            const statsContent = document.getElementById('statsContent');
+            
+            statsContent.innerHTML = `
+                <p><strong>处理节点数:</strong> ${nodeCount}</p>
+                <p><strong>状态转换数:</strong> ${statusConversions}</p>
+                <p><strong>输入行数:</strong> ${lines.length}</p>
+                <p><strong>输出行数:</strong> ${processedLines.length}</p>
+                <p><strong>新增行数:</strong> ${processedLines.length - lines.length}</p>
+            `;
+            
+            statsElement.style.display = 'block';
+            
+            log(`✅ 格式化完成！处理了 ${nodeCount} 个节点，转换了 ${statusConversions} 个状态`);
+        }
+
+        function copyOutput() {
+            const outputText = document.getElementById('outputText');
+            outputText.select();
+            document.execCommand('copy');
+            alert('✅ 已复制到剪贴板！');
+            log('📋 内容已复制到剪贴板');
+        }
+
+        function downloadOutput() {
+            const content = document.getElementById('outputText').value;
+            if (!content.trim()) {
+                alert('没有内容可下载！');
+                return;
+            }
+            
+            const blob = new Blob([content], { type: 'text/markdown' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'nodemind_jsmind_formatted.md';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            log('💾 文件已下载: nodemind_jsmind_formatted.md');
+        }
+
+        function loadSampleData() {
+            // 这里可以加载示例数据
+            const sampleText = `#### 示例节点
+
+**节点ID**: \`sample_123\`  
+**节点路径**: 示例路径  
+**作者**: 用户  
+**展开状态**: 展开  
+
+**子节点 (2个)**:
+
+##### 子节点1
+
+**节点ID**: \`child_1\`  
+**节点路径**: 示例路径 > 子节点1  
+**作者**: 用户  
+**展开状态**: 折叠  `;
+
+            document.getElementById('inputText').value = sampleText;
+            log('📋 已加载示例数据');
+        }
+
+        // 页面加载完成后的初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            log('🚀 NodeMind文档格式化工具已就绪');
+            log('📖 请粘贴您的MD文档内容，然后点击"开始格式化"');
+        });
+    </script>
+</body>
+</html> 

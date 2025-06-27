@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>跟进标签功能调试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        
+        .test-node {
+            width: 200px;
+            height: 50px;
+            background: #fff;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 10px 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .test-node:hover {
+            border-color: #007bff;
+        }
+        
+        .test-node.selected {
+            border-color: #28a745;
+            background: #d4edda;
+        }
+        
+        .tag-panel {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+        
+        .tag-item {
+            display: inline-block;
+            padding: 8px 16px;
+            margin: 5px;
+            background: #e9ecef;
+            border: 1px solid #ced4da;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .tag-item:hover {
+            background: #dee2e6;
+        }
+        
+        .tag-item.selected {
+            background: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+        
+        .tag-blue {
+            background: #e3f2fd;
+            border-color: #2196f3;
+        }
+        
+        .tag-blue.selected {
+            background: #2196f3;
+            color: white;
+        }
+        
+        .debug-info {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
+            font-family: monospace;
+            font-size: 14px;
+            white-space: pre-wrap;
+        }
+        
+        .btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        
+        .btn:hover {
+            background: #0056b3;
+        }
+        
+        /* 跟进标签节点背景色样式 - 优先级最高 */
+        .test-node[data-follow-up="true"] {
+            background-color: #e3f2fd !important;
+            border-color: #2196f3 !important;
+            color: #1565c0 !important;
+        }
+        
+        .test-node[data-follow-up="true"] * {
+            color: #1565c0 !important;
+        }
+        
+        /* 确保跟进标签样式优先于选中样式 */
+        .test-node.selected[data-follow-up="true"] {
+            background-color: #e3f2fd !important;
+            border-color: #2196f3 !important;
+            color: #1565c0 !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏷️ 跟进标签功能调试</h1>
+        
+        <div class="test-section">
+            <h3>1. 测试节点</h3>
+            <div class="test-node" id="test-node-1" onclick="selectNode('test-node-1')">
+                测试节点 1
+            </div>
+            <div class="test-node" id="test-node-2" onclick="selectNode('test-node-2')">
+                测试节点 2
+            </div>
+            <p>当前选中节点：<span id="current-node">无</span></p>
+            <p>跟进标签状态：<span id="follow-up-status" style="font-weight: bold; color: #dc3545;">未激活</span></p>
+            <p>节点背景色：<span id="node-background-color">默认</span></p>
+        </div>
+        
+        <div class="test-section">
+            <h3>2. 标签面板</h3>
+            <div class="tag-panel">
+                <div class="tag-item tag-blue" data-tag="跟进" data-group="笔记" onclick="debugToggleTag(this)">跟进</div>
+                <div class="tag-item tag-blue" data-tag="议题" data-group="笔记" onclick="debugToggleTag(this)">议题</div>
+                <div class="tag-item" data-tag="项目" data-group="常规" onclick="debugToggleTag(this)">项目</div>
+                <div class="tag-item" data-tag="完成" data-group="常规" onclick="debugToggleTag(this)">完成</div>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h3>3. 调试信息</h3>
+            <div class="debug-info" id="debug-info">等待操作...</div>
+            <button class="btn" onclick="clearDebugInfo()">清除日志</button>
+            <button class="btn" onclick="testAllFunctions()">测试所有函数</button>
+        </div>
+        
+        <div class="test-section">
+            <h3>4. 功能测试</h3>
+            <p>测试步骤：</p>
+            <ol>
+                <li>点击选择一个测试节点 → 节点变为<span style="background: #d4edda; padding: 2px 6px; border-radius: 3px;">绿色（选中状态）</span></li>
+                <li>点击"跟进"标签 → 节点应该变为<span style="background: #e3f2fd; padding: 2px 6px; border-radius: 3px; color: #1565c0;">浅蓝色（跟进状态）</span></li>
+                <li>再次点击"跟进"标签取消 → 节点恢复为<span style="background: #d4edda; padding: 2px 6px; border-radius: 3px;">绿色（仅选中状态）</span></li>
+            </ol>
+            <p><strong>颜色说明：</strong></p>
+            <ul>
+                <li><span style="background: #fff; padding: 2px 6px; border: 1px solid #ccc; border-radius: 3px;">白色</span> = 默认状态</li>
+                <li><span style="background: #d4edda; padding: 2px 6px; border-radius: 3px;">绿色</span> = 选中状态</li>
+                <li><span style="background: #e3f2fd; padding: 2px 6px; border-radius: 3px; color: #1565c0;">浅蓝色</span> = 跟进标签激活（优先级最高）</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        let currentNodeId = null;
+        
+        // 调试日志函数
+        function debugLog(message) {
+            const debugInfo = document.getElementById('debug-info');
+            const timestamp = new Date().toLocaleTimeString();
+            debugInfo.textContent += `[${timestamp}] ${message}\n`;
+            debugInfo.scrollTop = debugInfo.scrollHeight;
+            console.log(`[DEBUG] ${message}`);
+        }
+        
+        // 清除调试信息
+        function clearDebugInfo() {
+            document.getElementById('debug-info').textContent = '';
+        }
+        
+        // 更新节点状态显示
+        function updateNodeStatus() {
+            if (!currentNodeId) return;
+            
+            const nodeElement = findNodeElement(currentNodeId);
+            if (!nodeElement) return;
+            
+            // 检查跟进标签状态
+            const hasFollowUp = nodeElement.hasAttribute('data-follow-up');
+            const followUpStatus = document.getElementById('follow-up-status');
+            const backgroundColorStatus = document.getElementById('node-background-color');
+            
+            if (hasFollowUp) {
+                followUpStatus.textContent = '已激活';
+                followUpStatus.style.color = '#28a745';
+                backgroundColorStatus.textContent = '浅蓝色 (#e3f2fd)';
+                backgroundColorStatus.style.color = '#2196f3';
+            } else {
+                followUpStatus.textContent = '未激活';
+                followUpStatus.style.color = '#dc3545';
+                backgroundColorStatus.textContent = '默认';
+                backgroundColorStatus.style.color = '#6c757d';
+            }
+            
+            // 检查跟进标签的选中状态
+            const followUpTag = document.querySelector('[data-tag="跟进"]');
+            if (followUpTag) {
+                const isTagSelected = followUpTag.classList.contains('selected');
+                debugLog(`跟进标签UI状态: ${isTagSelected ? '选中' : '未选中'}`);
+                debugLog(`节点data-follow-up属性: ${hasFollowUp ? '存在' : '不存在'}`);
+                debugLog(`节点背景色: ${nodeElement.style.backgroundColor || '默认'}`);
+            }
+        }
+        
+        // 选择节点
+        function selectNode(nodeId) {
+            debugLog(`选择节点: ${nodeId}`);
+            
+            // 清除之前的选中状态
+            document.querySelectorAll('.test-node').forEach(node => {
+                node.classList.remove('selected');
+            });
+            
+            // 设置新的选中状态
+            const node = document.getElementById(nodeId);
+            if (node) {
+                node.classList.add('selected');
+                currentNodeId = nodeId;
+                document.getElementById('current-node').textContent = nodeId;
+                debugLog(`当前节点已设置为: ${nodeId}`);
+                updateNodeStatus();
+            }
+        }
+        
+        // 查找节点DOM元素的通用函数
+        function findNodeElement(nodeId) {
+            debugLog(`查找节点DOM元素: ${nodeId}`);
+            let element = document.getElementById(nodeId);
+            
+            if (element) {
+                debugLog(`找到节点元素: ${nodeId}`);
+            } else {
+                debugLog(`未找到节点元素: ${nodeId}`);
+            }
+            
+            return element;
+        }
+        
+        // 设置节点背景色
+        function setNodeBackgroundColor(nodeId, color) {
+            debugLog(`设置节点背景色: ${nodeId} -> ${color}`);
+            try {
+                const nodeElement = findNodeElement(nodeId);
+                if (nodeElement) {
+                    nodeElement.style.backgroundColor = color;
+                    nodeElement.setAttribute('data-follow-up', 'true');
+                    debugLog(`✅ 节点 ${nodeId} 背景色已设置为: ${color}`);
+                    updateNodeStatus();
+                    return true;
+                } else {
+                    debugLog(`❌ 未找到节点 ${nodeId} 的DOM元素`);
+                    return false;
+                }
+            } catch (error) {
+                debugLog(`❌ 设置节点 ${nodeId} 背景色失败: ${error.message}`);
+                return false;
+            }
+        }
+        
+        // 移除节点背景色
+        function removeNodeBackgroundColor(nodeId) {
+            debugLog(`移除节点背景色: ${nodeId}`);
+            try {
+                const nodeElement = findNodeElement(nodeId);
+                if (nodeElement) {
+                    nodeElement.style.backgroundColor = '';
+                    nodeElement.removeAttribute('data-follow-up');
+                    debugLog(`✅ 节点 ${nodeId} 背景色已移除`);
+                    updateNodeStatus();
+                    return true;
+                } else {
+                    debugLog(`❌ 未找到节点 ${nodeId} 的DOM元素`);
+                    return false;
+                }
+            } catch (error) {
+                debugLog(`❌ 移除节点 ${nodeId} 背景色失败: ${error.message}`);
+                return false;
+            }
+        }
+        
+        // 调试版本的标签切换函数
+        function debugToggleTag(tagElement) {
+            debugLog(`标签点击事件触发`);
+            debugLog(`tagElement: ${tagElement}`);
+            debugLog(`tagElement.dataset: ${JSON.stringify(tagElement.dataset)}`);
+            
+            if (!currentNodeId) {
+                debugLog(`❌ 没有选中的节点`);
+                alert('❌ 请先选择一个节点');
+                return;
+            }
+            
+            const tagName = tagElement.dataset.tag;
+            const tagGroup = tagElement.dataset.group;
+            
+            debugLog(`标签名称: "${tagName}"`);
+            debugLog(`标签组: "${tagGroup}"`);
+            debugLog(`当前节点ID: "${currentNodeId}"`);
+            
+            // 检查当前标签状态
+            const isCurrentlySelected = tagElement.classList.contains('selected');
+            debugLog(`当前是否选中: ${isCurrentlySelected}`);
+            
+            // 切换标签状态
+            if (isCurrentlySelected) {
+                // 移除标签
+                tagElement.classList.remove('selected');
+                debugLog(`🏷️ 已移除标签：${tagName}`);
+                
+                // 如果是跟进标签，移除节点背景色
+                if (tagName === '跟进') {
+                    debugLog(`🎨 检测到跟进标签，准备移除背景色`);
+                    const result = removeNodeBackgroundColor(currentNodeId);
+                    debugLog(`背景色移除结果: ${result}`);
+                }
+            } else {
+                // 添加标签
+                tagElement.classList.add('selected');
+                debugLog(`🏷️ 已添加标签：${tagName}`);
+                
+                // 如果是跟进标签，设置节点背景色为浅蓝色
+                if (tagName === '跟进') {
+                    debugLog(`🎨 检测到跟进标签，准备设置背景色`);
+                    const result = setNodeBackgroundColor(currentNodeId, '#e3f2fd');
+                    debugLog(`背景色设置结果: ${result}`);
+                }
+            }
+            
+            debugLog(`✅ 标签操作完成`);
+        }
+        
+        // 测试所有函数
+        function testAllFunctions() {
+            debugLog(`=== 开始测试所有函数 ===`);
+            
+            // 测试1: 选择节点
+            debugLog(`测试1: 选择节点`);
+            selectNode('test-node-1');
+            
+            // 测试2: 查找节点元素
+            debugLog(`测试2: 查找节点元素`);
+            const element = findNodeElement('test-node-1');
+            debugLog(`找到的元素: ${element ? element.tagName : 'null'}`);
+            
+            // 测试3: 设置背景色
+            debugLog(`测试3: 设置背景色`);
+            const setResult = setNodeBackgroundColor('test-node-1', '#e3f2fd');
+            debugLog(`设置结果: ${setResult}`);
+            
+            // 等待2秒后移除背景色
+            setTimeout(() => {
+                debugLog(`测试4: 移除背景色`);
+                const removeResult = removeNodeBackgroundColor('test-node-1');
+                debugLog(`移除结果: ${removeResult}`);
+                debugLog(`=== 测试完成 ===`);
+            }, 2000);
+        }
+        
+        // 页面加载完成后的初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            debugLog(`页面加载完成，调试页面已准备就绪`);
+            debugLog(`可用的测试函数: selectNode, debugToggleTag, testAllFunctions`);
+        });
+    </script>
+</body>
+</html> 

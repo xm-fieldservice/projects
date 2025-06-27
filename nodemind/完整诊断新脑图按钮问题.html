@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔍 新脑图按钮完整诊断</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 20px; 
+            background: #f5f5f5;
+            line-height: 1.6;
+        }
+        .diagnostic-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .diagnostic-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .diagnostic-section h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        .test-button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 14px;
+        }
+        .test-button:hover {
+            background: #0056b3;
+        }
+        .test-button.success { background: #28a745; }
+        .test-button.warning { background: #ffc107; color: #000; }
+        .test-button.danger { background: #dc3545; }
+        .status {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+        }
+        .status.success { background: #d4edda; color: #155724; }
+        .status.error { background: #f8d7da; color: #721c24; }
+        .status.info { background: #d1ecf1; color: #0c5460; }
+        .status.warning { background: #fff3cd; color: #856404; }
+        #diagnostic-results {
+            font-family: monospace;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid #dee2e6;
+        }
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .button-test-area {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            border: 2px dashed #6c757d;
+        }
+        .code-block {
+            background: #f1f3f4;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+            border-left: 4px solid #007bff;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="diagnostic-container">
+        <h1>🔍 新脑图按钮完整诊断报告</h1>
+        
+        <div class="diagnostic-section">
+            <h3>🎯 诊断目标</h3>
+            <p>全面检查新脑图按钮的所有相关组件，找出按钮无反应的根本原因。</p>
+            <div class="status info">
+                <strong>问题描述：</strong>用户点击"新脑图"按钮没有任何反应，等待了近一个小时仍无法解决。
+            </div>
+        </div>
+
+        <div class="two-column">
+            <div class="diagnostic-section">
+                <h3>🧪 自动诊断测试</h3>
+                <button class="test-button" onclick="runFullDiagnostic()">🚀 运行完整诊断</button>
+                <button class="test-button" onclick="testButtonExistence()">1️⃣ 检查按钮存在</button>
+                <button class="test-button" onclick="testEventBinding()">2️⃣ 检查事件绑定</button>
+                <button class="test-button" onclick="testAppJsLoading()">3️⃣ 检查app.js加载</button>
+                <button class="test-button" onclick="testFunctionExistence()">4️⃣ 检查函数存在</button>
+                <button class="test-button" onclick="testManualTrigger()">5️⃣ 手动触发测试</button>
+                <button class="test-button warning" onclick="clearResults()">🗑️ 清除结果</button>
+            </div>
+
+            <div class="diagnostic-section">
+                <h3>🔧 手动测试区域</h3>
+                <div class="button-test-area">
+                    <p><strong>这里是模拟的新脑图按钮：</strong></p>
+                    <button id="create_new_mindmap_button_test" class="test-button danger">🆕 新脑图 (测试版)</button>
+                    <p><strong>这里是真实的新脑图按钮：</strong></p>
+                    <button id="create_new_mindmap_button" class="test-button success">🆕 新脑图 (真实版)</button>
+                    <div id="manual-test-status" class="status info">等待手动测试...</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="diagnostic-section">
+            <h3>📊 诊断结果</h3>
+            <div id="diagnostic-results"></div>
+        </div>
+
+        <div class="diagnostic-section">
+            <h3>🔍 发现的问题汇总</h3>
+            <div id="issues-summary"></div>
+        </div>
+
+        <div class="diagnostic-section">
+            <h3>💡 修复建议</h3>
+            <div id="fix-suggestions"></div>
+        </div>
+    </div>
+
+    <script>
+        // 诊断日志系统
+        let diagnosticLog = [];
+        let foundIssues = [];
+        
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = `[${timestamp}] ${message}`;
+            diagnosticLog.push(logEntry);
+            
+            const resultsDiv = document.getElementById('diagnostic-results');
+            resultsDiv.textContent = diagnosticLog.join('\n');
+            resultsDiv.scrollTop = resultsDiv.scrollHeight;
+            
+            console.log(logEntry);
+        }
+
+        function addIssue(issue, severity = 'warning') {
+            foundIssues.push({issue, severity});
+            updateIssuesSummary();
+        }
+
+        function updateIssuesSummary() {
+            const summaryDiv = document.getElementById('issues-summary');
+            if (foundIssues.length === 0) {
+                summaryDiv.innerHTML = '<div class="status success">✅ 暂未发现问题</div>';
+                return;
+            }
+
+            let html = '';
+            foundIssues.forEach((item, index) => {
+                const className = item.severity === 'error' ? 'error' : 'warning';
+                const icon = item.severity === 'error' ? '❌' : '⚠️';
+                html += `<div class="status ${className}">${icon} ${index + 1}. ${item.issue}</div>`;
+            });
+            summaryDiv.innerHTML = html;
+        }
+
+        // 测试1: 检查按钮存在
+        function testButtonExistence() {
+            log('=== 测试1: 检查按钮存在性 ===');
+            
+            const button = document.getElementById('create_new_mindmap_button');
+            if (!button) {
+                log('❌ 找不到新脑图按钮 (ID: create_new_mindmap_button)', 'error');
+                addIssue('找不到新脑图按钮元素', 'error');
+                return false;
+            }
+            
+            log('✅ 找到新脑图按钮');
+            log(`📍 按钮位置: ${button.getBoundingClientRect().top}px from top`);
+            log(`📏 按钮大小: ${button.offsetWidth}x${button.offsetHeight}px`);
+            log(`🎨 按钮类名: ${button.className}`);
+            log(`📝 按钮文本: "${button.textContent.trim()}"`);
+            log(`👁️ 按钮可见: ${button.offsetParent !== null}`);
+            log(`🚫 按钮禁用: ${button.disabled}`);
+            
+            if (button.offsetParent === null) {
+                addIssue('按钮不可见 (display: none 或 visibility: hidden)', 'error');
+            }
+            
+            if (button.disabled) {
+                addIssue('按钮被禁用', 'warning');
+            }
+            
+            return true;
+        }
+
+        // 测试2: 检查事件绑定
+        function testEventBinding() {
+            log('=== 测试2: 检查事件绑定 ===');
+            
+            const button = document.getElementById('create_new_mindmap_button');
+            if (!button) {
+                log('❌ 按钮不存在，无法检查事件绑定');
+                return false;
+            }
+
+            // 检查onclick属性
+            if (button.onclick) {
+                log('✅ 发现onclick属性绑定');
+                log(`📋 onclick函数: ${button.onclick.toString().substring(0, 100)}...`);
+            } else {
+                log('⚠️ 没有onclick属性绑定');
+            }
+
+            // 检查addEventListener绑定（无法直接检测，但可以尝试触发）
+            log('🔍 尝试检测addEventListener绑定...');
+            
+            // 创建一个测试事件
+            let eventTriggered = false;
+            const originalAddEventListener = button.addEventListener;
+            
+            // 临时添加一个监听器来检测是否有其他监听器
+            const testHandler = () => { eventTriggered = true; };
+            button.addEventListener('click', testHandler);
+            
+            // 触发点击事件
+            const clickEvent = new MouseEvent('click', {
+                bubbles: true,
+                cancelable: true,
+                view: window
+            });
+            
+            button.dispatchEvent(clickEvent);
+            
+            // 移除测试监听器
+            button.removeEventListener('click', testHandler);
+            
+            if (eventTriggered) {
+                log('✅ 事件系统正常工作');
+            } else {
+                log('❌ 事件系统可能有问题');
+                addIssue('事件系统无法正常工作', 'error');
+            }
+
+            // 检查常见的事件绑定方式
+            const commonEventProps = ['onclick', 'addEventListener'];
+            let hasAnyBinding = false;
+            
+            if (button.onclick) hasAnyBinding = true;
+            
+            // 尝试检查是否有通过addEventListener绑定的事件
+            if (window.getEventListeners) {
+                const listeners = window.getEventListeners(button);
+                if (listeners && listeners.click && listeners.click.length > 0) {
+                    log(`✅ 发现 ${listeners.click.length} 个addEventListener绑定`);
+                    hasAnyBinding = true;
+                } else {
+                    log('⚠️ 没有发现addEventListener绑定');
+                }
+            } else {
+                log('ℹ️ 无法检测addEventListener绑定 (浏览器限制)');
+            }
+
+            if (!hasAnyBinding) {
+                addIssue('按钮没有任何事件绑定', 'error');
+            }
+
+            return hasAnyBinding;
+        }
+
+        // 测试3: 检查app.js加载
+        function testAppJsLoading() {
+            log('=== 测试3: 检查app.js加载状态 ===');
+            
+            // 检查script标签
+            const appScript = document.querySelector('script[src*="app.js"]');
+            if (!appScript) {
+                log('❌ 没有找到app.js的script标签');
+                addIssue('app.js未被引入到HTML中', 'error');
+                return false;
+            }
+            
+            log('✅ 找到app.js的script标签');
+            log(`📍 Script src: ${appScript.src}`);
+            log(`📋 Script type: ${appScript.type}`);
+            
+            // 检查是否是模块
+            if (appScript.type !== 'module') {
+                log('⚠️ app.js不是作为ES6模块加载');
+                addIssue('app.js应该作为ES6模块加载 (type="module")', 'warning');
+            }
+
+            // 检查模块是否成功加载（通过检查全局变量或函数）
+            const moduleIndicators = [
+                'window.mindmaps',
+                'window.nodeDatabase', 
+                'window.projectInfo',
+                'window.currentMindmap'
+            ];
+
+            let loadedIndicators = 0;
+            moduleIndicators.forEach(indicator => {
+                try {
+                    const value = eval(indicator);
+                    if (value !== undefined) {
+                        log(`✅ 找到模块指标: ${indicator}`);
+                        loadedIndicators++;
+                    } else {
+                        log(`⚠️ 模块指标未定义: ${indicator}`);
+                    }
+                } catch (e) {
+                    log(`❌ 模块指标检查失败: ${indicator} - ${e.message}`);
+                }
+            });
+
+            if (loadedIndicators === 0) {
+                addIssue('app.js可能没有成功加载或初始化', 'error');
+                return false;
+            }
+
+            log(`📊 找到 ${loadedIndicators}/${moduleIndicators.length} 个模块指标`);
+            return true;
+        }
+
+        // 测试4: 检查函数存在
+        function testFunctionExistence() {
+            log('=== 测试4: 检查相关函数存在性 ===');
+            
+            const functionsToCheck = [
+                'createNewMindmap',
+                'bindUIEventListeners', 
+                'main',
+                'showMessage'
+            ];
+
+            let foundFunctions = 0;
+            functionsToCheck.forEach(funcName => {
+                try {
+                    const func = eval(funcName);
+                    if (typeof func === 'function') {
+                        log(`✅ 函数存在: ${funcName}`);
+                        foundFunctions++;
+                    } else {
+                        log(`❌ 函数不存在或不是函数: ${funcName}`);
+                    }
+                } catch (e) {
+                    log(`❌ 函数检查失败: ${funcName} - ${e.message}`);
+                }
+            });
+
+            // 检查模块化函数（可能在命名空间中）
+            const moduleSpaces = ['window.uiController', 'window.mindmapService'];
+            moduleSpaces.forEach(space => {
+                try {
+                    const obj = eval(space);
+                    if (obj && typeof obj === 'object') {
+                        log(`✅ 找到模块空间: ${space}`);
+                        Object.keys(obj).forEach(key => {
+                            if (typeof obj[key] === 'function') {
+                                log(`  📋 ${space}.${key} (函数)`);
+                            }
+                        });
+                    }
+                } catch (e) {
+                    log(`⚠️ 模块空间不存在: ${space}`);
+                }
+            });
+
+            if (foundFunctions === 0) {
+                addIssue('没有找到任何相关函数', 'error');
+            }
+
+            return foundFunctions > 0;
+        }
+
+        // 测试5: 手动触发测试
+        function testManualTrigger() {
+            log('=== 测试5: 手动触发测试 ===');
+            
+            const button = document.getElementById('create_new_mindmap_button');
+            if (!button) {
+                log('❌ 按钮不存在，无法进行手动触发测试');
+                return false;
+            }
+
+            log('🎯 尝试手动触发按钮点击...');
+            
+            try {
+                // 方法1: 直接调用onclick
+                if (button.onclick) {
+                    log('📞 调用onclick方法...');
+                    button.onclick();
+                    log('✅ onclick调用完成');
+                } else {
+                    log('⚠️ 没有onclick方法可调用');
+                }
+
+                // 方法2: 触发click事件
+                log('🖱️ 触发click事件...');
+                const clickEvent = new MouseEvent('click', {
+                    bubbles: true,
+                    cancelable: true,
+                    view: window
+                });
+                button.dispatchEvent(clickEvent);
+                log('✅ click事件触发完成');
+
+                // 方法3: 直接调用createNewMindmap函数（如果存在）
+                try {
+                    if (typeof createNewMindmap === 'function') {
+                        log('🔧 直接调用createNewMindmap函数...');
+                        createNewMindmap();
+                        log('✅ createNewMindmap调用完成');
+                    } else {
+                        log('⚠️ createNewMindmap函数不存在');
+                    }
+                } catch (e) {
+                    log(`❌ 调用createNewMindmap失败: ${e.message}`);
+                }
+
+            } catch (error) {
+                log(`❌ 手动触发测试失败: ${error.message}`);
+                addIssue(`手动触发测试失败: ${error.message}`, 'error');
+                return false;
+            }
+
+            return true;
+        }
+
+        // 运行所有诊断
+        function runFullDiagnostic() {
+            log('🚀 开始运行完整诊断...');
+            log('');
+            
+            foundIssues = []; // 重置问题列表
+            
+            const tests = [
+                testButtonExistence,
+                testEventBinding, 
+                testAppJsLoading,
+                testFunctionExistence,
+                testManualTrigger
+            ];
+
+            let passedTests = 0;
+            tests.forEach((test, index) => {
+                try {
+                    const result = test();
+                    if (result) passedTests++;
+                    log('');
+                } catch (error) {
+                    log(`❌ 测试 ${index + 1} 执行失败: ${error.message}`);
+                    addIssue(`测试执行失败: ${error.message}`, 'error');
+                    log('');
+                }
+            });
+
+            log('='.repeat(50));
+            log(`📊 诊断完成: ${passedTests}/${tests.length} 项测试通过`);
+            log('='.repeat(50));
+
+            // 生成修复建议
+            generateFixSuggestions();
+        }
+
+        // 生成修复建议
+        function generateFixSuggestions() {
+            const suggestionsDiv = document.getElementById('fix-suggestions');
+            let suggestions = [];
+
+            if (foundIssues.length === 0) {
+                suggestionsDiv.innerHTML = '<div class="status success">✅ 未发现问题，按钮应该正常工作</div>';
+                return;
+            }
+
+            // 基于发现的问题生成建议
+            foundIssues.forEach(item => {
+                if (item.issue.includes('找不到新脑图按钮')) {
+                    suggestions.push('检查HTML中是否存在id="create_new_mindmap_button"的按钮元素');
+                }
+                if (item.issue.includes('app.js未被引入')) {
+                    suggestions.push('在HTML中添加: &lt;script type="module" src="src/app.js"&gt;&lt;/script&gt;');
+                }
+                if (item.issue.includes('没有任何事件绑定')) {
+                    suggestions.push('在app.js的main()函数中添加: uiController.bindUIEventListeners()');
+                }
+                if (item.issue.includes('app.js可能没有成功加载')) {
+                    suggestions.push('检查浏览器控制台是否有JavaScript错误');
+                    suggestions.push('确保所有模块文件路径正确');
+                }
+                if (item.issue.includes('没有找到任何相关函数')) {
+                    suggestions.push('检查ui_controller.js中是否有createNewMindmap和bindUIEventListeners函数');
+                }
+            });
+
+            // 通用建议
+            suggestions.push('打开浏览器开发者工具，查看Console标签页的错误信息');
+            suggestions.push('确保所有JavaScript文件都能正常加载');
+            suggestions.push('检查网络标签页，确认没有404错误');
+
+            let html = '';
+            suggestions.forEach((suggestion, index) => {
+                html += `<div class="code-block">💡 ${index + 1}. ${suggestion}</div>`;
+            });
+
+            suggestionsDiv.innerHTML = html;
+        }
+
+        // 清除结果
+        function clearResults() {
+            diagnosticLog = [];
+            foundIssues = [];
+            document.getElementById('diagnostic-results').textContent = '';
+            document.getElementById('issues-summary').innerHTML = '<div class="status info">等待诊断...</div>';
+            document.getElementById('fix-suggestions').innerHTML = '<div class="status info">等待诊断...</div>';
+            document.getElementById('manual-test-status').innerHTML = '等待手动测试...';
+            document.getElementById('manual-test-status').className = 'status info';
+        }
+
+        // 为测试按钮绑定事件
+        document.getElementById('create_new_mindmap_button_test').addEventListener('click', function() {
+            document.getElementById('manual-test-status').innerHTML = '✅ 测试按钮点击成功！事件系统正常工作。';
+            document.getElementById('manual-test-status').className = 'status success';
+            log('✅ 测试按钮点击成功！');
+        });
+
+        // 为真实按钮添加测试监听器
+        const realButton = document.getElementById('create_new_mindmap_button');
+        if (realButton) {
+            realButton.addEventListener('click', function() {
+                document.getElementById('manual-test-status').innerHTML = '🎉 真实按钮点击成功！如果没有其他反应，说明createNewMindmap函数有问题。';
+                document.getElementById('manual-test-status').className = 'status success';
+                log('🎉 真实按钮点击事件被触发！');
+            });
+        }
+
+        // 页面加载完成后的初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            log('🚀 诊断系统初始化完成');
+            log('👆 点击"运行完整诊断"开始检查所有问题');
+        });
+    </script>
+</body>
+</html> 

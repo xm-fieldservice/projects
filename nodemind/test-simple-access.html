@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NodeMind 访问测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .success {
+            color: #28a745;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background: #f8f9fa;
+        }
+        .link-button {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 10px;
+            background: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        .link-button:hover {
+            background: #0056b3;
+        }
+        .status {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .status.ok {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 NodeMind 服务器访问测试</h1>
+        
+        <div class="status ok">
+            <strong>✅ 服务器状态:</strong> 正常运行中 (端口 8000)
+        </div>
+
+        <div class="test-section">
+            <h3>📋 可用页面链接</h3>
+            <p>请点击下面的链接测试各个页面：</p>
+            
+            <div>
+                <a href="index.html" class="link-button" target="_blank">
+                    🏠 主应用 (index.html)
+                </a>
+                <span>- NodeMind 主要应用界面</span>
+            </div>
+
+            <div>
+                <a href="test-tag-coloring-modular.html" class="link-button" target="_blank">
+                    🧪 模块化测试 (test-tag-coloring-modular.html)
+                </a>
+                <span>- 标签着色功能专项测试</span>
+            </div>
+
+            <div>
+                <a href="test-modular-integration.html" class="link-button" target="_blank">
+                    🔧 集成测试 (test-modular-integration.html)
+                </a>
+                <span>- 模块化功能集成测试</span>
+            </div>
+
+            <div>
+                <a href="test-simple-access.html" class="link-button" target="_blank">
+                    📄 当前页面 (test-simple-access.html)
+                </a>
+                <span>- 服务器访问测试页面</span>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h3>🔍 连接测试</h3>
+            <div id="connection-test">
+                <button onclick="testConnections()" style="padding: 10px 20px; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                    测试所有连接
+                </button>
+                <div id="test-results" style="margin-top: 15px;"></div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h3>📝 使用说明</h3>
+            <ol>
+                <li><strong>确认服务器运行:</strong> 在命令行中应该看到 "Serving HTTP on :: port 8000"</li>
+                <li><strong>访问页面:</strong> 在浏览器中访问 <code>http://localhost:8000/页面名称</code></li>
+                <li><strong>测试功能:</strong> 点击上面的链接测试各个功能页面</li>
+                <li><strong>调试问题:</strong> 如果页面无法打开，检查浏览器控制台的错误信息</li>
+            </ol>
+        </div>
+
+        <div class="test-section">
+            <h3>🛠️ 故障排除</h3>
+            <div class="status error">
+                <strong>如果页面无法打开，请检查以下项目:</strong>
+                <ul>
+                    <li>确认 Python HTTP 服务器正在运行</li>
+                    <li>确认端口 8000 没有被其他程序占用</li>
+                    <li>尝试使用 <code>http://127.0.0.1:8000/</code> 而不是 localhost</li>
+                    <li>检查防火墙设置是否阻止了本地连接</li>
+                    <li>尝试使用不同的端口 (如 8080, 3000 等)</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h3>⚡ 快速启动命令</h3>
+            <pre style="background: #2d3748; color: #e2e8f0; padding: 15px; border-radius: 4px; overflow-x: auto;">
+# 方法1: Python 3
+python -m http.server 8000
+
+# 方法2: Python 2 (如果 Python 3 不可用)
+python -m SimpleHTTPServer 8000
+
+# 方法3: Node.js (如果安装了)
+npx http-server -p 8000
+
+# 方法4: PHP (如果安装了)
+php -S localhost:8000
+            </pre>
+        </div>
+    </div>
+
+    <script>
+        // 页面加载完成后的状态检查
+        window.addEventListener('load', function() {
+            console.log('✅ 测试页面加载成功');
+            console.log('🌐 当前URL:', window.location.href);
+            console.log('📍 服务器地址:', window.location.origin);
+            
+            // 显示当前状态
+            const currentUrl = window.location.href;
+            if (currentUrl.includes('localhost:8000') || currentUrl.includes('127.0.0.1:8000')) {
+                console.log('✅ 服务器连接正常');
+            } else {
+                console.warn('⚠️ 可能不是通过本地服务器访问');
+            }
+        });
+
+        // 测试连接功能
+        async function testConnections() {
+            const results = document.getElementById('test-results');
+            results.innerHTML = '<p>🔄 正在测试连接...</p>';
+            
+            const pages = [
+                { name: '主应用', url: 'index.html' },
+                { name: '模块化测试', url: 'test-tag-coloring-modular.html' },
+                { name: '集成测试', url: 'test-modular-integration.html' }
+            ];
+            
+            let resultHtml = '<h4>连接测试结果:</h4>';
+            
+            for (const page of pages) {
+                try {
+                    const response = await fetch(page.url, { method: 'HEAD' });
+                    if (response.ok) {
+                        resultHtml += `<div class="status ok">✅ ${page.name}: 可访问</div>`;
+                    } else {
+                        resultHtml += `<div class="status error">❌ ${page.name}: HTTP ${response.status}</div>`;
+                    }
+                } catch (error) {
+                    resultHtml += `<div class="status error">❌ ${page.name}: 连接失败 - ${error.message}</div>`;
+                }
+            }
+            
+            results.innerHTML = resultHtml;
+        }
+
+        // 自动运行连接测试
+        setTimeout(() => {
+            if (document.getElementById('test-results').innerHTML === '') {
+                testConnections();
+            }
+        }, 1000);
+    </script>
+</body>
+</html> 

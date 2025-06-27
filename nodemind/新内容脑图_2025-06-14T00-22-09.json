@@ -1,0 +1,2714 @@
+{
+  "mindmap": {
+    "meta": {
+      "name": "新内容脑图",
+      "author": "NodeMind",
+      "version": "1.0.0"
+    },
+    "format": "node_tree",
+    "data": {
+      "id": "new_root_1749519634001",
+      "topic": "🧠 中心节点",
+      "expanded": true,
+      "children": [
+        {
+          "id": "virtual_center_1749526667300_r18kfa0zl",
+          "topic": "📌 PROJECT 中心",
+          "expanded": true,
+          "direction": "right",
+          "children": [
+            {
+              "id": "757ec59b0fb95687",
+              "topic": "形式节点",
+              "expanded": true,
+              "children": [
+                {
+                  "id": "757ea1c9366416c1",
+                  "topic": "中心节点强制性隐藏，否则会把新增节点加到上面",
+                  "expanded": true
+                },
+                {
+                  "id": "757eb721a54aff08",
+                  "topic": "详情页新增其他属性：节点内容",
+                  "expanded": true,
+                  "children": [
+                    {
+                      "id": "757ebaccdec873ef",
+                      "topic": "节点内容的持久化处理",
+                      "expanded": true
+                    },
+                    {
+                      "id": "7597db278ff53ac7",
+                      "topic": "点击节点，默认打开详情页",
+                      "expanded": true
+                    },
+                    {
+                      "id": "7597e00c2b7ecda5",
+                      "topic": "将数据分析名字改为详情页，并且放在第一个。",
+                      "expanded": true
+                    },
+                    {
+                      "id": "7597e37649e599ba",
+                      "topic": "将详情页改成备用",
+                      "expanded": true
+                    }
+                  ]
+                },
+                {
+                  "id": "757ebd21d1e0e134",
+                  "topic": "文件的保存；保存的时候要保存：形式节点，不保存中心节点",
+                  "expanded": true
+                },
+                {
+                  "id": "757ed857bcd7271d",
+                  "topic": "自定保存只有文件名，没有路几个；而且也没找到“形式节点”的路径",
+                  "expanded": true
+                },
+                {
+                  "id": "7597a7b3f6476366",
+                  "topic": "快捷键调节工具窗口大小",
+                  "expanded": true
+                },
+                {
+                  "id": "7597f7eea7c278da",
+                  "topic": "笔记：脑图和注入命令相结合，可以在生成的同时，记笔记，用时运行其他任务；",
+                  "expanded": true
+                },
+                {
+                  "id": "766cf877f1bb8e3a",
+                  "topic": "自定义存储健：永远选择当然项目的文档，自动定位",
+                  "expanded": true
+                }
+              ]
+            },
+            {
+              "id": "766d480c05afbfce",
+              "topic": "控制看板：在injiect 工具内",
+              "expanded": true,
+              "children": [
+                {
+                  "id": "766d4ca43b8dbddf",
+                  "topic": "考虑在看板选项之间点选，而不是选项卡之间切换",
+                  "expanded": true
+                },
+                {
+                  "id": "766d55eb82d26df9",
+                  "topic": "可以直接在看板页面上增加或者删除同时处理的项目数量",
+                  "expanded": true
+                },
+                {
+                  "id": "766e87e726bf29a7",
+                  "topic": "将工具内部的边框设置成自动调节宽度",
+                  "expanded": true
+                },
+                {
+                  "id": "766e8ec21a22ba70",
+                  "topic": "必须将Injectd的框架设置成全屏，因为这个工具要大屏幕支持",
+                  "expanded": true
+                },
+                {
+                  "id": "766eab7a0158ac1b",
+                  "topic": "给工具价格前景锁",
+                  "expanded": true
+                }
+              ]
+            },
+            {
+              "id": "76bd00cfffce2315",
+              "topic": "整体",
+              "expanded": true,
+              "children": [
+                {
+                  "id": "76bc2164fce61ea6",
+                  "topic": "jsmind两种用法",
+                  "expanded": true,
+                  "children": [
+                    {
+                      "id": "76bc23eb9146c2b4",
+                      "topic": "独立使用",
+                      "expanded": true
+                    },
+                    {
+                      "id": "76bc24d75a3d0c0f",
+                      "topic": "整体被调用：被项目管理面板调用",
+                      "expanded": true,
+                      "children": [
+                        {
+                          "id": "76bc27d1c0a7e817",
+                          "topic": "一般约定一个项目就一个默认脑图",
+                          "expanded": true
+                        },
+                        {
+                          "id": "76bc2d14a531c8ff",
+                          "topic": "被调用的时候，就直接将已经注入的项目名称和路径直接打开默认的项目脑图，直接显示在“项目管理”面板内",
+                          "expanded": true
+                        },
+                        {
+                          "id": "76bc48aa51c2c528",
+                          "topic": "自动保存",
+                          "expanded": true
+                        },
+                        {
+                          "id": "76bc4bad8029a629",
+                          "topic": "新建的脑图页自动放在项目路径下。",
+                          "expanded": true
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "766b9d4c022b8119",
+              "topic": "详情页",
+              "expanded": true,
+              "children": [
+                {
+                  "id": "766b9e9a8c4a23b5",
+                  "topic": "节点信息",
+                  "expanded": true
+                },
+                {
+                  "id": "766b9f97fa1e4aa8",
+                  "topic": "MD阅读器，生成内容的阅读",
+                  "expanded": true,
+                  "children": [
+                    {
+                      "id": "76bc997e00a0da2b",
+                      "topic": "面板状态，全屏状态",
+                      "expanded": true
+                    }
+                  ]
+                },
+                {
+                  "id": "766bae67df0b9972",
+                  "topic": "查询表",
+                  "expanded": true,
+                  "children": [
+                    {
+                      "id": "766baff91ec44ad7",
+                      "topic": "单独的标签系统，在几点上标注1，2，3",
+                      "expanded": true
+                    },
+                    {
+                      "id": "766bb2e5c55f8e89",
+                      "topic": "然后形成一个列表",
+                      "expanded": true
+                    }
+                  ]
+                },
+                {
+                  "id": "766ce83133c9c52a",
+                  "topic": "关系表",
+                  "expanded": true,
+                  "children": [
+                    {
+                      "id": "766ce94975b5fd6d",
+                      "topic": "标注到关系表内",
+                      "expanded": true
+                    },
+                    {
+                      "id": "766ceb7e085213bc",
+                      "topic": "关系表设计成泳道",
+                      "expanded": true,
+                      "children": [
+                        {
+                          "id": "766cf07e6fcfdac1",
+                          "topic": "单泳道",
+                          "expanded": true
+                        },
+                        {
+                          "id": "766cf24f23251177",
+                          "topic": "多泳道",
+                          "expanded": true
+                        }
+                      ]
+                    },
+                    {
+                      "id": "766cec75271784b5",
+                      "topic": "拖拽的形式确立各种关系",
+                      "expanded": true
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "766962afbf208226",
+              "topic": "标签",
+              "expanded": true,
+              "children": [
+                {
+                  "id": "7669642430d85c16",
+                  "topic": "增加了标签的节点，对标签具有”遗传性“，其子节点自动被添加父节点的标签",
+                  "expanded": true
+                },
+                {
+                  "id": "766ab5c996c3ff85",
+                  "topic": "将标签数据纳入节点的结构化数据",
+                  "expanded": true
+                },
+                {
+                  "id": "766ac68d7361fad8",
+                  "topic": "标签的状态与节点的颜色互动",
+                  "expanded": true
+                },
+                {
+                  "id": "766ac8b82a267ddf",
+                  "topic": "节标签不一样，点上加注图标",
+                  "expanded": true
+                },
+                {
+                  "id": "7683eb59e3ab80b4",
+                  "topic": "二级标签标签分组和标签这个结构没有实现，无论如何都实现不了。",
+                  "expanded": true,
+                  "children": [
+                    {
+                      "id": "7683d46f97550c6d",
+                      "topic": "临时用一维的标签暂时放上了。",
+                      "expanded": true
+                    },
+                    {
+                      "id": "7683f2abe08e6fe8",
+                      "topic": "然后单独实现：测试实现在移植过来",
+                      "expanded": true
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "766ae084fdc0fe49",
+              "topic": "命令注入",
+              "expanded": true,
+              "children": [
+                {
+                  "id": "766ae1a5f8c6719e",
+                  "topic": "脑图节点直接注入命令",
+                  "expanded": true
+                },
+                {
+                  "id": "766ae3da9b53defc",
+                  "topic": "多个项目（脑图）",
+                  "expanded": true
+                },
+                {
+                  "id": "766ae74dcd450d9d",
+                  "topic": "清理当前的命令注入选项卡",
+                  "expanded": true
+                },
+                {
+                  "id": "766ae98393eac30b",
+                  "topic": "点击选项卡，自动切换项目和目录以及日志文档",
+                  "expanded": true
+                },
+                {
+                  "id": "766af236ac9441a4",
+                  "topic": "多项目窗口（cursor,windsurf),自动激活前景",
+                  "expanded": true
+                },
+                {
+                  "id": "766b513c1ad56283",
+                  "topic": "点击完成，自动git备份",
+                  "expanded": true
+                },
+                {
+                  "id": "76bcdd2075f8ce5b",
+                  "topic": "两种需求，简单的需求，就直接“自然状态”， 有问题的需要保存的才走提示词",
+                  "expanded": true,
+                  "children": [
+                    {
+                      "id": "76bce436429d398b",
+                      "topic": "自然状态",
+                      "expanded": true
+                    },
+                    {
+                      "id": "76bcf40c4f2620b0",
+                      "topic": "提示词",
+                      "expanded": true
+                    },
+                    {
+                      "id": "76bcf6440a2c20ef",
+                      "topic": "提示词+日志",
+                      "expanded": true
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "7597edb8436f1603",
+              "topic": "两个工具实例同时工作（当前不行）",
+              "expanded": true
+            },
+            {
+              "id": "759804a3234e0d6f",
+              "topic": "详情页与注入命令（智能体调用）同步；",
+              "expanded": true
+            },
+            {
+              "id": "759825ab4fa52976",
+              "topic": "当前的这个工具早晚要重构呀",
+              "expanded": true
+            },
+            {
+              "id": "75a5358638dc6b8f",
+              "topic": "热重载机制不能对于新增的模块或者某些“系统死角”无法发挥作用。",
+              "expanded": true
+            },
+            {
+              "id": "75a55ce66441e1d6",
+              "topic": "ast工具分析无用代码，codelens显示调用关系",
+              "expanded": true
+            },
+            {
+              "id": "766a3acb98a2465b",
+              "topic": "New Node",
+              "expanded": true
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "nodeDetails": {
+    "new_root_1749519634001": {
+      "id": "new_root_1749519634001",
+      "title": "🧠 中心节点",
+      "content": "",
+      "statusTags": [],
+      "relations": {
+        "parent": null,
+        "children": [
+          "virtual_center_1749526667300_r18kfa0zl"
+        ]
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": [],
+        "custom": [],
+        "future": []
+      },
+      "time": {
+        "created": "2025/6/13 16:00:06",
+        "modified": "2025/6/13 16:00:06"
+      },
+      "author": ""
+    },
+    "7578b252383150b7": {
+      "id": "7578b252383150b7",
+      "title": "New Node",
+      "content": "",
+      "relations": {
+        "parent": "new_root_1749519634001",
+        "children": []
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": []
+      },
+      "time": {
+        "created": "2025/6/10 上午9:53:48",
+        "modified": "2025/6/10 上午9:53:48"
+      },
+      "author": ""
+    },
+    "7578b42b6d137baa": {
+      "id": "7578b42b6d137baa",
+      "title": "New Node",
+      "content": "",
+      "relations": {
+        "parent": "7578b252383150b7",
+        "children": []
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": []
+      },
+      "time": {
+        "created": "2025/6/10 上午9:53:56",
+        "modified": "2025/6/10 上午9:53:56"
+      },
+      "author": ""
+    },
+    "virtual_center_1749525824037_u84wulbb2": {
+      "id": "virtual_center_1749525824037_u84wulbb2",
+      "title": "📌 WORKSPACE 中心",
+      "content": "",
+      "relations": {
+        "parent": "7570898ce2f28be4",
+        "children": []
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": []
+      },
+      "time": {
+        "created": "2025/6/12 上午3:55:18",
+        "modified": "2025/6/12 上午3:55:18"
+      },
+      "author": ""
+    },
+    "virtual_center_1749525824045_sq1e13tly": {
+      "id": "virtual_center_1749525824045_sq1e13tly",
+      "title": "📌 KNOWLEDGE 中心",
+      "content": "这是形式上的中心节点，用于业务逻辑管理。真实的系统根节点已被隐藏。",
+      "relations": {
+        "parent": "7570898ce2f28be4",
+        "children": []
+      },
+      "tags": {
+        "categories": [
+          "系统",
+          "中心节点"
+        ],
+        "technical": [
+          "虚拟节点",
+          "形式中心"
+        ],
+        "status": [
+          "活跃"
+        ]
+      },
+      "time": {
+        "created": "2025/6/10 上午11:23:44",
+        "updated": "2025/6/10 上午11:23:44"
+      },
+      "details": {
+        "description": "形式中心节点：用户视角的业务中心，隐藏了技术层面的真实根节点",
+        "implementation": "通过jsMind API创建的普通节点，具有特殊的持久化标记",
+        "testing": "支持所有普通节点操作：编辑、移动、添加子节点等",
+        "notes": "这个节点可以被当作真正的中心节点使用，满足业务需求"
+      },
+      "isVirtualCenter": true,
+      "virtualCenterConfig": {
+        "tabName": "knowledge",
+        "rootId": "7570898ce2f28be4",
+        "autoCreated": true
+      }
+    },
+    "virtual_center_1749525824046_mo3g993gh": {
+      "id": "virtual_center_1749525824046_mo3g993gh",
+      "title": "📌 PROJECT 中心",
+      "content": "这是形式上的中心节点，用于业务逻辑管理。真实的系统根节点已被隐藏。",
+      "relations": {
+        "parent": "new_root_1749519634001",
+        "children": []
+      },
+      "tags": {
+        "categories": [
+          "系统",
+          "中心节点"
+        ],
+        "technical": [
+          "虚拟节点",
+          "形式中心"
+        ],
+        "status": [
+          "活跃"
+        ]
+      },
+      "time": {
+        "created": "2025/6/10 上午11:23:44",
+        "updated": "2025/6/10 上午11:23:44"
+      },
+      "details": {
+        "description": "形式中心节点：用户视角的业务中心，隐藏了技术层面的真实根节点",
+        "implementation": "通过jsMind API创建的普通节点，具有特殊的持久化标记",
+        "testing": "支持所有普通节点操作：编辑、移动、添加子节点等",
+        "notes": "这个节点可以被当作真正的中心节点使用，满足业务需求"
+      },
+      "isVirtualCenter": true,
+      "virtualCenterConfig": {
+        "tabName": "project",
+        "rootId": "new_root_1749519634001",
+        "autoCreated": true
+      }
+    },
+    "virtual_center_1749526667300_r18kfa0zl": {
+      "id": "virtual_center_1749526667300_r18kfa0zl",
+      "title": "📌 PROJECT 中心",
+      "content": "",
+      "statusTags": [],
+      "relations": {
+        "parent": "new_root_1749519634001",
+        "children": [
+          "757ec59b0fb95687",
+          "766d480c05afbfce",
+          "766b9d4c022b8119",
+          "766962afbf208226",
+          "766ae084fdc0fe49",
+          "7597edb8436f1603",
+          "759804a3234e0d6f",
+          "759825ab4fa52976",
+          "75a5358638dc6b8f",
+          "75a55ce66441e1d6",
+          "766a3acb98a2465b"
+        ]
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": [],
+        "custom": [],
+        "future": []
+      },
+      "time": {
+        "created": "2025/6/13 16:00:06",
+        "modified": "2025/6/13 16:00:06"
+      },
+      "author": ""
+    },
+    "757ea1c9366416c1": {
+      "id": "757ea1c9366416c1",
+      "title": "中心节点强制性隐藏，否则会把新增节点加到上面",
+      "content": "",
+      "statusTags": [],
+      "relations": {
+        "parent": "757ec59b0fb95687",
+        "children": []
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": [],
+        "custom": [],
+        "future": []
+      },
+      "time": {
+        "created": "2025/6/13 16:00:06",
+        "modified": "2025/6/13 16:00:06"
+      },
+      "author": ""
+    },
+    "757ec3fa6dd4b765": {
+      "id": "757ec3fa6dd4b765",
+      "title": "New Node",
+      "content": "",
+      "relations": {
+        "parent": "new_root_1749519634001",
+        "children": []
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": []
+      },
+      "time": {
+        "created": "2025/6/10 上午11:39:52",
+        "modified": "2025/6/10 上午11:39:52"
+      },
+      "author": ""
+    },
+    "757ebd21d1e0e134": {
+      "id": "757ebd21d1e0e134",
+      "title": "文件的保存；保存的时候要保存：形式节点，不保存中心节点",
+      "content": "",
+      "statusTags": [],
+      "relations": {
+        "parent": "757ec59b0fb95687",
+        "children": []
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": [],
+        "custom": [],
+        "future": []
+      },
+      "time": {
+        "created": "2025/6/13 16:00:06",
+        "modified": "2025/6/13 16:00:06"
+      },
+      "author": ""
+    },
+    "757ebaccdec873ef": {
+      "id": "757ebaccdec873ef",
+      "title": "节点内容的持久化处理",
+      "content": "",
+      "statusTags": [],
+      "relations": {
+        "parent": "757eb721a54aff08",
+        "children": []
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": [],
+        "custom": [],
+        "future": []
+      },
+      "time": {
+        "created": "2025/6/13 16:00:06",
+        "modified": "2025/6/13 16:00:06"
+      },
+      "author": ""
+    },
+    "757eb721a54aff08": {
+      "id": "757eb721a54aff08",
+      "title": "详情页新增其他属性：节点内容",
+      "content": "",
+      "statusTags": [],
+      "relations": {
+        "parent": "757ec59b0fb95687",
+        "children": [
+          "757ebaccdec873ef",
+          "7597db278ff53ac7",
+          "7597e00c2b7ecda5",
+          "7597e37649e599ba"
+        ]
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": [],
+        "custom": [],
+        "future": []
+      },
+      "time": {
+        "created": "2025/6/13 16:00:06",
+        "modified": "2025/6/13 16:00:06"
+      },
+      "author": ""
+    },
+    "757ed857bcd7271d": {
+      "id": "757ed857bcd7271d",
+      "title": "自定保存只有文件名，没有路几个；而且也没找到“形式节点”的路径",
+      "content": "",
+      "statusTags": [],
+      "relations": {
+        "parent": "757ec59b0fb95687",
+        "children": []
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": [],
+        "custom": [],
+        "future": []
+      },
+      "time": {
+        "created": "2025/6/13 16:00:06",
+        "modified": "2025/6/13 16:00:06"
+      },
+      "author": ""
+    },
+    "757ec59b0fb95687": {
+      "id": "757ec59b0fb95687",
+      "title": "形式节点",
+      "content": "",
+      "statusTags": [],
+      "relations": {
+        "parent": "virtual_center_1749526667300_r18kfa0zl",
+        "children": [
+          "757ea1c9366416c1",
+          "757eb721a54aff08",
+          "757ebd21d1e0e134",
+          "757ed857bcd7271d",
+          "7597a7b3f6476366",
+          "7597f7eea7c278da",
+          "766cf877f1bb8e3a"
+        ]
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": [],
+        "custom": [],
+        "future": []
+      },
+      "time": {
+        "created": "2025/6/13 16:00:06",
+        "modified": "2025/6/13 16:00:06"
+      },
+      "author": ""
+    },
+    "757f2fdf0b3aae50": {
+      "id": "757f2fdf0b3aae50",
+      "title": "New Node",
+      "content": "",
+      "relations": {
+        "parent": "757ec59b0fb95687",
+        "children": []
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": []
+      },
+      "time": {
+        "created": "2025/6/10 上午11:47:16",
+        "modified": "2025/6/10 上午11:47:16"
+      },
+      "author": ""
+    },
+    "7597a7b3f6476366": {
+      "id": "7597a7b3f6476366",
+      "title": "快捷键调节工具窗口大小",
+      "content": "",
+      "statusTags": [],
+      "relations": {
+        "parent": "757ec59b0fb95687",
+        "children": []
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": [],
+        "custom": [],
+        "future": []
+      },
+      "time": {
+        "created": "2025/6/13 16:00:06",
+        "modified": "2025/6/13 16:00:06"
+      },
+      "author": ""
+    },
+    "7597e00c2b7ecda5": {
+      "id": "7597e00c2b7ecda5",
+      "title": "将数据分析名字改为详情页，并且放在第一个。",
+      "content": "",
+      "statusTags": [],
+      "relations": {
+        "parent": "757eb721a54aff08",
+        "children": []
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": [],
+        "custom": [],
+        "future": []
+      },
+      "time": {
+        "created": "2025/6/13 16:00:06",
+        "modified": "2025/6/13 16:00:06"
+      },
+      "author": ""
+    },
+    "7597edb8436f1603": {
+      "id": "7597edb8436f1603",
+      "title": "两个工具实例同时工作（当前不行）",
+      "content": "",
+      "statusTags": [],
+      "relations": {
+        "parent": "virtual_center_1749526667300_r18kfa0zl",
+        "children": []
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": [],
+        "custom": [],
+        "future": []
+      },
+      "time": {
+        "created": "2025/6/13 16:00:06",
+        "modified": "2025/6/13 16:00:06"
+      },
+      "author": ""
+    },
+    "759804a3234e0d6f": {
+      "id": "759804a3234e0d6f",
+      "title": "详情页与注入命令（智能体调用）同步；",
+      "content": "",
+      "statusTags": [],
+      "relations": {
+        "parent": "virtual_center_1749526667300_r18kfa0zl",
+        "children": []
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": [],
+        "custom": [],
+        "future": []
+      },
+      "time": {
+        "created": "2025/6/13 16:00:06",
+        "modified": "2025/6/13 16:00:06"
+      },
+      "author": ""
+    },
+    "759825ab4fa52976": {
+      "id": "759825ab4fa52976",
+      "title": "当前的这个工具早晚要重构呀",
+      "content": "",
+      "statusTags": [],
+      "relations": {
+        "parent": "virtual_center_1749526667300_r18kfa0zl",
+        "children": []
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": [],
+        "custom": [],
+        "future": []
+      },
+      "time": {
+        "created": "2025/6/13 16:00:06",
+        "modified": "2025/6/13 16:00:06"
+      },
+      "author": ""
+    },
+    "75a5358638dc6b8f": {
+      "id": "75a5358638dc6b8f",
+      "title": "热重载机制不能对于新增的模块或者某些“系统死角”无法发挥作用。",
+      "content": "",
+      "statusTags": [],
+      "relations": {
+        "parent": "virtual_center_1749526667300_r18kfa0zl",
+        "children": []
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": [],
+        "custom": [],
+        "future": []
+      },
+      "time": {
+        "created": "2025/6/13 16:00:06",
+        "modified": "2025/6/13 16:00:06"
+      },
+      "author": ""
+    },
+    "75a55ce66441e1d6": {
+      "id": "75a55ce66441e1d6",
+      "title": "ast工具分析无用代码，codelens显示调用关系",
+      "content": "",
+      "statusTags": [],
+      "relations": {
+        "parent": "virtual_center_1749526667300_r18kfa0zl",
+        "children": []
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": [],
+        "custom": [],
+        "future": []
+      },
+      "time": {
+        "created": "2025/6/13 16:00:06",
+        "modified": "2025/6/13 16:00:06"
+      },
+      "author": ""
+    },
+    "74599b64e94b9434": {
+      "id": "74599b64e94b9434",
+      "title": "多个页面的节点的跨页面拖拽拷贝",
+      "content": "",
+      "relations": {
+        "parent": null,
+        "children": [
+          "virtual_center_1749525714730_j6dufrvhg"
+        ]
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": []
+      },
+      "time": {
+        "created": "2025/6/11 00:48:02",
+        "modified": "2025/6/11 00:48:02"
+      },
+      "author": ""
+    },
+    "virtual_center_1749525714724_cisaroz2l": {
+      "id": "virtual_center_1749525714724_cisaroz2l",
+      "title": "📌 WORKSPACE 中心",
+      "content": "",
+      "relations": {
+        "parent": "74599b64e94b9434",
+        "children": []
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": []
+      },
+      "time": {
+        "created": "2025/6/11 00:48:02",
+        "modified": "2025/6/11 00:48:02"
+      },
+      "author": ""
+    },
+    "virtual_center_1749525714730_j6dufrvhg": {
+      "id": "virtual_center_1749525714730_j6dufrvhg",
+      "title": "📌 KNOWLEDGE 中心",
+      "content": "",
+      "relations": {
+        "parent": "74599b64e94b9434",
+        "children": []
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": []
+      },
+      "time": {
+        "created": "2025/6/11 00:48:02",
+        "modified": "2025/6/11 00:48:02"
+      },
+      "author": ""
+    },
+    "7597db278ff53ac7": {
+      "id": "7597db278ff53ac7",
+      "title": "点击节点，默认打开详情页",
+      "content": "",
+      "statusTags": [],
+      "relations": {
+        "parent": "757eb721a54aff08",
+        "children": []
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": [],
+        "custom": [],
+        "future": []
+      },
+      "time": {
+        "created": "2025/6/13 16:00:06",
+        "modified": "2025/6/13 16:00:06"
+      },
+      "author": ""
+    },
+    "7597e37649e599ba": {
+      "id": "7597e37649e599ba",
+      "title": "将详情页改成备用",
+      "content": "",
+      "statusTags": [],
+      "relations": {
+        "parent": "757eb721a54aff08",
+        "children": []
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": [],
+        "custom": [],
+        "future": []
+      },
+      "time": {
+        "created": "2025/6/13 16:00:06",
+        "modified": "2025/6/13 16:00:06"
+      },
+      "author": ""
+    },
+    "7597f7eea7c278da": {
+      "id": "7597f7eea7c278da",
+      "title": "笔记：脑图和注入命令相结合，可以在生成的同时，记笔记，用时运行其他任务；",
+      "content": "",
+      "statusTags": [],
+      "relations": {
+        "parent": "757ec59b0fb95687",
+        "children": []
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": [],
+        "custom": [],
+        "future": []
+      },
+      "time": {
+        "created": "2025/6/13 16:00:06",
+        "modified": "2025/6/13 16:00:06"
+      },
+      "author": ""
+    },
+    "new_root_1749671705140": {
+      "id": "new_root_1749671705140",
+      "title": "🧠 中心节点",
+      "content": "",
+      "relations": {
+        "parent": null,
+        "children": [
+          "7619e4092d7f0576"
+        ]
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": []
+      },
+      "time": {
+        "created": "2025/6/13 07:40:36",
+        "modified": "2025/6/13 07:40:36"
+      },
+      "author": ""
+    },
+    "7608f609958d9fdb": {
+      "id": "7608f609958d9fdb",
+      "title": "New Node",
+      "content": "",
+      "relations": {
+        "parent": "virtual_center_1749525824037_u84wulbb2",
+        "children": []
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": []
+      },
+      "time": {
+        "created": "2025/6/12 上午3:55:33",
+        "modified": "2025/6/12 上午3:55:33"
+      },
+      "author": ""
+    },
+    "7619e5105d9c0f1b": {
+      "id": "7619e5105d9c0f1b",
+      "title": "完成",
+      "content": "",
+      "relations": {
+        "parent": "763da7355e705b26",
+        "children": []
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": []
+      },
+      "time": {
+        "created": "2025/6/13 07:40:36",
+        "modified": "2025/6/13 07:40:36"
+      },
+      "author": ""
+    },
+    "7619e83a0f2e54e7": {
+      "id": "7619e83a0f2e54e7",
+      "title": "项目",
+      "content": "",
+      "relations": {
+        "parent": "763da7355e705b26",
+        "children": []
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": []
+      },
+      "time": {
+        "created": "2025/6/13 07:40:36",
+        "modified": "2025/6/13 07:40:36"
+      },
+      "author": ""
+    },
+    "7619ee9075557e56": {
+      "id": "7619ee9075557e56",
+      "title": "进行中",
+      "content": "",
+      "relations": {
+        "parent": "763da7355e705b26",
+        "children": []
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": []
+      },
+      "time": {
+        "created": "2025/6/13 07:40:36",
+        "modified": "2025/6/13 07:40:36"
+      },
+      "author": ""
+    },
+    "7619e4092d7f0576": {
+      "id": "7619e4092d7f0576",
+      "title": "标签",
+      "content": "",
+      "relations": {
+        "parent": "new_root_1749671705140",
+        "children": [
+          "763da7355e705b26",
+          "763dabf3d5504747"
+        ]
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": []
+      },
+      "time": {
+        "created": "2025/6/13 07:40:36",
+        "modified": "2025/6/13 07:40:36"
+      },
+      "author": ""
+    },
+    "7619efe63876b704": {
+      "id": "7619efe63876b704",
+      "title": "计划",
+      "content": "",
+      "relations": {
+        "parent": "763da7355e705b26",
+        "children": []
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": []
+      },
+      "time": {
+        "created": "2025/6/13 07:40:36",
+        "modified": "2025/6/13 07:40:36"
+      },
+      "author": ""
+    },
+    "7619e75091213ca3": {
+      "id": "7619e75091213ca3",
+      "title": "里程碑",
+      "content": "",
+      "relations": {
+        "parent": "763da7355e705b26",
+        "children": []
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": []
+      },
+      "time": {
+        "created": "2025/6/13 07:40:36",
+        "modified": "2025/6/13 07:40:36"
+      },
+      "author": ""
+    },
+    "763da7355e705b26": {
+      "id": "763da7355e705b26",
+      "title": "常规",
+      "content": "",
+      "relations": {
+        "parent": "7619e4092d7f0576",
+        "children": [
+          "7619e83a0f2e54e7",
+          "7619e75091213ca3",
+          "7619e5105d9c0f1b",
+          "7619ee9075557e56",
+          "7619efe63876b704"
+        ]
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": []
+      },
+      "time": {
+        "created": "2025/6/13 07:40:36",
+        "modified": "2025/6/13 07:40:36"
+      },
+      "author": ""
+    },
+    "763dabf3d5504747": {
+      "id": "763dabf3d5504747",
+      "title": "AI标记",
+      "content": "",
+      "relations": {
+        "parent": "7619e4092d7f0576",
+        "children": [
+          "763f6fb672eb0ffa",
+          "763f70d12ec2a764",
+          "763f730703e28c1f",
+          "763f7454b07fd6fa"
+        ]
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": []
+      },
+      "time": {
+        "created": "2025/6/13 07:40:36",
+        "modified": "2025/6/13 07:40:36"
+      },
+      "author": ""
+    },
+    "7608e10098e37a7f": {
+      "id": "7608e10098e37a7f",
+      "title": "标签管理：临时工作区B",
+      "content": "",
+      "relations": {
+        "parent": "virtual_center_1749526667300_r18kfa0zl",
+        "children": []
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": [],
+        "custom": []
+      },
+      "time": {
+        "created": "2025/6/12 下午7:16:43",
+        "modified": "2025/6/12 下午7:16:43"
+      },
+      "author": ""
+    },
+    "763f6fb672eb0ffa": {
+      "id": "763f6fb672eb0ffa",
+      "title": "记忆",
+      "content": "",
+      "relations": {
+        "parent": "763dabf3d5504747",
+        "children": []
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": []
+      },
+      "time": {
+        "created": "2025/6/13 07:40:36",
+        "modified": "2025/6/13 07:40:36"
+      },
+      "author": ""
+    },
+    "763f70d12ec2a764": {
+      "id": "763f70d12ec2a764",
+      "title": "注意力",
+      "content": "",
+      "relations": {
+        "parent": "763dabf3d5504747",
+        "children": []
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": []
+      },
+      "time": {
+        "created": "2025/6/13 07:40:36",
+        "modified": "2025/6/13 07:40:36"
+      },
+      "author": ""
+    },
+    "763f730703e28c1f": {
+      "id": "763f730703e28c1f",
+      "title": "犯坏",
+      "content": "",
+      "relations": {
+        "parent": "763dabf3d5504747",
+        "children": []
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": []
+      },
+      "time": {
+        "created": "2025/6/13 07:40:36",
+        "modified": "2025/6/13 07:40:36"
+      },
+      "author": ""
+    },
+    "763f7454b07fd6fa": {
+      "id": "763f7454b07fd6fa",
+      "title": "幻觉",
+      "content": "",
+      "relations": {
+        "parent": "763dabf3d5504747",
+        "children": []
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": []
+      },
+      "time": {
+        "created": "2025/6/13 07:40:36",
+        "modified": "2025/6/13 07:40:36"
+      },
+      "author": ""
+    },
+    "workspace_root": {
+      "id": "workspace_root",
+      "title": "🔬 临时工作区A",
+      "content": "",
+      "relations": {
+        "parent": null,
+        "children": []
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": []
+      },
+      "time": {
+        "created": "2025/6/11 上午11:34:47",
+        "modified": "2025/6/11 上午11:34:47"
+      },
+      "author": ""
+    },
+    "knowledge_root": {
+      "id": "knowledge_root",
+      "title": "📋 临时工作区B",
+      "content": "",
+      "relations": {
+        "parent": null,
+        "children": []
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": []
+      },
+      "time": {
+        "created": "2025/6/11 上午11:34:47",
+        "modified": "2025/6/11 上午11:34:47"
+      },
+      "author": ""
+    },
+    "new_mindmap_1749771349012_root": {
+      "id": "new_mindmap_1749771349012_root",
+      "title": "💡 新建思维导图",
+      "content": "",
+      "relations": {
+        "parent": null,
+        "children": [
+          "new_mindmap_1749771349012_idea1",
+          "new_mindmap_1749771349012_idea2",
+          "new_mindmap_1749771349012_plan1",
+          "new_mindmap_1749771349012_note1"
+        ]
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": []
+      },
+      "time": {
+        "created": "2025/6/13 07:35:49",
+        "modified": "2025/6/13 07:35:49"
+      },
+      "author": "NodeMind用户"
+    },
+    "new_mindmap_1749771349012_idea1": {
+      "id": "new_mindmap_1749771349012_idea1",
+      "title": "💭 想法一",
+      "content": "",
+      "relations": {
+        "parent": "new_mindmap_1749771349012_root",
+        "children": []
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": []
+      },
+      "time": {
+        "created": "2025/6/13 07:35:49",
+        "modified": "2025/6/13 07:35:49"
+      },
+      "author": "NodeMind用户"
+    },
+    "new_mindmap_1749771349012_idea2": {
+      "id": "new_mindmap_1749771349012_idea2",
+      "title": "🎯 目标",
+      "content": "",
+      "relations": {
+        "parent": "new_mindmap_1749771349012_root",
+        "children": []
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": []
+      },
+      "time": {
+        "created": "2025/6/13 07:35:49",
+        "modified": "2025/6/13 07:35:49"
+      },
+      "author": "NodeMind用户"
+    },
+    "new_mindmap_1749771349012_plan1": {
+      "id": "new_mindmap_1749771349012_plan1",
+      "title": "📋 计划",
+      "content": "",
+      "relations": {
+        "parent": "new_mindmap_1749771349012_root",
+        "children": []
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": []
+      },
+      "time": {
+        "created": "2025/6/13 07:35:49",
+        "modified": "2025/6/13 07:35:49"
+      },
+      "author": "NodeMind用户"
+    },
+    "new_mindmap_1749771349012_note1": {
+      "id": "new_mindmap_1749771349012_note1",
+      "title": "📝 备注",
+      "content": "",
+      "relations": {
+        "parent": "new_mindmap_1749771349012_root",
+        "children": []
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": []
+      },
+      "time": {
+        "created": "2025/6/13 07:35:49",
+        "modified": "2025/6/13 07:35:49"
+      },
+      "author": "NodeMind用户"
+    },
+    "new_mindmap_1749771438780_root": {
+      "id": "new_mindmap_1749771438780_root",
+      "title": "💡 新建思维导图",
+      "content": "",
+      "relations": {
+        "parent": null,
+        "children": [
+          "new_mindmap_1749771438780_idea1",
+          "new_mindmap_1749771438780_idea2",
+          "new_mindmap_1749771438780_plan1",
+          "new_mindmap_1749771438780_note1"
+        ]
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": []
+      },
+      "time": {
+        "created": "2025/6/13 07:37:18",
+        "modified": "2025/6/13 07:37:18"
+      },
+      "author": "NodeMind用户"
+    },
+    "new_mindmap_1749771438780_idea1": {
+      "id": "new_mindmap_1749771438780_idea1",
+      "title": "💭 想法一",
+      "content": "",
+      "relations": {
+        "parent": "new_mindmap_1749771438780_root",
+        "children": []
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": []
+      },
+      "time": {
+        "created": "2025/6/13 07:37:18",
+        "modified": "2025/6/13 07:37:18"
+      },
+      "author": "NodeMind用户"
+    },
+    "new_mindmap_1749771438780_idea2": {
+      "id": "new_mindmap_1749771438780_idea2",
+      "title": "🎯 目标",
+      "content": "",
+      "relations": {
+        "parent": "new_mindmap_1749771438780_root",
+        "children": []
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": []
+      },
+      "time": {
+        "created": "2025/6/13 07:37:18",
+        "modified": "2025/6/13 07:37:18"
+      },
+      "author": "NodeMind用户"
+    },
+    "new_mindmap_1749771438780_plan1": {
+      "id": "new_mindmap_1749771438780_plan1",
+      "title": "📋 计划",
+      "content": "",
+      "relations": {
+        "parent": "new_mindmap_1749771438780_root",
+        "children": []
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": []
+      },
+      "time": {
+        "created": "2025/6/13 07:37:18",
+        "modified": "2025/6/13 07:37:18"
+      },
+      "author": "NodeMind用户"
+    },
+    "new_mindmap_1749771438780_note1": {
+      "id": "new_mindmap_1749771438780_note1",
+      "title": "📝 备注",
+      "content": "",
+      "relations": {
+        "parent": "new_mindmap_1749771438780_root",
+        "children": []
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": []
+      },
+      "time": {
+        "created": "2025/6/13 07:37:18",
+        "modified": "2025/6/13 07:37:18"
+      },
+      "author": "NodeMind用户"
+    },
+    "new_mindmap_1749771577878_root": {
+      "id": "new_mindmap_1749771577878_root",
+      "title": "💡 新建思维导图",
+      "content": "",
+      "relations": {
+        "parent": null,
+        "children": []
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": []
+      },
+      "time": {
+        "created": "2025/6/13 07:39:37",
+        "modified": "2025/6/13 07:39:37"
+      },
+      "author": "NodeMind用户"
+    },
+    "76683843dfc72365": {
+      "id": "76683843dfc72365",
+      "title": "New Node",
+      "content": "",
+      "relations": {
+        "parent": "766837c3916cc45b",
+        "children": []
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": []
+      },
+      "time": {
+        "created": "2025/6/13 07:39:49",
+        "modified": "2025/6/13 07:39:49"
+      },
+      "author": ""
+    },
+    "766837c3916cc45b": {
+      "id": "766837c3916cc45b",
+      "title": "New Node",
+      "content": "",
+      "relations": {
+        "parent": "new_mindmap_1749771577878_root",
+        "children": [
+          "76683843dfc72365",
+          "76683879f6068251",
+          "766838a184eb181a"
+        ]
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": []
+      },
+      "time": {
+        "created": "2025/6/13 07:39:50",
+        "modified": "2025/6/13 07:39:50"
+      },
+      "author": ""
+    },
+    "76690d5c9b934126": {
+      "id": "76690d5c9b934126",
+      "title": "测试",
+      "content": "",
+      "relations": {
+        "parent": "7619e4092d7f0576",
+        "children": []
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": []
+      },
+      "time": {
+        "created": "2025/6/13 07:59:19",
+        "modified": "2025/6/13 07:59:19"
+      },
+      "author": ""
+    },
+    "766962afbf208226": {
+      "id": "766962afbf208226",
+      "title": "标签",
+      "content": "",
+      "statusTags": [],
+      "relations": {
+        "parent": "virtual_center_1749526667300_r18kfa0zl",
+        "children": [
+          "7669642430d85c16",
+          "766ab5c996c3ff85",
+          "766ac68d7361fad8",
+          "766ac8b82a267ddf",
+          "7683eb59e3ab80b4"
+        ]
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": [],
+        "custom": [],
+        "future": []
+      },
+      "time": {
+        "created": "2025/6/13 16:00:06",
+        "modified": "2025/6/13 16:00:06"
+      },
+      "author": ""
+    },
+    "new_mindmap_1749772876625_root": {
+      "id": "new_mindmap_1749772876625_root",
+      "title": "💡 新建思维导图",
+      "content": "",
+      "relations": {
+        "parent": null,
+        "children": []
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": []
+      },
+      "time": {
+        "created": "2025/6/13 08:01:16",
+        "modified": "2025/6/13 08:01:16"
+      },
+      "author": "NodeMind用户"
+    },
+    "7669642430d85c16": {
+      "id": "7669642430d85c16",
+      "title": "增加了标签的节点，对标签具有”遗传性“，其子节点自动被添加父节点的标签",
+      "content": "",
+      "statusTags": [],
+      "relations": {
+        "parent": "766962afbf208226",
+        "children": []
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": [],
+        "custom": [],
+        "future": []
+      },
+      "time": {
+        "created": "2025/6/13 16:00:06",
+        "modified": "2025/6/13 16:00:06"
+      },
+      "author": ""
+    },
+    "766a3acb98a2465b": {
+      "id": "766a3acb98a2465b",
+      "title": "New Node",
+      "content": "",
+      "statusTags": [],
+      "relations": {
+        "parent": "virtual_center_1749526667300_r18kfa0zl",
+        "children": []
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": [],
+        "custom": [],
+        "future": []
+      },
+      "time": {
+        "created": "2025/6/13 16:00:06",
+        "modified": "2025/6/13 16:00:06"
+      },
+      "author": ""
+    },
+    "766ab5c996c3ff85": {
+      "id": "766ab5c996c3ff85",
+      "title": "将标签数据纳入节点的结构化数据",
+      "content": "",
+      "statusTags": [],
+      "relations": {
+        "parent": "766962afbf208226",
+        "children": []
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": [],
+        "custom": [],
+        "future": []
+      },
+      "time": {
+        "created": "2025/6/13 16:00:06",
+        "modified": "2025/6/13 16:00:06"
+      },
+      "author": ""
+    },
+    "766ac68d7361fad8": {
+      "id": "766ac68d7361fad8",
+      "title": "标签的状态与节点的颜色互动",
+      "content": "",
+      "statusTags": [],
+      "relations": {
+        "parent": "766962afbf208226",
+        "children": []
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": [],
+        "custom": [],
+        "future": []
+      },
+      "time": {
+        "created": "2025/6/13 16:00:06",
+        "modified": "2025/6/13 16:00:06"
+      },
+      "author": ""
+    },
+    "766ac8b82a267ddf": {
+      "id": "766ac8b82a267ddf",
+      "title": "节标签不一样，点上加注图标",
+      "content": "",
+      "statusTags": [],
+      "relations": {
+        "parent": "766962afbf208226",
+        "children": []
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": [],
+        "custom": [],
+        "future": []
+      },
+      "time": {
+        "created": "2025/6/13 16:00:06",
+        "modified": "2025/6/13 16:00:06"
+      },
+      "author": ""
+    },
+    "766af236ac9441a4": {
+      "id": "766af236ac9441a4",
+      "title": "多项目窗口（cursor,windsurf),自动激活前景",
+      "content": "",
+      "statusTags": [],
+      "relations": {
+        "parent": "766ae084fdc0fe49",
+        "children": []
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": [],
+        "custom": [],
+        "future": []
+      },
+      "time": {
+        "created": "2025/6/13 16:00:06",
+        "modified": "2025/6/13 16:00:06"
+      },
+      "author": ""
+    },
+    "766ae3da9b53defc": {
+      "id": "766ae3da9b53defc",
+      "title": "多个项目（脑图）",
+      "content": "",
+      "statusTags": [],
+      "relations": {
+        "parent": "766ae084fdc0fe49",
+        "children": []
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": [],
+        "custom": [],
+        "future": []
+      },
+      "time": {
+        "created": "2025/6/13 16:00:06",
+        "modified": "2025/6/13 16:00:06"
+      },
+      "author": ""
+    },
+    "766ae1a5f8c6719e": {
+      "id": "766ae1a5f8c6719e",
+      "title": "脑图节点直接注入命令",
+      "content": "",
+      "statusTags": [],
+      "relations": {
+        "parent": "766ae084fdc0fe49",
+        "children": []
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": [],
+        "custom": [],
+        "future": []
+      },
+      "time": {
+        "created": "2025/6/13 16:00:06",
+        "modified": "2025/6/13 16:00:06"
+      },
+      "author": ""
+    },
+    "766b513c1ad56283": {
+      "id": "766b513c1ad56283",
+      "title": "点击完成，自动git备份",
+      "content": "",
+      "statusTags": [],
+      "relations": {
+        "parent": "766ae084fdc0fe49",
+        "children": []
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": [],
+        "custom": [],
+        "future": []
+      },
+      "time": {
+        "created": "2025/6/13 16:00:06",
+        "modified": "2025/6/13 16:00:06"
+      },
+      "author": ""
+    },
+    "766b9f97fa1e4aa8": {
+      "id": "766b9f97fa1e4aa8",
+      "title": "MD阅读器，生成内容的阅读",
+      "content": "",
+      "statusTags": [],
+      "relations": {
+        "parent": "766b9d4c022b8119",
+        "children": []
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": [],
+        "custom": [],
+        "future": []
+      },
+      "time": {
+        "created": "2025/6/13 16:00:06",
+        "modified": "2025/6/13 16:00:06"
+      },
+      "author": ""
+    },
+    "766bae67df0b9972": {
+      "id": "766bae67df0b9972",
+      "title": "查询表",
+      "content": "",
+      "statusTags": [],
+      "relations": {
+        "parent": "766b9d4c022b8119",
+        "children": [
+          "766baff91ec44ad7",
+          "766bb2e5c55f8e89"
+        ]
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": [],
+        "custom": [],
+        "future": []
+      },
+      "time": {
+        "created": "2025/6/13 16:00:06",
+        "modified": "2025/6/13 16:00:06"
+      },
+      "author": ""
+    },
+    "766baff91ec44ad7": {
+      "id": "766baff91ec44ad7",
+      "title": "单独的标签系统，在几点上标注1，2，3",
+      "content": "",
+      "statusTags": [
+        "项目"
+      ],
+      "relations": {
+        "parent": "766bae67df0b9972",
+        "children": []
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": [],
+        "custom": [],
+        "future": []
+      },
+      "time": {
+        "created": "2025/6/13 16:00:06",
+        "modified": "2025/6/13 17:29:50"
+      },
+      "author": ""
+    },
+    "766bb2e5c55f8e89": {
+      "id": "766bb2e5c55f8e89",
+      "title": "然后形成一个列表",
+      "content": "",
+      "statusTags": [],
+      "relations": {
+        "parent": "766bae67df0b9972",
+        "children": []
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": [],
+        "custom": [],
+        "future": []
+      },
+      "time": {
+        "created": "2025/6/13 16:00:06",
+        "modified": "2025/6/13 16:00:06"
+      },
+      "author": ""
+    },
+    "766b9e9a8c4a23b5": {
+      "id": "766b9e9a8c4a23b5",
+      "title": "节点信息",
+      "content": "",
+      "statusTags": [],
+      "relations": {
+        "parent": "766b9d4c022b8119",
+        "children": []
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": [],
+        "custom": [],
+        "future": []
+      },
+      "time": {
+        "created": "2025/6/13 16:00:06",
+        "modified": "2025/6/13 16:00:06"
+      },
+      "author": ""
+    },
+    "766ceb7e085213bc": {
+      "id": "766ceb7e085213bc",
+      "title": "关系表设计成泳道",
+      "content": "",
+      "statusTags": [
+        "项目"
+      ],
+      "relations": {
+        "parent": "766ce83133c9c52a",
+        "children": [
+          "766cf07e6fcfdac1",
+          "766cf24f23251177"
+        ]
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": [],
+        "custom": [],
+        "future": []
+      },
+      "time": {
+        "created": "2025/6/13 16:00:06",
+        "modified": "2025/6/13 16:03:31"
+      },
+      "author": ""
+    },
+    "766d4ca43b8dbddf": {
+      "id": "766d4ca43b8dbddf",
+      "title": "考虑在看板选项之间点选，而不是选项卡之间切换",
+      "content": "",
+      "statusTags": [],
+      "relations": {
+        "parent": "766d480c05afbfce",
+        "children": []
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": [],
+        "custom": [],
+        "future": []
+      },
+      "time": {
+        "created": "2025/6/13 16:00:06",
+        "modified": "2025/6/13 16:00:06"
+      },
+      "author": ""
+    },
+    "766d55eb82d26df9": {
+      "id": "766d55eb82d26df9",
+      "title": "可以直接在看板页面上增加或者删除同时处理的项目数量",
+      "content": "",
+      "statusTags": [],
+      "relations": {
+        "parent": "766d480c05afbfce",
+        "children": []
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": [],
+        "custom": [],
+        "future": []
+      },
+      "time": {
+        "created": "2025/6/13 16:00:06",
+        "modified": "2025/6/13 16:00:06"
+      },
+      "author": ""
+    },
+    "766cec75271784b5": {
+      "id": "766cec75271784b5",
+      "title": "拖拽的形式确立各种关系",
+      "content": "",
+      "statusTags": [],
+      "relations": {
+        "parent": "766ce83133c9c52a",
+        "children": []
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": [],
+        "custom": [],
+        "future": []
+      },
+      "time": {
+        "created": "2025/6/13 16:00:06",
+        "modified": "2025/6/13 16:00:06"
+      },
+      "author": ""
+    },
+    "766ce94975b5fd6d": {
+      "id": "766ce94975b5fd6d",
+      "title": "标注到关系表内",
+      "content": "",
+      "statusTags": [],
+      "relations": {
+        "parent": "766ce83133c9c52a",
+        "children": []
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": [],
+        "custom": [],
+        "future": []
+      },
+      "time": {
+        "created": "2025/6/13 16:00:06",
+        "modified": "2025/6/13 16:00:06"
+      },
+      "author": ""
+    },
+    "766d480c05afbfce": {
+      "id": "766d480c05afbfce",
+      "title": "控制看板：在injiect 工具内",
+      "content": "",
+      "statusTags": [],
+      "relations": {
+        "parent": "virtual_center_1749526667300_r18kfa0zl",
+        "children": [
+          "766d4ca43b8dbddf",
+          "766d55eb82d26df9",
+          "766e87e726bf29a7",
+          "766e8ec21a22ba70",
+          "766eab7a0158ac1b"
+        ]
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": [],
+        "custom": [],
+        "future": []
+      },
+      "time": {
+        "created": "2025/6/13 16:00:06",
+        "modified": "2025/6/13 16:00:06"
+      },
+      "author": ""
+    },
+    "766e8ec21a22ba70": {
+      "id": "766e8ec21a22ba70",
+      "title": "必须将Injectd的框架设置成全屏，因为这个工具要大屏幕支持",
+      "content": "",
+      "statusTags": [],
+      "relations": {
+        "parent": "766d480c05afbfce",
+        "children": []
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": [],
+        "custom": [],
+        "future": []
+      },
+      "time": {
+        "created": "2025/6/13 16:00:06",
+        "modified": "2025/6/13 16:00:06"
+      },
+      "author": ""
+    },
+    "7673285aa94ab9ae": {
+      "id": "7673285aa94ab9ae",
+      "title": "议题",
+      "content": "",
+      "relations": {
+        "parent": "76690d5c9b934126",
+        "children": []
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": []
+      },
+      "time": {
+        "created": "2025/6/13 10:51:36",
+        "modified": "2025/6/13 10:51:36"
+      },
+      "author": ""
+    },
+    "766ce83133c9c52a": {
+      "id": "766ce83133c9c52a",
+      "title": "关系表",
+      "content": "",
+      "statusTags": [],
+      "relations": {
+        "parent": "766b9d4c022b8119",
+        "children": [
+          "766ce94975b5fd6d",
+          "766ceb7e085213bc",
+          "766cec75271784b5"
+        ]
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": [],
+        "custom": [],
+        "future": []
+      },
+      "time": {
+        "created": "2025/6/13 16:00:06",
+        "modified": "2025/6/13 16:00:06"
+      },
+      "author": ""
+    },
+    "766eab7a0158ac1b": {
+      "id": "766eab7a0158ac1b",
+      "title": "给工具价格前景锁",
+      "content": "",
+      "statusTags": [],
+      "relations": {
+        "parent": "766d480c05afbfce",
+        "children": []
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": [],
+        "custom": [],
+        "future": []
+      },
+      "time": {
+        "created": "2025/6/13 16:00:06",
+        "modified": "2025/6/13 16:00:06"
+      },
+      "author": ""
+    },
+    "766e87e726bf29a7": {
+      "id": "766e87e726bf29a7",
+      "title": "将工具内部的边框设置成自动调节宽度",
+      "content": "",
+      "statusTags": [],
+      "relations": {
+        "parent": "766d480c05afbfce",
+        "children": []
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": [],
+        "custom": [],
+        "future": []
+      },
+      "time": {
+        "created": "2025/6/13 16:00:06",
+        "modified": "2025/6/13 16:00:06"
+      },
+      "author": ""
+    },
+    "7683d46f97550c6d": {
+      "id": "7683d46f97550c6d",
+      "title": "临时用一维的标签暂时放上了。",
+      "content": "",
+      "statusTags": [],
+      "relations": {
+        "parent": "7683eb59e3ab80b4",
+        "children": []
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": [],
+        "custom": [],
+        "future": []
+      },
+      "time": {
+        "created": "2025/6/13 16:00:06",
+        "modified": "2025/6/13 16:00:06"
+      },
+      "author": ""
+    },
+    "7683eb59e3ab80b4": {
+      "id": "7683eb59e3ab80b4",
+      "title": "二级标签标签分组和标签这个结构没有实现，无论如何都实现不了。",
+      "content": "",
+      "statusTags": [],
+      "relations": {
+        "parent": "766962afbf208226",
+        "children": [
+          "7683d46f97550c6d",
+          "7683f2abe08e6fe8"
+        ]
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": [],
+        "custom": [],
+        "future": []
+      },
+      "time": {
+        "created": "2025/6/13 16:00:06",
+        "modified": "2025/6/13 16:00:06"
+      },
+      "author": ""
+    },
+    "7683f2abe08e6fe8": {
+      "id": "7683f2abe08e6fe8",
+      "title": "然后单独实现：测试实现在移植过来",
+      "content": "",
+      "statusTags": [],
+      "relations": {
+        "parent": "7683eb59e3ab80b4",
+        "children": []
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": [],
+        "custom": [],
+        "future": []
+      },
+      "time": {
+        "created": "2025/6/13 16:00:06",
+        "modified": "2025/6/13 16:00:06"
+      },
+      "author": ""
+    },
+    "new_mindmap_1749801601119_root": {
+      "id": "new_mindmap_1749801601119_root",
+      "title": "💡 新建思维导图",
+      "content": "",
+      "relations": {
+        "parent": null,
+        "children": []
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": []
+      },
+      "time": {
+        "created": "2025/6/13 16:00:01",
+        "modified": "2025/6/13 16:00:01"
+      },
+      "author": "NodeMind用户"
+    },
+    "766cf877f1bb8e3a": {
+      "id": "766cf877f1bb8e3a",
+      "title": "自定义存储健：永远选择当然项目的文档，自动定位",
+      "content": "",
+      "statusTags": [],
+      "relations": {
+        "parent": "757ec59b0fb95687",
+        "children": []
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": [],
+        "custom": [],
+        "future": []
+      },
+      "time": {
+        "created": "2025/6/13 16:00:06",
+        "modified": "2025/6/13 16:00:06"
+      },
+      "author": ""
+    },
+    "766b9d4c022b8119": {
+      "id": "766b9d4c022b8119",
+      "title": "详情页",
+      "content": "",
+      "statusTags": [],
+      "relations": {
+        "parent": "virtual_center_1749526667300_r18kfa0zl",
+        "children": [
+          "766b9e9a8c4a23b5",
+          "766b9f97fa1e4aa8",
+          "766bae67df0b9972",
+          "766ce83133c9c52a"
+        ]
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": [],
+        "custom": [],
+        "future": []
+      },
+      "time": {
+        "created": "2025/6/13 16:00:06",
+        "modified": "2025/6/13 16:00:06"
+      },
+      "author": ""
+    },
+    "766cf07e6fcfdac1": {
+      "id": "766cf07e6fcfdac1",
+      "title": "单泳道",
+      "content": "",
+      "statusTags": [],
+      "relations": {
+        "parent": "766ceb7e085213bc",
+        "children": []
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": [],
+        "custom": [],
+        "future": []
+      },
+      "time": {
+        "created": "2025/6/13 16:00:06",
+        "modified": "2025/6/13 16:00:06"
+      },
+      "author": ""
+    },
+    "766cf24f23251177": {
+      "id": "766cf24f23251177",
+      "title": "多泳道",
+      "content": "",
+      "statusTags": [],
+      "relations": {
+        "parent": "766ceb7e085213bc",
+        "children": []
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": [],
+        "custom": [],
+        "future": []
+      },
+      "time": {
+        "created": "2025/6/13 16:00:06",
+        "modified": "2025/6/13 16:00:06"
+      },
+      "author": ""
+    },
+    "766ae084fdc0fe49": {
+      "id": "766ae084fdc0fe49",
+      "title": "命令注入",
+      "content": "",
+      "statusTags": [],
+      "relations": {
+        "parent": "virtual_center_1749526667300_r18kfa0zl",
+        "children": [
+          "766ae1a5f8c6719e",
+          "766ae3da9b53defc",
+          "766ae74dcd450d9d",
+          "766ae98393eac30b",
+          "766af236ac9441a4",
+          "766b513c1ad56283"
+        ]
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": [],
+        "custom": [],
+        "future": []
+      },
+      "time": {
+        "created": "2025/6/13 16:00:06",
+        "modified": "2025/6/13 16:00:06"
+      },
+      "author": ""
+    },
+    "766ae74dcd450d9d": {
+      "id": "766ae74dcd450d9d",
+      "title": "清理当前的命令注入选项卡",
+      "content": "",
+      "statusTags": [],
+      "relations": {
+        "parent": "766ae084fdc0fe49",
+        "children": []
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": [],
+        "custom": [],
+        "future": []
+      },
+      "time": {
+        "created": "2025/6/13 16:00:06",
+        "modified": "2025/6/13 16:00:06"
+      },
+      "author": ""
+    },
+    "766ae98393eac30b": {
+      "id": "766ae98393eac30b",
+      "title": "点击选项卡，自动切换项目和目录以及日志文档",
+      "content": "",
+      "statusTags": [],
+      "relations": {
+        "parent": "766ae084fdc0fe49",
+        "children": []
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": [],
+        "custom": [],
+        "future": []
+      },
+      "time": {
+        "created": "2025/6/13 16:00:06",
+        "modified": "2025/6/13 16:00:06"
+      },
+      "author": ""
+    },
+    "76bc27d1c0a7e817": {
+      "id": "76bc27d1c0a7e817",
+      "title": "一般约定一个项目就一个默认脑图",
+      "content": "",
+      "statusTags": [],
+      "relations": {
+        "parent": "76bc24d75a3d0c0f",
+        "children": []
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": []
+      },
+      "time": {
+        "created": "2025/6/14 08:07:11",
+        "modified": "2025/6/14 08:07:11"
+      },
+      "author": ""
+    },
+    "76bc2d14a531c8ff": {
+      "id": "76bc2d14a531c8ff",
+      "title": "New Node",
+      "content": "",
+      "statusTags": [],
+      "relations": {
+        "parent": "76bc24d75a3d0c0f",
+        "children": []
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": []
+      },
+      "time": {
+        "created": "2025/6/14 08:07:12",
+        "modified": "2025/6/14 08:07:12"
+      },
+      "author": ""
+    },
+    "76bc4bad8029a629": {
+      "id": "76bc4bad8029a629",
+      "title": "新建的脑图页自动放在项目路径下。",
+      "content": "",
+      "statusTags": [],
+      "relations": {
+        "parent": "76bc24d75a3d0c0f",
+        "children": []
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": []
+      },
+      "time": {
+        "created": "2025/6/14 08:09:32",
+        "modified": "2025/6/14 08:09:32"
+      },
+      "author": ""
+    },
+    "76bc8f87db251485": {
+      "id": "76bc8f87db251485",
+      "title": "New Node",
+      "content": "",
+      "statusTags": [],
+      "relations": {
+        "parent": "766b9f97fa1e4aa8",
+        "children": []
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": []
+      },
+      "time": {
+        "created": "2025/6/14 08:13:49",
+        "modified": "2025/6/14 08:13:49"
+      },
+      "author": ""
+    },
+    "76bc997e00a0da2b": {
+      "id": "76bc997e00a0da2b",
+      "title": "面板状态",
+      "content": "",
+      "statusTags": [],
+      "relations": {
+        "parent": "766b9f97fa1e4aa8",
+        "children": []
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": []
+      },
+      "time": {
+        "created": "2025/6/14 08:14:36",
+        "modified": "2025/6/14 08:14:36"
+      },
+      "author": ""
+    },
+    "76bc9a8c2c07360f": {
+      "id": "76bc9a8c2c07360f",
+      "title": "独立状态",
+      "content": "",
+      "statusTags": [],
+      "relations": {
+        "parent": "766b9f97fa1e4aa8",
+        "children": []
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": []
+      },
+      "time": {
+        "created": "2025/6/14 08:16:12",
+        "modified": "2025/6/14 08:16:12"
+      },
+      "author": ""
+    },
+    "76bc24d75a3d0c0f": {
+      "id": "76bc24d75a3d0c0f",
+      "title": "整体被调用：被项目管理面板调用",
+      "content": "",
+      "statusTags": [],
+      "relations": {
+        "parent": "76bc2164fce61ea6",
+        "children": [
+          "76bc27d1c0a7e817",
+          "76bc2d14a531c8ff",
+          "76bc48aa51c2c528",
+          "76bc4bad8029a629"
+        ]
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": []
+      },
+      "time": {
+        "created": "2025/6/14 08:17:50",
+        "modified": "2025/6/14 08:17:50"
+      },
+      "author": ""
+    },
+    "76bce436429d398b": {
+      "id": "76bce436429d398b",
+      "title": "自然状态",
+      "content": "",
+      "statusTags": [],
+      "relations": {
+        "parent": "76bcdd2075f8ce5b",
+        "children": []
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": []
+      },
+      "time": {
+        "created": "2025/6/14 08:20:33",
+        "modified": "2025/6/14 08:20:33"
+      },
+      "author": ""
+    },
+    "76bcdd2075f8ce5b": {
+      "id": "76bcdd2075f8ce5b",
+      "title": "两种需求，简单的需求，就直接“自然状态”， 有问题的需要保存的才走提示词",
+      "content": "",
+      "statusTags": [],
+      "relations": {
+        "parent": "766ae084fdc0fe49",
+        "children": [
+          "76bce436429d398b",
+          "76bcf40c4f2620b0",
+          "76bcf6440a2c20ef"
+        ]
+      },
+      "tags": {
+        "categories": [],
+        "technical": [],
+        "status": []
+      },
+      "time": {
+        "created": "2025/6/14 08:22:00",
+        "modified": "2025/6/14 08:22:00"
+      },
+      "author": ""
+    }
+  },
+  "exportInfo": {
+    "timestamp": "2025-06-14T00:22:09.506Z",
+    "version": "1.0.0",
+    "exported_by": "NodeMind",
+    "export_type": "custom_with_file_selector",
+    "current_tab": "project"
+  }
+}

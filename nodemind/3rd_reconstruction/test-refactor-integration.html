@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第三次重构 - 集成测试</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .header h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+        
+        .header p {
+            color: #7f8c8d;
+            font-size: 1.2em;
+        }
+        
+        .test-section {
+            margin-bottom: 40px;
+            padding: 25px;
+            border: 2px solid #ecf0f1;
+            border-radius: 10px;
+            background: #f8f9fa;
+        }
+        
+        .test-section h2 {
+            color: #2980b9;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+        
+        .control-panel {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .control-group {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+        
+        .control-group h3 {
+            margin: 0 0 15px 0;
+            color: #34495e;
+            font-size: 1.2em;
+        }
+        
+        .btn {
+            background: linear-gradient(45deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 5px;
+            transition: all 0.3s ease;
+            min-width: 120px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+        }
+        
+        .btn.success {
+            background: linear-gradient(45deg, #27ae60, #229954);
+        }
+        
+        .btn.danger {
+            background: linear-gradient(45deg, #e74c3c, #c0392b);
+        }
+        
+        .btn.warning {
+            background: linear-gradient(45deg, #f39c12, #e67e22);
+        }
+        
+        .status-display {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            margin: 20px 0;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .status-display h4 {
+            margin: 0 0 15px 0;
+            color: #3498db;
+        }
+        
+        .log-entry {
+            margin: 5px 0;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+        
+        .log-success { background: rgba(39, 174, 96, 0.2); }
+        .log-error { background: rgba(231, 76, 60, 0.2); }
+        .log-warning { background: rgba(243, 156, 18, 0.2); }
+        .log-info { background: rgba(52, 152, 219, 0.2); }
+        
+        .test-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin: 10px 0;
+            font-size: 14px;
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .metric-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+        
+        .metric-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #2980b9;
+        }
+        
+        .metric-label {
+            color: #7f8c8d;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 NodeMind 第三次重构</h1>
+            <p>外科手术式集成测试 - 万能数据架构验证</p>
+        </div>
+
+        <!-- 特性开关控制 -->
+        <div class="test-section">
+            <h2>🎛️ 特性开关控制</h2>
+            <div class="control-panel">
+                <div class="control-group">
+                    <h3>核心服务</h3>
+                    <button class="btn" onclick="toggleService('universalDataService')">启用万能数据服务</button>
+                    <button class="btn" onclick="toggleService('smartTagging')">启用智能标签</button>
+                </div>
+                
+                <div class="control-group">
+                    <h3>适配器服务</h3>
+                    <button class="btn" onclick="toggleService('tagService')">启用标签服务</button>
+                    <button class="btn warning" onclick="toggleService('templateService')">启用模板服务</button>
+                    <button class="btn warning" onclick="toggleService('projectService')">启用项目服务</button>
+                </div>
+                
+                <div class="control-group">
+                    <h3>批量操作</h3>
+                    <button class="btn success" onclick="enableAll()">启用所有服务</button>
+                    <button class="btn danger" onclick="disableAll()">禁用所有服务</button>
+                    <button class="btn warning" onclick="resetSystem()">重置系统</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 标签服务测试 -->
+        <div class="test-section">
+            <h2>🏷️ 标签服务测试</h2>
+            <div class="control-panel">
+                <div class="control-group">
+                    <h3>基础操作</h3>
+                    <input type="text" id="nodeId" class="test-input" placeholder="节点ID (如: test-node-1)" value="test-node-1">
+                    <input type="text" id="tagType" class="test-input" placeholder="标签类型 (如: status)" value="status">
+                    <input type="text" id="tagValue" class="test-input" placeholder="标签值 (如: 进行中)" value="进行中">
+                    
+                    <button class="btn" onclick="testAddTag()">添加标签</button>
+                    <button class="btn" onclick="testGetTags()">获取标签</button>
+                    <button class="btn" onclick="testRemoveTag()">移除标签</button>
+                    <button class="btn" onclick="testToggleTag()">切换状态标签</button>
+                </div>
+                
+                <div class="control-group">
+                    <h3>批量测试</h3>
+                    <button class="btn success" onclick="runTagServiceBenchmark()">性能基准测试</button>
+                    <button class="btn warning" onclick="runTagServiceStressTest()">压力测试</button>
+                    <button class="btn" onclick="compareWithOriginal()">与原版对比</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 万能数据架构测试 -->
+        <div class="test-section">
+            <h2>🌟 万能数据架构测试</h2>
+            <div class="control-panel">
+                <div class="control-group">
+                    <h3>数据操作</h3>
+                    <textarea id="mdContent" class="test-input" rows="4" placeholder="输入MD格式内容进行测试">
+# 测试任务 #任务 #高优先级
+
+这是一个测试任务，用于验证万能数据架构的功能。
+
+## 详细信息
+- 状态：#进行中
+- 技术栈：#JavaScript #Node.js
+- 分类：#开发 #测试
+
+## 六要素分析
+- 谁：开发团队
+- 何时：今天
+- 何地：本地环境
+- 用什么工具：NodeMind
+- 为了谁：项目团队
+- 做什么：验证重构功能
+                    </textarea>
+                    
+                    <button class="btn" onclick="testUniversalAdd()">添加数据</button>
+                    <button class="btn" onclick="testUniversalQuery()">查询数据</button>
+                    <button class="btn" onclick="testUniversalUpdate()">更新数据</button>
+                </div>
+                
+                <div class="control-group">
+                    <h3>智能解析</h3>
+                    <button class="btn" onclick="testSmartParsing()">智能解析测试</button>
+                    <button class="btn" onclick="testSixElementsExtraction()">六要素提取</button>
+                    <button class="btn" onclick="testTagSuggestion()">标签建议</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 系统状态监控 -->
+        <div class="test-section">
+            <h2>📊 系统状态监控</h2>
+            <div class="status-display">
+                <h4>实时日志</h4>
+                <div id="logContainer"></div>
+            </div>
+            
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-value" id="activeServices">0</div>
+                    <div class="metric-label">启用服务数</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value" id="totalErrors">0</div>
+                    <div class="metric-label">总错误数</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value" id="avgResponseTime">0ms</div>
+                    <div class="metric-label">平均响应时间</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value" id="dataCount">0</div>
+                    <div class="metric-label">数据条目数</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        // 导入重构后的模块
+        import { getUniversalDataService } from './src/core/universal_data_service.js';
+        import { getTagServiceAdapter } from './src/adapters/tag_service_adapter.js';
+        import { getFeatureSwitchController } from './src/core/feature_switch_controller.js';
+
+        // 全局变量
+        window.universalService = getUniversalDataService();
+        window.tagAdapter = getTagServiceAdapter();
+        window.switchController = getFeatureSwitchController();
+
+        // 注册适配器
+        window.switchController.registerAdapter('tagService', window.tagAdapter);
+
+        // 日志系统
+        const logContainer = document.getElementById('logContainer');
+        
+        function addLog(message, type = 'info') {
+            const logEntry = document.createElement('div');
+            logEntry.className = `log-entry log-${type}`;
+            logEntry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            logContainer.appendChild(logEntry);
+            logContainer.scrollTop = logContainer.scrollHeight;
+            
+            // 限制日志条数
+            if (logContainer.children.length > 100) {
+                logContainer.removeChild(logContainer.firstChild);
+            }
+        }
+
+        // 重写console方法以捕获日志
+        const originalLog = console.log;
+        const originalError = console.error;
+        const originalWarn = console.warn;
+
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            addLog(args.join(' '), 'info');
+        };
+
+        console.error = function(...args) {
+            originalError.apply(console, args);
+            addLog(args.join(' '), 'error');
+        };
+
+        console.warn = function(...args) {
+            originalWarn.apply(console, args);
+            addLog(args.join(' '), 'warning');
+        };
+
+        // 特性开关控制函数
+        window.toggleService = async function(serviceName) {
+            try {
+                const status = window.switchController.getStatus();
+                const isEnabled = status.switches[serviceName];
+                
+                if (isEnabled) {
+                    window.switchController.disable(serviceName);
+                    addLog(`已禁用服务: ${serviceName}`, 'warning');
+                } else {
+                    window.switchController.enable(serviceName);
+                    addLog(`已启用服务: ${serviceName}`, 'success');
+                }
+                
+                updateMetrics();
+            } catch (error) {
+                addLog(`切换服务失败: ${serviceName} - ${error.message}`, 'error');
+            }
+        };
+
+        window.enableAll = async function() {
+            try {
+                const services = ['universalDataService', 'smartTagging', 'tagService'];
+                await window.switchController.enableBatch(services);
+                addLog('所有服务已启用', 'success');
+                updateMetrics();
+            } catch (error) {
+                addLog(`批量启用失败: ${error.message}`, 'error');
+            }
+        };
+
+        window.disableAll = function() {
+            const services = ['tagService', 'smartTagging', 'universalDataService'];
+            services.forEach(service => {
+                try {
+                    window.switchController.disable(service);
+                } catch (error) {
+                    console.warn(`禁用 ${service} 失败:`, error);
+                }
+            });
+            addLog('所有服务已禁用', 'warning');
+            updateMetrics();
+        };
+
+        window.resetSystem = function() {
+            window.disableAll();
+            // 重置错误计数
+            const services = ['tagService', 'templateService', 'projectService'];
+            services.forEach(service => {
+                window.switchController.resetErrorCount(service);
+            });
+            addLog('系统已重置', 'info');
+            updateMetrics();
+        };
+
+        // 标签服务测试函数
+        window.testAddTag = async function() {
+            const nodeId = document.getElementById('nodeId').value;
+            const tagType = document.getElementById('tagType').value;
+            const tagValue = document.getElementById('tagValue').value;
+            
+            try {
+                const result = await window.tagAdapter.addNodeTag(nodeId, tagType, tagValue);
+                addLog(`添加标签成功: ${nodeId} -> ${tagType}:${tagValue}`, 'success');
+            } catch (error) {
+                addLog(`添加标签失败: ${error.message}`, 'error');
+            }
+        };
+
+        window.testGetTags = async function() {
+            const nodeId = document.getElementById('nodeId').value;
+            
+            try {
+                const tags = await window.tagAdapter.getNodeTags(nodeId);
+                addLog(`获取标签成功: ${JSON.stringify(tags)}`, 'success');
+            } catch (error) {
+                addLog(`获取标签失败: ${error.message}`, 'error');
+            }
+        };
+
+        window.testRemoveTag = async function() {
+            const nodeId = document.getElementById('nodeId').value;
+            const tagType = document.getElementById('tagType').value;
+            const tagValue = document.getElementById('tagValue').value;
+            
+            try {
+                const result = await window.tagAdapter.removeNodeTag(nodeId, tagType, tagValue);
+                addLog(`移除标签成功: ${nodeId} -> ${tagType}:${tagValue}`, 'success');
+            } catch (error) {
+                addLog(`移除标签失败: ${error.message}`, 'error');
+            }
+        };
+
+        window.testToggleTag = async function() {
+            const nodeId = document.getElementById('nodeId').value;
+            const tagValue = document.getElementById('tagValue').value;
+            
+            try {
+                const result = await window.tagAdapter.toggleNodeStatusTag(nodeId, tagValue);
+                addLog(`切换状态标签成功: ${nodeId} -> ${tagValue}`, 'success');
+            } catch (error) {
+                addLog(`切换状态标签失败: ${error.message}`, 'error');
+            }
+        };
+
+        // 万能数据架构测试函数
+        window.testUniversalAdd = function() {
+            const content = document.getElementById('mdContent').value;
+            
+            try {
+                const result = window.universalService.add(content, 'test-interface');
+                addLog(`万能数据添加成功: ${result.id}`, 'success');
+                updateMetrics();
+            } catch (error) {
+                addLog(`万能数据添加失败: ${error.message}`, 'error');
+            }
+        };
+
+        window.testUniversalQuery = function() {
+            try {
+                const tasks = window.universalService.getByType('task');
+                const notes = window.universalService.getByType('note');
+                addLog(`查询结果 - 任务:${tasks.length}, 笔记:${notes.length}`, 'success');
+            } catch (error) {
+                addLog(`万能数据查询失败: ${error.message}`, 'error');
+            }
+        };
+
+        window.testSmartParsing = function() {
+            const content = document.getElementById('mdContent').value;
+            
+            try {
+                const result = window.universalService.taggingSystem.comprehensiveParse(content, 'test-interface');
+                addLog(`智能解析成功: 类型=${result.finalClassification.type}, 标签=${result.explicitMarkers.allTags.length}`, 'success');
+                console.log('解析结果:', result);
+            } catch (error) {
+                addLog(`智能解析失败: ${error.message}`, 'error');
+            }
+        };
+
+        // 性能测试函数
+        window.runTagServiceBenchmark = async function() {
+            addLog('开始标签服务性能基准测试...', 'info');
+            
+            const testCount = 100;
+            const startTime = performance.now();
+            
+            try {
+                for (let i = 0; i < testCount; i++) {
+                    await window.tagAdapter.addNodeTag(`benchmark-${i}`, 'status', '测试');
+                    await window.tagAdapter.getNodeTags(`benchmark-${i}`);
+                    await window.tagAdapter.removeNodeTag(`benchmark-${i}`, 'status', '测试');
+                }
+                
+                const endTime = performance.now();
+                const duration = endTime - startTime;
+                const avgTime = duration / testCount;
+                
+                addLog(`基准测试完成: ${testCount}次操作, 总时间${duration.toFixed(2)}ms, 平均${avgTime.toFixed(2)}ms/次`, 'success');
+                
+            } catch (error) {
+                addLog(`基准测试失败: ${error.message}`, 'error');
+            }
+        };
+
+        // 更新指标显示
+        function updateMetrics() {
+            const status = window.switchController.getStatus();
+            const performance = window.switchController.getPerformanceReport();
+            
+            // 启用服务数
+            const activeCount = Object.values(status.switches).filter(Boolean).length;
+            document.getElementById('activeServices').textContent = activeCount;
+            
+            // 总错误数
+            const totalErrors = Object.values(status.errors).reduce((sum, count) => sum + count, 0);
+            document.getElementById('totalErrors').textContent = totalErrors;
+            
+            // 平均响应时间
+            const avgTimes = Object.values(performance).map(p => p.averageTime).filter(t => t > 0);
+            const avgResponseTime = avgTimes.length > 0 ? avgTimes.reduce((sum, time) => sum + time, 0) / avgTimes.length : 0;
+            document.getElementById('avgResponseTime').textContent = Math.round(avgResponseTime) + 'ms';
+            
+            // 数据条目数
+            const dataCount = window.universalService.dataStore.size;
+            document.getElementById('dataCount').textContent = dataCount;
+        }
+
+        // 初始化
+        addLog('🚀 第三次重构集成测试系统已启动', 'success');
+        addLog('💡 请先启用核心服务，然后进行功能测试', 'info');
+        updateMetrics();
+
+        // 定期更新指标
+        setInterval(updateMetrics, 5000);
+    </script>
+</body>
+</html> 

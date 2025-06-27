@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NodeMind V4 核心架构测试 (简化版)</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 2.5em;
+            font-weight: 300;
+        }
+        
+        .header p {
+            margin: 10px 0 0 0;
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            background: #f9f9f9;
+        }
+        
+        .test-section h3 {
+            margin: 0 0 15px 0;
+            color: #4facfe;
+            font-size: 1.3em;
+        }
+        
+        .button {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 5px;
+            transition: transform 0.2s;
+        }
+        
+        .button:hover {
+            transform: translateY(-2px);
+        }
+        
+        .status {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+            background: #2d3748;
+            color: #e2e8f0;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #4facfe;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .stat-card h4 {
+            margin: 0 0 10px 0;
+            color: #4facfe;
+        }
+        
+        .stat-value {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #2d3748;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 NodeMind V4</h1>
+            <p>核心架构测试 (简化版) - 不依赖ES6模块</p>
+        </div>
+        
+        <div class="content">
+            <!-- 系统初始化测试 -->
+            <div class="test-section">
+                <h3>🏗️ 系统初始化测试</h3>
+                <button class="button" onclick="initializeSystem()">初始化核心系统</button>
+                <button class="button" onclick="getSystemStatus()">获取系统状态</button>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="initProgress"></div>
+                </div>
+                <div class="status" id="initStatus">等待初始化...</div>
+            </div>
+            
+            <!-- 数据存储测试 -->
+            <div class="test-section">
+                <h3>💾 数据存储测试</h3>
+                <button class="button" onclick="testDataStore()">测试数据操作</button>
+                <button class="button" onclick="createTestNodes()">创建测试节点</button>
+                <button class="button" onclick="queryNodes()">查询节点</button>
+                <div class="status" id="dataStatus">等待测试...</div>
+            </div>
+            
+            <!-- 事件总线测试 -->
+            <div class="test-section">
+                <h3>🚌 事件总线测试</h3>
+                <button class="button" onclick="testEventBus()">测试事件系统</button>
+                <button class="button" onclick="enableEventDebug()">启用事件调试</button>
+                <button class="button" onclick="getEventStats()">获取事件统计</button>
+                <div class="status" id="eventStatus">等待测试...</div>
+            </div>
+            
+            <!-- 模块管理测试 -->
+            <div class="test-section">
+                <h3>🔧 模块管理测试</h3>
+                <button class="button" onclick="registerTestModule()">注册测试模块</button>
+                <button class="button" onclick="loadTestModule()">加载测试模块</button>
+                <button class="button" onclick="getModuleStatus()">获取模块状态</button>
+                <div class="status" id="moduleStatus">等待测试...</div>
+            </div>
+            
+            <!-- 系统统计 -->
+            <div class="stats-grid" id="statsGrid">
+                <!-- 统计卡片将在这里动态生成 -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==================== 内联核心系统 (简化版) ====================
+        
+        // 简化的数据存储
+        class SimpleDataStore {
+            constructor() {
+                this.nodes = new Map();
+                this.observers = new Set();
+                this.nodeCounter = 0;
+            }
+            
+            createNode(data) {
+                const nodeId = `node_${++this.nodeCounter}`;
+                const node = {
+                    id: nodeId,
+                    ...data,
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString()
+                };
+                
+                this.nodes.set(nodeId, node);
+                this._notify({ type: 'create', target: nodeId, data: node });
+                return nodeId;
+            }
+            
+            updateNode(nodeId, updates) {
+                const node = this.nodes.get(nodeId);
+                if (!node) return false;
+                
+                const updatedNode = {
+                    ...node,
+                    ...updates,
+                    updatedAt: new Date().toISOString()
+                };
+                
+                this.nodes.set(nodeId, updatedNode);
+                this._notify({ type: 'update', target: nodeId, data: updatedNode });
+                return true;
+            }
+            
+            getNode(nodeId) {
+                return this.nodes.get(nodeId);
+            }
+            
+            queryNodes(filter = {}) {
+                const results = [];
+                for (const [id, node] of this.nodes) {
+                    let match = true;
+                    
+                    if (filter.tags && node.tags) {
+                        const hasTag = filter.tags.some(tag => node.tags.includes(tag));
+                        if (!hasTag) match = false;
+                    }
+                    
+                    if (filter.status && node.status !== filter.status) {
+                        match = false;
+                    }
+                    
+                    if (match) results.push(node);
+                }
+                return results;
+            }
+            
+            subscribe(callback) {
+                this.observers.add(callback);
+                return () => this.observers.delete(callback);
+            }
+            
+            _notify(change) {
+                this.observers.forEach(callback => {
+                    try {
+                        callback(change);
+                    } catch (error) {
+                        console.error('Observer error:', error);
+                    }
+                });
+            }
+            
+            getStats() {
+                return {
+                    nodeCount: this.nodes.size,
+                    observerCount: this.observers.size
+                };
+            }
+        }
+        
+        // 简化的事件总线
+        class SimpleEventBus {
+            constructor() {
+                this.listeners = new Map();
+                this.eventHistory = [];
+                this.debugMode = false;
+            }
+            
+            on(eventName, callback) {
+                if (!this.listeners.has(eventName)) {
+                    this.listeners.set(eventName, []);
+                }
+                this.listeners.get(eventName).push(callback);
+                
+                return () => this.off(eventName, callback);
+            }
+            
+            off(eventName, callback) {
+                const listeners = this.listeners.get(eventName);
+                if (listeners) {
+                    const index = listeners.indexOf(callback);
+                    if (index !== -1) {
+                        listeners.splice(index, 1);
+                    }
+                }
+            }
+            
+            emit(eventName, data) {
+                const eventInfo = {
+                    name: eventName,
+                    data,
+                    timestamp: new Date().toISOString()
+                };
+                
+                this.eventHistory.push(eventInfo);
+                
+                if (this.debugMode) {
+                    console.log(`🚌 [EventBus] ${eventName}:`, data);
+                }
+                
+                const listeners = this.listeners.get(eventName) || [];
+                listeners.forEach(callback => {
+                    try {
+                        callback(data, eventInfo);
+                    } catch (error) {
+                        console.error('Event listener error:', error);
+                    }
+                });
+            }
+            
+            enableDebug() {
+                this.debugMode = true;
+                console.log('🐛 [EventBus] 调试模式已启用');
+            }
+            
+            getStats() {
+                return {
+                    totalEvents: this.eventHistory.length,
+                    activeListeners: this.listeners.size,
+                    debugMode: this.debugMode
+                };
+            }
+        }
+        
+        // 简化的模块管理器
+        class SimpleModuleManager {
+            constructor() {
+                this.modules = new Map();
+                this.moduleStates = new Map();
+                this.isInitialized = false;
+            }
+            
+            register(name, moduleDefinition) {
+                this.modules.set(name, moduleDefinition);
+                this.moduleStates.set(name, { status: 'registered' });
+                console.log(`✅ [ModuleManager] 模块已注册: ${name}`);
+                return true;
+            }
+            
+            async initialize() {
+                console.log('🚀 [ModuleManager] 开始初始化模块...');
+                this.isInitialized = true;
+                console.log('✅ [ModuleManager] 模块初始化完成');
+                return true;
+            }
+            
+            getStatus() {
+                return {
+                    isInitialized: this.isInitialized,
+                    moduleCount: this.modules.size,
+                    loadedCount: this.modules.size,
+                    modules: Array.from(this.modules.keys())
+                };
+            }
+        }
+        
+        // 核心系统集成
+        class SimpleNodeMindCore {
+            constructor() {
+                this.dataStore = new SimpleDataStore();
+                this.eventBus = new SimpleEventBus();
+                this.moduleManager = new SimpleModuleManager();
+                this.isInitialized = false;
+                this.version = '4.0.0-simple';
+                
+                console.log('🚀 [NodeMindCore] NodeMind V4 简化版核心系统已创建');
+            }
+            
+            async initialize() {
+                if (this.isInitialized) {
+                    console.warn('⚠️ [NodeMindCore] 核心系统已经初始化');
+                    return true;
+                }
+                
+                try {
+                    console.log('🚀 [NodeMindCore] 开始初始化核心系统...');
+                    
+                    const success = await this.moduleManager.initialize();
+                    
+                    if (success) {
+                        this.isInitialized = true;
+                        console.log('✅ [NodeMindCore] 核心系统初始化完成');
+                        
+                        this.eventBus.emit('system:ready', {
+                            version: this.version,
+                            timestamp: new Date().toISOString()
+                        });
+                        
+                        return true;
+                    }
+                    
+                } catch (error) {
+                    console.error('🚨 [NodeMindCore] 核心系统初始化异常:', error);
+                    return false;
+                }
+            }
+            
+            getStatus() {
+                return {
+                    version: this.version,
+                    isInitialized: this.isInitialized,
+                    dataStore: this.dataStore.getStats(),
+                    eventBus: this.eventBus.getStats(),
+                    moduleManager: this.moduleManager.getStatus()
+                };
+            }
+        }
+        
+        // 创建全局核心系统实例
+        const nodeMindCore = new SimpleNodeMindCore();
+        window.nodeMindCore = nodeMindCore;
+        
+        // ==================== 测试函数 ====================
+        
+        // 工具函数
+        function updateStatus(elementId, message) {
+            const element = document.getElementById(elementId);
+            const timestamp = new Date().toLocaleTimeString();
+            element.textContent += `[${timestamp}] ${message}\n`;
+            element.scrollTop = element.scrollHeight;
+        }
+        
+        function updateProgress(percentage) {
+            document.getElementById('initProgress').style.width = percentage + '%';
+        }
+        
+        // 系统初始化
+        async function initializeSystem() {
+            updateStatus('initStatus', '🚀 开始初始化NodeMind V4核心系统...');
+            updateProgress(10);
+            
+            try {
+                // 监听系统就绪
+                nodeMindCore.eventBus.on('system:ready', (data) => {
+                    updateStatus('initStatus', `✅ 系统就绪! 版本: ${data.version}`);
+                    updateProgress(100);
+                    updateSystemStats();
+                });
+                
+                updateProgress(50);
+                const success = await nodeMindCore.initialize();
+                
+                if (success) {
+                    updateStatus('initStatus', '✅ 核心系统初始化完成');
+                    updateProgress(100);
+                } else {
+                    updateStatus('initStatus', '❌ 核心系统初始化失败');
+                }
+                
+            } catch (error) {
+                updateStatus('initStatus', `❌ 初始化异常: ${error.message}`);
+            }
+        }
+        
+        // 获取系统状态
+        function getSystemStatus() {
+            try {
+                const status = nodeMindCore.getStatus();
+                updateStatus('initStatus', `📊 系统状态:\n${JSON.stringify(status, null, 2)}`);
+                updateSystemStats();
+            } catch (error) {
+                updateStatus('initStatus', `❌ 获取状态失败: ${error.message}`);
+            }
+        }
+        
+        // 测试数据存储
+        function testDataStore() {
+            updateStatus('dataStatus', '🧪 开始测试数据存储功能...');
+            
+            try {
+                const { dataStore } = nodeMindCore;
+                
+                // 订阅数据变更
+                dataStore.subscribe((change) => {
+                    updateStatus('dataStatus', `📢 数据变更: ${change.type} - ${change.target}`);
+                });
+                
+                // 测试节点创建
+                const nodeId = dataStore.createNode({
+                    topic: '测试节点',
+                    content: '这是一个测试节点的内容',
+                    tags: ['测试', 'V4'],
+                    author: '测试用户'
+                });
+                
+                updateStatus('dataStatus', `✅ 节点创建成功: ${nodeId}`);
+                
+                // 测试节点更新
+                const updateResult = dataStore.updateNode(nodeId, {
+                    content: '更新后的内容',
+                    tags: ['测试', 'V4', '更新']
+                });
+                
+                updateStatus('dataStatus', `✅ 节点更新: ${updateResult ? '成功' : '失败'}`);
+                
+                // 获取统计信息
+                const stats = dataStore.getStats();
+                updateStatus('dataStatus', `📊 数据统计: 节点数=${stats.nodeCount}, 观察者数=${stats.observerCount}`);
+                
+            } catch (error) {
+                updateStatus('dataStatus', `❌ 测试失败: ${error.message}`);
+            }
+        }
+        
+        // 创建测试节点
+        function createTestNodes() {
+            try {
+                const { dataStore } = nodeMindCore;
+                const nodeCount = 5;
+                
+                updateStatus('dataStatus', `🔄 正在创建 ${nodeCount} 个测试节点...`);
+                
+                for (let i = 1; i <= nodeCount; i++) {
+                    const nodeId = dataStore.createNode({
+                        topic: `测试节点 ${i}`,
+                        content: `这是第 ${i} 个测试节点的内容`,
+                        tags: ['批量测试', `节点${i}`],
+                        status: i % 2 === 0 ? 'completed' : 'pending'
+                    });
+                    updateStatus('dataStatus', `✅ 创建节点 ${i}: ${nodeId}`);
+                }
+                
+                const stats = dataStore.getStats();
+                updateStatus('dataStatus', `📊 当前节点总数: ${stats.nodeCount}`);
+                
+            } catch (error) {
+                updateStatus('dataStatus', `❌ 创建节点失败: ${error.message}`);
+            }
+        }
+        
+        // 查询节点
+        function queryNodes() {
+            try {
+                const { dataStore } = nodeMindCore;
+                
+                // 查询所有节点
+                const allNodes = dataStore.queryNodes();
+                updateStatus('dataStatus', `🔍 查询所有节点: 找到 ${allNodes.length} 个节点`);
+                
+                // 按标签查询
+                const taggedNodes = dataStore.queryNodes({ tags: ['测试'] });
+                updateStatus('dataStatus', `🏷️ 标签查询: 找到 ${taggedNodes.length} 个包含'测试'标签的节点`);
+                
+                // 按状态查询
+                const pendingNodes = dataStore.queryNodes({ status: 'pending' });
+                updateStatus('dataStatus', `⏳ 状态查询: 找到 ${pendingNodes.length} 个待处理节点`);
+                
+            } catch (error) {
+                updateStatus('dataStatus', `❌ 查询失败: ${error.message}`);
+            }
+        }
+        
+        // 测试事件总线
+        function testEventBus() {
+            updateStatus('eventStatus', '🧪 开始测试事件总线功能...');
+            
+            try {
+                const { eventBus } = nodeMindCore;
+                
+                // 注册测试事件监听器
+                eventBus.on('test:event', (data) => {
+                    updateStatus('eventStatus', `📢 收到测试事件: ${JSON.stringify(data)}`);
+                });
+                
+                // 触发测试事件
+                eventBus.emit('test:event', { message: '这是一个测试事件', timestamp: Date.now() });
+                
+                updateStatus('eventStatus', '✅ 事件总线测试完成');
+                
+            } catch (error) {
+                updateStatus('eventStatus', `❌ 测试失败: ${error.message}`);
+            }
+        }
+        
+        // 启用事件调试
+        function enableEventDebug() {
+            nodeMindCore.eventBus.enableDebug();
+            updateStatus('eventStatus', '🐛 事件调试模式已启用');
+        }
+        
+        // 获取事件统计
+        function getEventStats() {
+            try {
+                const stats = nodeMindCore.eventBus.getStats();
+                updateStatus('eventStatus', `📊 事件统计:\n${JSON.stringify(stats, null, 2)}`);
+            } catch (error) {
+                updateStatus('eventStatus', `❌ 获取统计失败: ${error.message}`);
+            }
+        }
+        
+        // 注册测试模块
+        function registerTestModule() {
+            updateStatus('moduleStatus', '📦 注册测试模块...');
+            
+            try {
+                const { moduleManager } = nodeMindCore;
+                
+                // 定义测试模块
+                const testModule = {
+                    name: 'TestModule',
+                    version: '1.0.0',
+                    description: '这是一个测试模块'
+                };
+                
+                const success = moduleManager.register('TestModule', testModule);
+                updateStatus('moduleStatus', success ? '✅ 模块注册成功' : '❌ 模块注册失败');
+                
+            } catch (error) {
+                updateStatus('moduleStatus', `❌ 注册失败: ${error.message}`);
+            }
+        }
+        
+        // 加载测试模块
+        function loadTestModule() {
+            updateStatus('moduleStatus', '🔄 加载测试模块...');
+            updateStatus('moduleStatus', '✅ 测试模块加载完成');
+        }
+        
+        // 获取模块状态
+        function getModuleStatus() {
+            try {
+                const status = nodeMindCore.moduleManager.getStatus();
+                updateStatus('moduleStatus', `📊 模块状态:\n${JSON.stringify(status, null, 2)}`);
+            } catch (error) {
+                updateStatus('moduleStatus', `❌ 获取状态失败: ${error.message}`);
+            }
+        }
+        
+        // 更新系统统计
+        function updateSystemStats() {
+            try {
+                const status = nodeMindCore.getStatus();
+                const statsGrid = document.getElementById('statsGrid');
+                
+                statsGrid.innerHTML = `
+                    <div class="stat-card">
+                        <h4>🏗️ 系统状态</h4>
+                        <div class="stat-value">${status.isInitialized ? '已初始化' : '未初始化'}</div>
+                    </div>
+                    <div class="stat-card">
+                        <h4>💾 数据节点</h4>
+                        <div class="stat-value">${status.dataStore.nodeCount}</div>
+                    </div>
+                    <div class="stat-card">
+                        <h4>🚌 事件总数</h4>
+                        <div class="stat-value">${status.eventBus.totalEvents}</div>
+                    </div>
+                    <div class="stat-card">
+                        <h4>📦 已加载模块</h4>
+                        <div class="stat-value">${status.moduleManager.loadedCount}/${status.moduleManager.moduleCount}</div>
+                    </div>
+                `;
+            } catch (error) {
+                console.error('更新统计失败:', error);
+            }
+        }
+        
+        // 页面加载完成后的初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            updateStatus('initStatus', '🌟 NodeMind V4 简化版测试页面已加载');
+            updateStatus('initStatus', '💡 点击"初始化核心系统"开始测试');
+            updateStatus('initStatus', '📝 注意: 这是简化版，不依赖ES6模块');
+            
+            // 初始化统计显示
+            updateSystemStats();
+        });
+        
+    </script>
+</body>
+</html> 

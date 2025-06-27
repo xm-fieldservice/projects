@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>标签着色功能模块化测试</title>
+    <link rel="stylesheet" href="v5/js/libs/jsmind.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 20px;
+        }
+
+        .control-panel {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            height: fit-content;
+        }
+
+        .mindmap-container {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            min-height: 600px;
+        }
+
+        #jsmind_container {
+            width: 100%;
+            height: 600px;
+        }
+
+        .section {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .section:last-child {
+            border-bottom: none;
+        }
+
+        .section-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+            font-size: 16px;
+        }
+
+        .tag-group {
+            margin-bottom: 15px;
+        }
+
+        .tag-group-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .tag-group-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .tag-item {
+            padding: 6px 12px;
+            border-radius: 16px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            user-select: none;
+            border: 1px solid transparent;
+        }
+
+        .tag-item:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .tag-item.selected {
+            border: 2px solid #007bff;
+            font-weight: 600;
+            transform: scale(1.05);
+        }
+
+        /* 标签颜色样式 */
+        .tag-yellow {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .tag-green {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .tag-blue {
+            background: #cce5ff;
+            color: #004085;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 4px;
+            transition: background-color 0.2s;
+        }
+
+        .btn-primary {
+            background: #007bff;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #0056b3;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #545b62;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #1e7e34;
+        }
+
+        .log-area {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 10px;
+            height: 150px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+        }
+
+        .current-node-info {
+            background: #e7f3ff;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 6px;
+        }
+
+        .status-success { background: #28a745; }
+        .status-warning { background: #ffc107; }
+        .status-error { background: #dc3545; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="control-panel">
+            <div class="section">
+                <div class="section-title">🎯 当前节点</div>
+                <div class="current-node-info" id="current-node-info">
+                    <div>请点击思维导图中的节点</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">🏷️ 标签管理</div>
+                <div id="tag-groups-container">
+                    <div class="tag-group">
+                        <div class="tag-group-title">常规</div>
+                        <div class="tag-group-items">
+                            <div class="tag-item tag-yellow" data-tag="项目" data-group="常规">项目</div>
+                            <div class="tag-item tag-yellow" data-tag="里程碑" data-group="常规">里程碑</div>
+                            <div class="tag-item tag-yellow" data-tag="完成" data-group="常规">完成</div>
+                            <div class="tag-item tag-yellow" data-tag="进行中" data-group="常规">进行中</div>
+                            <div class="tag-item tag-yellow" data-tag="计划" data-group="常规">计划</div>
+                        </div>
+                    </div>
+                    <div class="tag-group">
+                        <div class="tag-group-title">AI</div>
+                        <div class="tag-group-items">
+                            <div class="tag-item tag-green" data-tag="记忆" data-group="AI">记忆</div>
+                            <div class="tag-item tag-green" data-tag="注意力" data-group="AI">注意力</div>
+                            <div class="tag-item tag-green" data-tag="经验" data-group="AI">经验</div>
+                            <div class="tag-item tag-green" data-tag="幻觉" data-group="AI">幻觉</div>
+                        </div>
+                    </div>
+                    <div class="tag-group">
+                        <div class="tag-group-title">笔记</div>
+                        <div class="tag-group-items">
+                            <div class="tag-item tag-blue" data-tag="跟进" data-group="笔记">跟进</div>
+                            <div class="tag-item tag-blue" data-tag="议题" data-group="笔记">议题</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">🔧 控制面板</div>
+                <button class="btn btn-primary" onclick="initializeService()">初始化服务</button>
+                <button class="btn btn-secondary" onclick="clearAllColors()">清除所有颜色</button>
+                <button class="btn btn-success" onclick="restoreAllColors()">恢复所有颜色</button>
+                <button class="btn btn-primary" onclick="testColorConfig()">测试颜色配置</button>
+            </div>
+
+            <div class="section">
+                <div class="section-title">📊 服务状态</div>
+                <div id="service-status">
+                    <div><span class="status-indicator status-warning"></span>服务未初始化</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">📝 操作日志</div>
+                <div class="log-area" id="log-area"></div>
+                <button class="btn btn-secondary" onclick="clearLog()">清除日志</button>
+            </div>
+        </div>
+
+        <div class="mindmap-container">
+            <div id="jsmind_container"></div>
+        </div>
+    </div>
+
+    <!-- jsMind 库 -->
+    <script src="v5/js/libs/jsmind.js"></script>
+
+    <!-- 模拟的模块化环境 -->
+    <script type="module">
+        // 模拟事件总线
+        const eventBus = {
+            listeners: new Map(),
+            
+            subscribe(event, callback) {
+                if (!this.listeners.has(event)) {
+                    this.listeners.set(event, []);
+                }
+                this.listeners.get(event).push(callback);
+                console.log(`📡 订阅事件: ${event}`);
+            },
+            
+            publish(event, data) {
+                console.log(`📢 发布事件: ${event}`, data);
+                if (this.listeners.has(event)) {
+                    this.listeners.get(event).forEach(callback => {
+                        try {
+                            callback(data);
+                        } catch (error) {
+                            console.error(`事件处理错误: ${event}`, error);
+                        }
+                    });
+                }
+            }
+        };
+
+        // 模拟标签服务
+        const tagService = {
+            nodeDatabase: {},
+            
+            addNodeTag(nodeId, tagType, tag) {
+                if (!this.nodeDatabase[nodeId]) {
+                    this.nodeDatabase[nodeId] = {
+                        tags: { categories: [], technical: [], status: [], custom: [], future: [] }
+                    };
+                }
+                
+                if (!this.nodeDatabase[nodeId].tags[tagType]) {
+                    this.nodeDatabase[nodeId].tags[tagType] = [];
+                }
+                
+                if (!this.nodeDatabase[nodeId].tags[tagType].includes(tag)) {
+                    this.nodeDatabase[nodeId].tags[tagType].push(tag);
+                    console.log(`🏷️ 添加标签: ${nodeId} -> ${tagType}.${tag}`);
+                }
+            },
+            
+            removeNodeTag(nodeId, tagType, tag) {
+                if (this.nodeDatabase[nodeId] && this.nodeDatabase[nodeId].tags[tagType]) {
+                    const index = this.nodeDatabase[nodeId].tags[tagType].indexOf(tag);
+                    if (index > -1) {
+                        this.nodeDatabase[nodeId].tags[tagType].splice(index, 1);
+                        console.log(`🗑️ 移除标签: ${nodeId} -> ${tagType}.${tag}`);
+                    }
+                }
+            },
+            
+            getNodeTags(nodeId) {
+                if (!this.nodeDatabase[nodeId]) {
+                    return { categories: [], technical: [], status: [], custom: [], future: [] };
+                }
+                return this.nodeDatabase[nodeId].tags;
+            }
+        };
+
+        // 颜色配置
+        const TAG_COLOR_CONFIG = {
+            '常规': {
+                '项目': { bg: '#fff3cd', fg: '#856404', jsmind: '#fff3cd' },
+                '里程碑': { bg: '#d4edda', fg: '#155724', jsmind: '#d4edda' },
+                '完成': { bg: '#d1ecf1', fg: '#0c5460', jsmind: '#d1ecf1' },
+                '进行中': { bg: '#ffeaa7', fg: '#6c5ce7', jsmind: '#ffeaa7' },
+                '计划': { bg: '#fab1a0', fg: '#e17055', jsmind: '#fab1a0' }
+            },
+            'AI': {
+                '记忆': { bg: '#d4edda', fg: '#155724', jsmind: '#d4edda' },
+                '注意力': { bg: '#c3e6cb', fg: '#1e7e34', jsmind: '#c3e6cb' },
+                '经验': { bg: '#b8daff', fg: '#004085', jsmind: '#b8daff' },
+                '幻觉': { bg: '#f8d7da', fg: '#721c24', jsmind: '#f8d7da' }
+            },
+            '笔记': {
+                '跟进': { bg: '#e3f2fd', fg: '#1976d2', jsmind: '#e3f2fd' },
+                '议题': { bg: '#e1f5fe', fg: '#0277bd', jsmind: '#e1f5fe' }
+            }
+        };
+
+        // 节点着色服务
+        class NodeColoringService {
+            constructor() {
+                this.isInitialized = false;
+                this.currentMindmap = null;
+                this.nodeColorStates = new Map();
+                this.currentNodeId = null;
+                this.setupEventListeners();
+            }
+
+            initialize() {
+                if (this.isInitialized) {
+                    this.log('🎨 NodeColoringService 已经初始化');
+                    return;
+                }
+
+                this.log('🎨 初始化 NodeColoringService...');
+                this.updateMindmapInstance();
+                this.isInitialized = true;
+                this.updateServiceStatus('success', '服务已初始化');
+                this.log('✅ NodeColoringService 初始化完成');
+            }
+
+            updateMindmapInstance() {
+                this.currentMindmap = window.jm;
+                this.log('🎯 获取思维导图实例: ' + !!this.currentMindmap);
+            }
+
+            setupEventListeners() {
+                eventBus.subscribe('tag:clicked', (data) => {
+                    this.handleTagClick(data.nodeId, data.tagName, data.tagGroup, data.element);
+                });
+            }
+
+            handleTagClick(nodeId, tagName, tagGroup, tagElement) {
+                this.log(`🏷️ 处理标签点击: ${tagName} (${tagGroup}) -> 节点 ${nodeId}`);
+
+                if (!nodeId || !tagName || !tagGroup) {
+                    this.log('❌ 标签点击参数不完整');
+                    return;
+                }
+
+                const isSelected = tagElement.classList.contains('selected');
+                
+                if (isSelected) {
+                    this.removeTagAndColor(nodeId, tagName, tagGroup, tagElement);
+                } else {
+                    this.addTagAndColor(nodeId, tagName, tagGroup, tagElement);
+                }
+            }
+
+            addTagAndColor(nodeId, tagName, tagGroup, tagElement) {
+                try {
+                    // 1. 添加标签到数据
+                    const tagType = this.getTagTypeFromGroup(tagGroup);
+                    tagService.addNodeTag(nodeId, tagType, tagName);
+
+                    // 2. 更新UI状态
+                    tagElement.classList.add('selected');
+
+                    // 3. 应用节点颜色
+                    this.applyNodeColor(nodeId, tagName, tagGroup);
+
+                    this.log(`✅ 已添加标签并着色: ${tagName} -> 节点 ${nodeId}`);
+
+                } catch (error) {
+                    this.log(`❌ 添加标签和颜色失败: ${error.message}`);
+                }
+            }
+
+            removeTagAndColor(nodeId, tagName, tagGroup, tagElement) {
+                try {
+                    // 1. 从数据中移除标签
+                    const tagType = this.getTagTypeFromGroup(tagGroup);
+                    tagService.removeNodeTag(nodeId, tagType, tagName);
+
+                    // 2. 更新UI状态
+                    tagElement.classList.remove('selected');
+
+                    // 3. 移除节点颜色（如果需要）
+                    this.removeNodeColorIfNeeded(nodeId, tagName, tagGroup);
+
+                    this.log(`✅ 已移除标签和颜色: ${tagName} -> 节点 ${nodeId}`);
+
+                } catch (error) {
+                    this.log(`❌ 移除标签和颜色失败: ${error.message}`);
+                }
+            }
+
+            applyNodeColor(nodeId, tagName, tagGroup) {
+                const colorConfig = this.getColorConfig(tagGroup, tagName);
+                if (!colorConfig) {
+                    this.log(`⚠️ 未找到标签颜色配置: ${tagGroup}.${tagName}`);
+                    return;
+                }
+
+                // 使用jsMind API设置颜色
+                if (this.currentMindmap && this.currentMindmap.set_node_color) {
+                    this.currentMindmap.set_node_color(nodeId, colorConfig.jsmind, colorConfig.fg);
+                    this.log(`🎨 应用jsMind颜色: ${nodeId} -> ${colorConfig.jsmind}`);
+                }
+
+                // 同时设置DOM样式（作为备用）
+                this.setDOMNodeColor(nodeId, colorConfig);
+
+                // 记录颜色状态
+                this.nodeColorStates.set(nodeId, { tagName, tagGroup, colorConfig });
+            }
+
+            removeNodeColorIfNeeded(nodeId, tagName, tagGroup) {
+                const nodeTags = tagService.getNodeTags(nodeId);
+                const tagType = this.getTagTypeFromGroup(tagGroup);
+                const remainingTags = nodeTags[tagType] || [];
+
+                const hasOtherTagsInGroup = remainingTags.some(tag => 
+                    tag !== tagName && this.getColorConfig(tagGroup, tag)
+                );
+
+                if (!hasOtherTagsInGroup) {
+                    this.clearNodeColor(nodeId);
+                    this.nodeColorStates.delete(nodeId);
+                    this.log(`🧹 清除节点颜色: ${nodeId}`);
+                }
+            }
+
+            clearNodeColor(nodeId) {
+                if (this.currentMindmap && this.currentMindmap.set_node_color) {
+                    this.currentMindmap.set_node_color(nodeId, null, null);
+                }
+                this.clearDOMNodeColor(nodeId);
+            }
+
+            setDOMNodeColor(nodeId, colorConfig) {
+                const nodeElement = document.querySelector(`[nodeid="${nodeId}"]`);
+                if (nodeElement) {
+                    nodeElement.style.backgroundColor = colorConfig.bg;
+                    nodeElement.style.color = colorConfig.fg;
+                    nodeElement.setAttribute('data-tag-colored', 'true');
+                }
+            }
+
+            clearDOMNodeColor(nodeId) {
+                const nodeElement = document.querySelector(`[nodeid="${nodeId}"]`);
+                if (nodeElement) {
+                    nodeElement.style.backgroundColor = '';
+                    nodeElement.style.color = '';
+                    nodeElement.removeAttribute('data-tag-colored');
+                }
+            }
+
+            getColorConfig(tagGroup, tagName) {
+                return TAG_COLOR_CONFIG[tagGroup]?.[tagName] || null;
+            }
+
+            getTagTypeFromGroup(tagGroup) {
+                const groupToTypeMap = {
+                    '常规': 'categories',
+                    'AI': 'technical', 
+                    '笔记': 'status'
+                };
+                return groupToTypeMap[tagGroup] || 'categories';
+            }
+
+            clearAllNodeColors() {
+                this.nodeColorStates.forEach((_, nodeId) => {
+                    this.clearNodeColor(nodeId);
+                });
+                this.nodeColorStates.clear();
+                this.log('🧹 已清除所有节点颜色');
+            }
+
+            restoreAllNodeColors() {
+                Object.keys(tagService.nodeDatabase).forEach(nodeId => {
+                    this.restoreNodeColors(nodeId);
+                });
+                this.log('🎨 已恢复所有节点颜色');
+            }
+
+            restoreNodeColors(nodeId) {
+                const nodeTags = tagService.getNodeTags(nodeId);
+                
+                Object.entries(nodeTags).forEach(([tagType, tags]) => {
+                    if (Array.isArray(tags) && tags.length > 0) {
+                        for (const tagName of tags) {
+                            const tagGroup = this.getGroupFromTagType(tagType);
+                            const colorConfig = this.getColorConfig(tagGroup, tagName);
+                            if (colorConfig) {
+                                this.applyNodeColor(nodeId, tagName, tagGroup);
+                                break;
+                            }
+                        }
+                    }
+                });
+            }
+
+            getGroupFromTagType(tagType) {
+                const typeToGroupMap = {
+                    'categories': '常规',
+                    'technical': 'AI',
+                    'status': '笔记'
+                };
+                return typeToGroupMap[tagType] || '常规';
+            }
+
+            setCurrentNode(nodeId) {
+                this.currentNodeId = nodeId;
+                this.updateCurrentNodeInfo(nodeId);
+                this.restoreTagStates(nodeId);
+            }
+
+            updateCurrentNodeInfo(nodeId) {
+                const infoElement = document.getElementById('current-node-info');
+                if (!nodeId) {
+                    infoElement.innerHTML = '<div>请点击思维导图中的节点</div>';
+                    return;
+                }
+
+                const node = this.currentMindmap.get_node(nodeId);
+                const nodeTags = tagService.getNodeTags(nodeId);
+                const allTags = [
+                    ...nodeTags.categories,
+                    ...nodeTags.technical,
+                    ...nodeTags.status
+                ];
+
+                infoElement.innerHTML = `
+                    <div><strong>节点ID:</strong> ${nodeId}</div>
+                    <div><strong>节点标题:</strong> ${node ? node.topic : '未知'}</div>
+                    <div><strong>已选标签:</strong> ${allTags.length > 0 ? allTags.join(', ') : '无'}</div>
+                `;
+            }
+
+            restoreTagStates(nodeId) {
+                // 清除所有标签选中状态
+                document.querySelectorAll('.tag-item').forEach(tagItem => {
+                    tagItem.classList.remove('selected');
+                });
+
+                if (!nodeId) return;
+
+                // 恢复选中状态
+                const nodeTags = tagService.getNodeTags(nodeId);
+                const allSelectedTags = [
+                    ...nodeTags.categories,
+                    ...nodeTags.technical,
+                    ...nodeTags.status
+                ];
+
+                document.querySelectorAll('.tag-item').forEach(tagItem => {
+                    const tagName = tagItem.dataset.tag;
+                    if (allSelectedTags.includes(tagName)) {
+                        tagItem.classList.add('selected');
+                    }
+                });
+            }
+
+            log(message) {
+                const logArea = document.getElementById('log-area');
+                const timestamp = new Date().toLocaleTimeString();
+                logArea.textContent += `[${timestamp}] ${message}\n`;
+                logArea.scrollTop = logArea.scrollHeight;
+                console.log(message);
+            }
+
+            updateServiceStatus(type, message) {
+                const statusElement = document.getElementById('service-status');
+                const statusClass = type === 'success' ? 'status-success' : 
+                                  type === 'warning' ? 'status-warning' : 'status-error';
+                statusElement.innerHTML = `<div><span class="status-indicator ${statusClass}"></span>${message}</div>`;
+            }
+        }
+
+        // 创建服务实例
+        const nodeColoringService = new NodeColoringService();
+
+        // 初始化思维导图
+        function initMindmap() {
+            const mind = {
+                "meta": {
+                    "name": "标签着色测试",
+                    "author": "NodeMind",
+                    "version": "1.0"
+                },
+                "format": "node_tree",
+                "data": {
+                    "id": "root",
+                    "topic": "标签着色测试",
+                    "children": [
+                        {
+                            "id": "node1",
+                            "topic": "项目管理",
+                            "direction": "right"
+                        },
+                        {
+                            "id": "node2", 
+                            "topic": "AI学习",
+                            "direction": "right"
+                        },
+                        {
+                            "id": "node3",
+                            "topic": "笔记整理",
+                            "direction": "left"
+                        },
+                        {
+                            "id": "node4",
+                            "topic": "测试节点",
+                            "direction": "left"
+                        }
+                    ]
+                }
+            };
+
+            const options = {
+                container: 'jsmind_container',
+                editable: true,
+                theme: 'primary'
+            };
+
+            window.jm = new jsMind(options);
+            window.jm.show(mind);
+
+            // 绑定节点选择事件
+            window.jm.add_event_listener(function(type, data) {
+                if (type === jsMind.event_type.select) {
+                    nodeColoringService.setCurrentNode(data.node.id);
+                    nodeColoringService.log(`📍 选择节点: ${data.node.id} (${data.node.topic})`);
+                }
+            });
+
+            nodeColoringService.log('🗺️ 思维导图初始化完成');
+        }
+
+        // 绑定标签点击事件
+        function bindTagEvents() {
+            document.querySelectorAll('.tag-item').forEach(tagItem => {
+                tagItem.addEventListener('click', function() {
+                    if (!nodeColoringService.currentNodeId) {
+                        nodeColoringService.log('⚠️ 请先选择一个节点');
+                        return;
+                    }
+
+                    const tagName = this.dataset.tag;
+                    const tagGroup = this.dataset.group;
+                    
+                    eventBus.publish('tag:clicked', {
+                        nodeId: nodeColoringService.currentNodeId,
+                        tagName: tagName,
+                        tagGroup: tagGroup,
+                        element: this
+                    });
+                });
+            });
+
+            nodeColoringService.log('🏷️ 标签事件绑定完成');
+        }
+
+        // 全局函数
+        window.initializeService = function() {
+            nodeColoringService.initialize();
+        };
+
+        window.clearAllColors = function() {
+            nodeColoringService.clearAllNodeColors();
+        };
+
+        window.restoreAllColors = function() {
+            nodeColoringService.restoreAllNodeColors();
+        };
+
+        window.testColorConfig = function() {
+            nodeColoringService.log('🧪 测试颜色配置:');
+            Object.entries(TAG_COLOR_CONFIG).forEach(([group, tags]) => {
+                Object.entries(tags).forEach(([tag, config]) => {
+                    nodeColoringService.log(`  ${group}.${tag}: ${config.jsmind}`);
+                });
+            });
+        };
+
+        window.clearLog = function() {
+            document.getElementById('log-area').textContent = '';
+        };
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            initMindmap();
+            bindTagEvents();
+            nodeColoringService.log('🚀 测试页面加载完成');
+        });
+    </script>
+</body>
+</html>

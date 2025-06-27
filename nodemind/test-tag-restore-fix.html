@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>标签恢复修复测试 - 第三次重构版本</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-section {
+            border: 2px solid #e0e0e0;
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        .test-section h3 {
+            margin: 0 0 15px 0;
+            color: #333;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        #content-editor {
+            width: 100%;
+            height: 120px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            resize: vertical;
+        }
+        .tag-groups {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+        .tag-group {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            min-width: 200px;
+        }
+        .tag-group-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #555;
+        }
+        .tag {
+            display: inline-block;
+            padding: 5px 10px;
+            margin: 3px;
+            background: #e9ecef;
+            border: 1px solid #ced4da;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+        .tag:hover {
+            background: #dee2e6;
+            transform: translateY(-1px);
+        }
+        .tag.selected {
+            background: #007bff;
+            color: white;
+            border-color: #0056b3;
+        }
+        .button {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            font-weight: bold;
+            transition: transform 0.2s;
+        }
+        .button:hover {
+            transform: translateY(-2px);
+        }
+        .log {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 5px;
+            padding: 10px;
+            height: 200px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+        }
+        .status {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            border-radius: 5px;
+            padding: 10px;
+            margin: 10px 0;
+            color: #155724;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏷️ 标签恢复修复测试 - 第三次重构版本</h1>
+        
+        <div class="status">
+            <strong>测试目标：</strong>验证标签状态在切换节点后能正确恢复显示<br>
+            <strong>修复方案：</strong>删除nodeDatabase操作逻辑，只从MD内容中读取和恢复标签<br>
+            <strong>符合第三次重构理念：</strong>万物皆MD，标签即文本
+        </div>
+
+        <div class="test-section">
+            <h3>📝 1. 内容编辑器（模拟四组件）</h3>
+            <textarea id="content-editor" placeholder="在这里输入内容和标签，如：这是一个测试内容 #想法 #前端 #待办">这是一个测试节点 #想法 #前端 #待办</textarea>
+        </div>
+
+        <div class="test-section">
+            <h3>🏷️ 2. 标签组（点击可添加/移除标签）</h3>
+            <div id="tag-groups" class="tag-groups">
+                <div class="tag-group">
+                    <div class="tag-group-title">📂 分类标签</div>
+                    <div class="tag-group-items">
+                        <span class="tag" data-tag="想法" data-group="分类标签">想法</span>
+                        <span class="tag" data-tag="计划" data-group="分类标签">计划</span>
+                        <span class="tag" data-tag="笔记" data-group="分类标签">笔记</span>
+                        <span class="tag" data-tag="总结" data-group="分类标签">总结</span>
+                        <span class="tag" data-tag="问题" data-group="分类标签">问题</span>
+                        <span class="tag" data-tag="方案" data-group="分类标签">方案</span>
+                    </div>
+                </div>
+                
+                <div class="tag-group">
+                    <div class="tag-group-title">⚙️ 技术标签</div>
+                    <div class="tag-group-items">
+                        <span class="tag" data-tag="前端" data-group="技术标签">前端</span>
+                        <span class="tag" data-tag="后端" data-group="技术标签">后端</span>
+                        <span class="tag" data-tag="数据库" data-group="技术标签">数据库</span>
+                        <span class="tag" data-tag="API" data-group="技术标签">API</span>
+                        <span class="tag" data-tag="算法" data-group="技术标签">算法</span>
+                        <span class="tag" data-tag="架构" data-group="技术标签">架构</span>
+                    </div>
+                </div>
+                
+                <div class="tag-group">
+                    <div class="tag-group-title">📊 状态标签</div>
+                    <div class="tag-group-items">
+                        <span class="tag" data-tag="待办" data-group="状态标签">待办</span>
+                        <span class="tag" data-tag="进行中" data-group="状态标签">进行中</span>
+                        <span class="tag" data-tag="已完成" data-group="状态标签">已完成</span>
+                        <span class="tag" data-tag="已验证" data-group="状态标签">已验证</span>
+                        <span class="tag" data-tag="暂停" data-group="状态标签">暂停</span>
+                        <span class="tag" data-tag="取消" data-group="状态标签">取消</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h3>🧪 3. 测试操作</h3>
+            <button class="button" onclick="testScenario1()">测试场景1：基础标签切换</button>
+            <button class="button" onclick="testScenario2()">测试场景2：模拟节点切换</button>
+            <button class="button" onclick="testScenario3()">测试场景3：复杂标签组合</button>
+            <button class="button" onclick="manualRestore()">手动恢复标签</button>
+            <button class="button" onclick="clearAll()">清除所有</button>
+        </div>
+
+        <div class="test-section">
+            <h3>📋 4. 测试日志</h3>
+            <div id="test-log" class="log"></div>
+        </div>
+    </div>
+
+    <script>
+        // 模拟节点ID
+        let currentNodeId = 'test-node-1';
+        
+        // 测试日志
+        function log(message) {
+            const logDiv = document.getElementById('test-log');
+            const timestamp = new Date().toLocaleTimeString();
+            logDiv.textContent += `[${timestamp}] ${message}\n`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+            console.log(message);
+        }
+
+        // 第三次重构版本：标签切换（只操作内容）
+        function fourComponentToggleTag(tagElement) {
+            const tagName = tagElement.dataset.tag;
+            const tagGroup = tagElement.dataset.group;
+            
+            log(`🏷️ 标签操作: ${tagName} (${tagGroup})`);
+            
+            const contentEditor = document.getElementById('content-editor');
+            if (!contentEditor) {
+                log('❌ 找不到内容编辑器');
+                return;
+            }
+            
+            let content = contentEditor.value;
+            const tagString = `#${tagName}`;
+            
+            // 切换标签状态
+            if (tagElement.classList.contains('selected')) {
+                // 移除标签
+                tagElement.classList.remove('selected');
+                content = content.replace(new RegExp(`\\s*${tagString.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\s*`, 'g'), ' ').trim();
+                log(`🗑️ 已移除标签：${tagName}`);
+            } else {
+                // 添加标签
+                tagElement.classList.add('selected');
+                content = content + (content ? ' ' : '') + tagString;
+                log(`✅ 已添加标签：${tagName}`);
+            }
+            
+            // 立即更新内容编辑器
+            contentEditor.value = content;
+            log(`📝 内容已更新: ${content}`);
+        }
+
+        // 第三次重构版本：从MD内容中智能恢复标签状态
+        function restoreFourComponentTagStates(nodeId) {
+            if (!nodeId) {
+                log('⚠️ restoreFourComponentTagStates: 缺少节点ID');
+                return;
+            }
+            
+            log(`🔄 [第三次重构] 恢复标签状态: ${nodeId}`);
+            
+            // 清除所有标签的选中状态
+            document.querySelectorAll('.tag').forEach(tag => {
+                tag.classList.remove('selected');
+            });
+            
+            // 从内容编辑器获取MD内容
+            const contentEditor = document.getElementById('content-editor');
+            if (!contentEditor) {
+                log('⚠️ 找不到内容编辑器，无法恢复标签状态');
+                return;
+            }
+            
+            const content = contentEditor.value;
+            log(`📋 分析MD内容中的标签: "${content.substring(0, 50)}..."`);
+            
+            // 智能提取标签（支持 #标签 格式）
+            const tagMatches = content.match(/#[\u4e00-\u9fa5\w]+/g); // 支持中文标签
+            
+            if (tagMatches && tagMatches.length > 0) {
+                log(`🏷️ 发现 ${tagMatches.length} 个标签: ${tagMatches.join(', ')}`);
+                
+                let restoredCount = 0;
+                tagMatches.forEach(tagMatch => {
+                    const tagName = tagMatch.substring(1); // 移除 # 符号
+                    const tagElement = document.querySelector(`[data-tag="${tagName}"]`);
+                    
+                    if (tagElement) {
+                        tagElement.classList.add('selected');
+                        restoredCount++;
+                        log(`✅ 恢复标签: ${tagName}`);
+                    } else {
+                        log(`⚠️ 标签不在当前标签组中: ${tagName}`);
+                    }
+                });
+                
+                log(`✅ [第三次重构] 标签恢复完成: ${nodeId}, 成功恢复 ${restoredCount}/${tagMatches.length} 个标签`);
+            } else {
+                log(`ℹ️ MD内容中没有发现标签: ${nodeId}`);
+            }
+        }
+
+        // 测试场景1：基础标签切换
+        function testScenario1() {
+            log('\n🧪 === 测试场景1：基础标签切换 ===');
+            
+            // 1. 清除当前状态
+            document.getElementById('content-editor').value = '这是测试内容';
+            document.querySelectorAll('.tag').forEach(tag => tag.classList.remove('selected'));
+            
+            // 2. 手动点击几个标签
+            log('📝 模拟用户点击标签...');
+            const tags = ['想法', '前端', '待办'];
+            tags.forEach(tagName => {
+                const tagElement = document.querySelector(`[data-tag="${tagName}"]`);
+                if (tagElement) {
+                    fourComponentToggleTag(tagElement);
+                }
+            });
+            
+            // 3. 恢复标签状态
+            setTimeout(() => {
+                log('🔄 模拟节点切换后恢复标签...');
+                restoreFourComponentTagStates(currentNodeId);
+            }, 1000);
+        }
+
+        // 测试场景2：模拟节点切换
+        function testScenario2() {
+            log('\n🧪 === 测试场景2：模拟节点切换 ===');
+            
+            // 1. 设置初始状态
+            document.getElementById('content-editor').value = '项目计划 #计划 #架构 #进行中';
+            restoreFourComponentTagStates('node-1');
+            
+            setTimeout(() => {
+                // 2. 切换到另一个节点
+                log('🔄 切换到节点2...');
+                document.getElementById('content-editor').value = '前端开发任务 #前端 #API #待办';
+                restoreFourComponentTagStates('node-2');
+                
+                setTimeout(() => {
+                    // 3. 切换回原节点
+                    log('🔄 切换回节点1...');
+                    document.getElementById('content-editor').value = '项目计划 #计划 #架构 #进行中';
+                    restoreFourComponentTagStates('node-1');
+                }, 1500);
+            }, 1500);
+        }
+
+        // 测试场景3：复杂标签组合
+        function testScenario3() {
+            log('\n🧪 === 测试场景3：复杂标签组合 ===');
+            
+            const complexContent = `# 复杂项目设计文档
+
+这是一个包含多种标签的复杂内容示例。
+
+## 项目概述
+这个项目需要 #前端 #后端 #数据库 的全栈开发。
+
+## 当前状态
+项目目前是 #进行中 状态，需要 #想法 和 #方案。
+
+## 技术栈
+使用 #算法 和 #架构 设计。`;
+
+            document.getElementById('content-editor').value = complexContent;
+            log('📝 设置复杂内容，包含多个标签');
+            
+            setTimeout(() => {
+                restoreFourComponentTagStates('complex-node');
+            }, 500);
+        }
+
+        // 手动恢复标签
+        function manualRestore() {
+            log('\n🔄 === 手动恢复标签状态 ===');
+            restoreFourComponentTagStates(currentNodeId);
+        }
+
+        // 清除所有
+        function clearAll() {
+            log('\n🗑️ === 清除所有状态 ===');
+            document.getElementById('content-editor').value = '';
+            document.querySelectorAll('.tag').forEach(tag => {
+                tag.classList.remove('selected');
+            });
+            log('✅ 已清除所有内容和标签状态');
+        }
+
+        // 绑定标签点击事件
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.tag').forEach(tag => {
+                tag.addEventListener('click', function() {
+                    fourComponentToggleTag(this);
+                });
+            });
+            
+            // 初始恢复
+            log('🚀 页面初始化完成，恢复初始标签状态');
+            restoreFourComponentTagStates(currentNodeId);
+        });
+    </script>
+</body>
+</html> 

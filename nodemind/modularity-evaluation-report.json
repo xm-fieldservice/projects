@@ -1,0 +1,38 @@
+{
+  "timestamp": "2025-06-21T19:08:09.531Z",
+  "srcStructure": {
+    "services": 21,
+    "controllers": 3,
+    "ui": 6,
+    "utils": 2,
+    "total": 32
+  },
+  "indexAnalysis": {
+    "totalLines": 9829,
+    "scriptLines": 7850,
+    "styleLines": 0,
+    "htmlLines": 1979,
+    "functions": 157,
+    "classes": 4,
+    "globalVars": 642
+  },
+  "refactorArchitecture": {
+    "universalDataService": true,
+    "smartMDParser": true,
+    "uiIntegrationAdapter": true,
+    "tagServiceAdapter": true,
+    "featureSwitchController": true
+  },
+  "evaluation": {
+    "score": 70,
+    "grade": "B (良好)",
+    "recommendation": "模块化程度较好，可以进一步优化"
+  },
+  "suggestions": [
+    "🔄 将index.html中的大量内联JavaScript提取到独立模块文件",
+    "⚡ 将index.html中的函数按功能分组，移动到相应的service模块",
+    "🔗 建立模块间的标准化接口和依赖管理",
+    "📝 为每个模块添加详细的JSDoc文档",
+    "🧪 为核心模块添加单元测试"
+  ]
+}

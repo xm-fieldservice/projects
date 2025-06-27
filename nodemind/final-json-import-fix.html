@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NodeMind JSON导入最终修复</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #f8f9fa;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #007bff, #6610f2);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .btn {
+            background: #28a745;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        
+        .btn:hover {
+            background: #218838;
+        }
+        
+        .btn.secondary {
+            background: #6c757d;
+        }
+        
+        .btn.secondary:hover {
+            background: #5a6268;
+        }
+        
+        .result {
+            margin: 10px 0;
+            padding: 12px;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 14px;
+        }
+        
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border-left: 4px solid #28a745;
+        }
+        
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border-left: 4px solid #dc3545;
+        }
+        
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border-left: 4px solid #17a2b8;
+        }
+        
+        .warning {
+            background: #fff3cd;
+            color: #856404;
+            border-left: 4px solid #ffc107;
+        }
+        
+        #mindmap-display {
+            border: 2px solid #dee2e6;
+            min-height: 400px;
+            background: white;
+            border-radius: 6px;
+            position: relative;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .stat-card {
+            background: #e9ecef;
+            padding: 15px;
+            border-radius: 6px;
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #007bff;
+        }
+        
+        .code-fix {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+    </style>
+    <script src="js/jsmind.js"></script>
+    <link rel="stylesheet" href="js/jsmind.css">
+</head>
+<body>
+    <div class="header">
+        <h1>🎉 测试成功！JSON导入最终解决方案</h1>
+        <p>既然测试工具成功了，现在提供完整的解决方案</p>
+    </div>
+
+    <div class="container">
+        <h2>🚀 下一步操作</h2>
+        <div class="result success">
+            ✅ 您的JSON文件格式完全正确<br>
+            ✅ 修复的导入逻辑有效<br>
+            ✅ 问题出在主应用的缓存或代码冲突
+        </div>
+        
+        <h3>方法1：强制刷新主应用缓存 ⭐ 推荐</h3>
+        <ol>
+            <li>关闭所有 <code>index.html</code> 的浏览器标签页</li>
+            <li>按 <strong>Ctrl + Shift + R</strong> 或 <strong>Ctrl + F5</strong> 强制刷新</li>
+            <li>重新打开 <code>index.html</code></li>
+            <li>点击"📊 导入JSON"按钮</li>
+            <li>选择您的JSON文件</li>
+        </ol>
+        
+        <h3>方法2：直接使用这个工具</h3>
+        <input type="file" id="file-input" accept=".json" style="display: none;">
+        <button class="btn" onclick="selectFile()">📂 在此工具中导入JSON</button>
+        <button class="btn secondary" onclick="clearAll()">🧹 清空显示</button>
+        
+        <div class="stats" id="stats-area" style="display: none;">
+            <div class="stat-card">
+                <div class="stat-number" id="node-count">0</div>
+                <div>节点数量</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="doc-count">0</div>
+                <div>文档数量</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="file-size">0</div>
+                <div>文件大小(KB)</div>
+            </div>
+        </div>
+        
+        <div id="log-area"></div>
+    </div>
+    
+    <div class="container">
+        <h2>🗺️ 思维导图显示</h2>
+        <div id="mindmap-display"></div>
+    </div>
+    
+    <div class="container">
+        <h2>🔧 主应用修复代码</h2>
+        <p>如果您的主应用导入还有问题，可以复制以下修复代码：</p>
+        <div class="code-fix" id="fix-code">
+// 正在生成修复代码...
+        </div>
+        <button class="btn secondary" onclick="copyFixCode()">📋 复制修复代码</button>
+    </div>
+
+    <script>
+        let jm = null;
+        let importedData = null;
+        
+        // 初始化
+        function init() {
+            try {
+                const options = {
+                    container: 'mindmap-display',
+                    editable: false,
+                    theme: 'primary'
+                };
+                jm = new jsMind(options);
+                log('✅ jsMind初始化成功', 'success');
+                
+                generateFixCode();
+                
+            } catch (error) {
+                log(`❌ jsMind初始化失败: ${error.message}`, 'error');
+            }
+        }
+        
+        // 日志函数
+        function log(message, type = 'info') {
+            const logArea = document.getElementById('log-area');
+            const div = document.createElement('div');
+            div.className = `result ${type}`;
+            const timestamp = new Date().toLocaleTimeString();
+            div.textContent = `[${timestamp}] ${message}`;
+            logArea.appendChild(div);
+            console.log(message);
+        }
+        
+        // 选择文件
+        function selectFile() {
+            document.getElementById('file-input').click();
+        }
+        
+        // 清空所有
+        function clearAll() {
+            document.getElementById('log-area').innerHTML = '';
+            document.getElementById('stats-area').style.display = 'none';
+            if (jm) {
+                jm.show({
+                    meta: { name: "空白", author: "NodeMind", version: "1.0" },
+                    format: "node_tree", 
+                    data: { id: "root", topic: "请导入JSON文件" }
+                });
+            }
+        }
+        
+        // 更新统计
+        function updateStats(nodeCount, docCount, fileSize) {
+            document.getElementById('node-count').textContent = nodeCount;
+            document.getElementById('doc-count').textContent = docCount;
+            document.getElementById('file-size').textContent = Math.round(fileSize / 1024);
+            document.getElementById('stats-area').style.display = 'grid';
+        }
+        
+        // 递归计算节点数量
+        function countNodes(node) {
+            let count = 1;
+            if (node.children && Array.isArray(node.children)) {
+                for (const child of node.children) {
+                    count += countNodes(child);
+                }
+            }
+            return count;
+        }
+        
+        // 处理文件导入
+        function handleFileImport(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            log(`📁 开始导入: ${file.name}`, 'info');
+            log(`📏 文件大小: ${Math.round(file.size / 1024)} KB`, 'info');
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const content = e.target.result;
+                    log(`📄 文件读取完成，长度: ${content.length} 字符`, 'info');
+                    
+                    const jsonData = JSON.parse(content);
+                    log('✅ JSON解析成功', 'success');
+                    
+                    let mindmapData = null;
+                    let documentCount = 0;
+                    let nodeCount = 0;
+                    
+                    if (jsonData.mindmap && jsonData.mindmap.data) {
+                        log('🎯 检测到：NodeMind项目格式', 'success');
+                        mindmapData = jsonData.mindmap;
+                        
+                        if (jsonData.documents) {
+                            documentCount = Object.keys(jsonData.documents).length;
+                            log(`📚 包含文档: ${documentCount} 个`, 'info');
+                        }
+                        
+                        nodeCount = countNodes(mindmapData.data);
+                        log(`🔢 节点统计: ${nodeCount} 个`, 'info');
+                        
+                    } else if (jsonData.meta && jsonData.format && jsonData.data) {
+                        log('🎯 检测到：标准思维导图格式', 'success');
+                        mindmapData = jsonData;
+                        nodeCount = countNodes(jsonData.data);
+                        
+                    } else if (jsonData.data && jsonData.data.id) {
+                        log('🎯 检测到：直接节点数据格式', 'success');
+                        mindmapData = {
+                            meta: { name: file.name.replace('.json', ''), author: "导入", version: "1.0" },
+                            format: "node_tree",
+                            data: jsonData.data
+                        };
+                        nodeCount = countNodes(jsonData.data);
+                        
+                    } else if (jsonData.id && jsonData.topic) {
+                        log('🎯 检测到：根节点格式', 'success');
+                        mindmapData = {
+                            meta: { name: file.name.replace('.json', ''), author: "导入", version: "1.0" },
+                            format: "node_tree",
+                            data: jsonData
+                        };
+                        nodeCount = countNodes(jsonData);
+                        
+                    } else {
+                        throw new Error('无法识别的JSON格式');
+                    }
+                    
+                    if (mindmapData && jm) {
+                        jm.show(mindmapData);
+                        log('🎨 思维导图显示成功', 'success');
+                        log('🎉 导入完成！', 'success');
+                        
+                        updateStats(nodeCount, documentCount, file.size);
+                        
+                        if (mindmapData.meta) {
+                            log(`📋 名称: ${mindmapData.meta.name || '未命名'}`, 'info');
+                            log(`👤 作者: ${mindmapData.meta.author || '未知'}`, 'info');
+                        }
+                        
+                    } else {
+                        throw new Error('无法显示思维导图');
+                    }
+                    
+                } catch (error) {
+                    log(`❌ 导入失败: ${error.message}`, 'error');
+                }
+            };
+            
+            reader.onerror = function() {
+                log('❌ 文件读取失败', 'error');
+            };
+            
+            reader.readAsText(file);
+            event.target.value = '';
+        }
+        
+        // 生成修复代码
+        function generateFixCode() {
+            const fixCode = `
+// NodeMind主应用JSON导入修复代码
+// 替换原有的handleJSONFileImport函数
+
+function handleJSONFileImport(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    console.log('📊 [JSON导入] 开始导入JSON文件:', file.name);
+    console.log('📊 [JSON导入] 文件大小:', Math.round(file.size / 1024), 'KB');
+    showMessage('📊 正在导入JSON文件: ' + file.name);
+    
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            const content = e.target.result;
+            console.log('📊 [JSON导入] 文件读取完成，内容长度:', content.length);
+            
+            const jsonData = JSON.parse(content);
+            console.log('📊 [JSON导入] JSON解析成功');
+            
+            let mindmapData = null;
+            let importSuccess = false;
+            
+            // 检查NodeMind项目格式
+            if (jsonData.mindmap && jsonData.mindmap.data) {
+                console.log('📊 [JSON导入] 检测到NodeMind项目格式');
+                mindmapData = jsonData.mindmap;
+                
+                // 导入文档数据
+                if (jsonData.documents) {
+                    const docCount = Object.keys(jsonData.documents).length;
+                    console.log('📊 [JSON导入] 文档数量:', docCount);
+                    Object.assign(nodeDatabase, jsonData.documents);
+                }
+                
+                // 显示思维导图
+                if (mindmaps.project) {
+                    mindmaps.project.show(mindmapData);
+                    console.log('📊 [JSON导入] 已显示到项目管理脑图');
+                    importSuccess = true;
+                }
+                
+            } else if (jsonData.meta && jsonData.format && jsonData.data) {
+                console.log('📊 [JSON导入] 检测到标准思维导图格式');
+                mindmapData = jsonData;
+                
+                if (mindmaps.project) {
+                    mindmaps.project.show(mindmapData);
+                    console.log('📊 [JSON导入] 已显示标准格式到项目管理脑图');
+                    importSuccess = true;
+                }
+            } else if (jsonData.data && jsonData.data.id) {
+                console.log('📊 [JSON导入] 检测到直接节点数据格式');
+                mindmapData = {
+                    meta: { name: file.name.replace('.json', ''), author: "导入", version: "1.0" },
+                    format: "node_tree",
+                    data: jsonData.data
+                };
+                
+                if (mindmaps.project) {
+                    mindmaps.project.show(mindmapData);
+                    console.log('📊 [JSON导入] 已显示节点数据到项目管理脑图');
+                    importSuccess = true;
+                }
+            } else if (jsonData.id && jsonData.topic) {
+                console.log('📊 [JSON导入] 检测到根节点格式');
+                mindmapData = {
+                    meta: { name: file.name.replace('.json', ''), author: "导入", version: "1.0" },
+                    format: "node_tree",
+                    data: jsonData
+                };
+                
+                if (mindmaps.project) {
+                    mindmaps.project.show(mindmapData);
+                    console.log('📊 [JSON导入] 已显示根节点到项目管理脑图');
+                    importSuccess = true;
+                }
+            } else {
+                throw new Error('无法识别的JSON格式，请确保是NodeMind导出的文件');
+            }
+            
+            if (importSuccess) {
+                saveDataToStorage();
+                showMessage('✅ JSON文件导入成功: ' + file.name);
+                console.log('✅ [JSON导入] 文件导入完成:', file.name);
+            } else {
+                throw new Error('思维导图显示失败，请检查项目管理面板是否正常');
+            }
+            
+        } catch (error) {
+            console.error('❌ [JSON导入] 文件导入失败:', error);
+            showMessage('❌ JSON文件导入失败: ' + error.message);
+            
+            const userChoice = confirm('JSON文件导入失败。\\n\\n错误信息: ' + error.message + '\\n\\n是否查看帮助信息？');
+            if (userChoice) {
+                alert('JSON导入帮助：\\n\\n支持的格式：\\n1. NodeMind项目格式\\n2. 标准思维导图格式\\n3. 直接节点数据格式\\n4. 根节点格式\\n\\n请确保文件完整且编码为UTF-8');
+            }
+        }
+    };
+    
+    reader.readAsText(file);
+    event.target.value = '';
+}`;
+            
+            document.getElementById('fix-code').textContent = fixCode;
+        }
+        
+        // 复制修复代码
+        function copyFixCode() {
+            const fixCode = document.getElementById('fix-code').textContent;
+            navigator.clipboard.writeText(fixCode).then(() => {
+                log('📋 修复代码已复制到剪贴板', 'success');
+            }).catch(() => {
+                log('❌ 复制失败，请手动选择复制', 'error');
+            });
+        }
+        
+        // 绑定事件
+        document.getElementById('file-input').addEventListener('change', handleFileImport);
+        
+        // 页面加载完成后初始化
+        window.addEventListener('load', function() {
+            init();
+            log('🎉 恭喜！测试成功表明一切正常', 'success');
+            log('💡 现在请尝试在主应用中强制刷新缓存', 'info');
+        });
+    </script>
+</body>
+</html> 

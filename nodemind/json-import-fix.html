@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NodeMind JSON导入修复</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .btn {
+            background: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        
+        .btn:hover {
+            background: #0056b3;
+        }
+        
+        .message {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        
+        .log {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin: 10px 0;
+        }
+        
+        .stat-item {
+            background: #e9ecef;
+            padding: 10px;
+            border-radius: 4px;
+            text-align: center;
+        }
+        
+        #mindmap-container {
+            border: 1px solid #ddd;
+            min-height: 400px;
+            margin: 10px 0;
+            background: white;
+        }
+    </style>
+    <script src="js/jsmind.js"></script>
+    <link rel="stylesheet" href="js/jsmind.css">
+</head>
+<body>
+    <div class="container">
+        <h1>🧠 NodeMind JSON导入修复工具</h1>
+        <p>这个工具可以正确导入NodeMind项目JSON文件，包括完整的项目结构。</p>
+        
+        <input type="file" id="file-input" accept=".json" style="display: none;">
+        <button class="btn" onclick="selectFile()">📁 选择JSON文件</button>
+        <button class="btn" onclick="clearLog()">🧹 清空日志</button>
+        
+        <div id="message-area"></div>
+        
+        <div class="stats" id="stats-area" style="display: none;">
+            <div class="stat-item">
+                <strong id="node-count">0</strong>
+                <div>节点数量</div>
+            </div>
+            <div class="stat-item">
+                <strong id="doc-count">0</strong>
+                <div>文档数量</div>
+            </div>
+            <div class="stat-item">
+                <strong id="file-size">0</strong>
+                <div>文件大小(KB)</div>
+            </div>
+        </div>
+        
+        <div class="log" id="log-area"></div>
+    </div>
+    
+    <div class="container">
+        <h2>📊 思维导图显示</h2>
+        <div id="mindmap-container"></div>
+    </div>
+
+    <script>
+        let jm = null;
+        
+        // 初始化jsMind
+        function initJsMind() {
+            const options = {
+                container: 'mindmap-container',
+                editable: false,
+                theme: 'primary'
+            };
+            jm = new jsMind(options);
+            log('✅ jsMind初始化完成');
+        }
+        
+        // 日志功能
+        function log(message) {
+            const timestamp = new Date().toLocaleTimeString();
+            const logArea = document.getElementById('log-area');
+            logArea.innerHTML += `[${timestamp}] ${message}\n`;
+            logArea.scrollTop = logArea.scrollHeight;
+            console.log(message);
+        }
+        
+        // 显示消息
+        function showMessage(text, type = 'info') {
+            const messageArea = document.getElementById('message-area');
+            const div = document.createElement('div');
+            div.className = `message ${type}`;
+            div.textContent = text;
+            messageArea.appendChild(div);
+            
+            // 3秒后自动移除
+            setTimeout(() => {
+                if (div.parentNode) {
+                    div.parentNode.removeChild(div);
+                }
+            }, 3000);
+        }
+        
+        // 更新统计信息
+        function updateStats(nodeCount, docCount, fileSize) {
+            document.getElementById('node-count').textContent = nodeCount;
+            document.getElementById('doc-count').textContent = docCount;
+            document.getElementById('file-size').textContent = Math.round(fileSize / 1024);
+            document.getElementById('stats-area').style.display = 'block';
+        }
+        
+        // 清空日志
+        function clearLog() {
+            document.getElementById('log-area').innerHTML = '';
+            document.getElementById('message-area').innerHTML = '';
+        }
+        
+        // 选择文件
+        function selectFile() {
+            document.getElementById('file-input').click();
+        }
+        
+        // 递归计算节点数量
+        function countNodes(node) {
+            let count = 1; // 当前节点
+            if (node.children && Array.isArray(node.children)) {
+                for (const child of node.children) {
+                    count += countNodes(child);
+                }
+            }
+            return count;
+        }
+        
+        // 修复后的JSON导入处理
+        function handleFileImport(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            log(`📁 开始导入文件: ${file.name}`);
+            log(`📏 文件大小: ${Math.round(file.size / 1024)} KB`);
+            showMessage(`📁 正在导入: ${file.name}`, 'info');
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const content = e.target.result;
+                    log(`📄 文件读取完成，长度: ${content.length} 字符`);
+                    
+                    // 解析JSON
+                    const jsonData = JSON.parse(content);
+                    log('✅ JSON解析成功');
+                    
+                    // 处理不同格式的NodeMind文件
+                    let mindmapData = null;
+                    let documentCount = 0;
+                    let nodeCount = 0;
+                    
+                    // 检查是否是完整的NodeMind项目文件
+                    if (jsonData.mindmap && jsonData.mindmap.data) {
+                        log('🎯 检测到NodeMind项目格式');
+                        mindmapData = jsonData.mindmap;
+                        
+                        // 统计文档数量
+                        if (jsonData.documents) {
+                            documentCount = Object.keys(jsonData.documents).length;
+                            log(`📚 包含文档数据: ${documentCount} 个文档`);
+                        }
+                        
+                        // 统计节点数量
+                        nodeCount = countNodes(mindmapData.data);
+                        log(`🔢 节点统计: ${nodeCount} 个节点`);
+                        
+                    } 
+                    // 检查是否是标准的思维导图格式
+                    else if (jsonData.meta && jsonData.format && jsonData.data) {
+                        log('🎯 检测到标准思维导图格式');
+                        mindmapData = jsonData;
+                        nodeCount = countNodes(jsonData.data);
+                        log(`🔢 节点统计: ${nodeCount} 个节点`);
+                    }
+                    // 检查是否直接是节点数据
+                    else if (jsonData.data && jsonData.data.id) {
+                        log('🎯 检测到直接节点数据格式');
+                        mindmapData = {
+                            meta: {
+                                name: file.name.replace('.json', ''),
+                                author: "导入",
+                                version: "1.0"
+                            },
+                            format: "node_tree",
+                            data: jsonData.data
+                        };
+                        nodeCount = countNodes(jsonData.data);
+                        log(`🔢 节点统计: ${nodeCount} 个节点`);
+                    }
+                    // 检查是否直接是根节点
+                    else if (jsonData.id && jsonData.topic) {
+                        log('🎯 检测到根节点数据格式');
+                        mindmapData = {
+                            meta: {
+                                name: file.name.replace('.json', ''),
+                                author: "导入",
+                                version: "1.0"
+                            },
+                            format: "node_tree",
+                            data: jsonData
+                        };
+                        nodeCount = countNodes(jsonData);
+                        log(`🔢 节点统计: ${nodeCount} 个节点`);
+                    }
+                    else {
+                        throw new Error('无法识别的JSON格式，请确保是NodeMind导出的文件');
+                    }
+                    
+                    // 显示思维导图
+                    if (mindmapData && jm) {
+                        log('🎨 开始显示思维导图');
+                        jm.show(mindmapData);
+                        log('✅ 思维导图显示成功');
+                        
+                        showMessage(`✅ 导入成功: ${file.name}`, 'success');
+                        updateStats(nodeCount, documentCount, file.size);
+                        
+                        // 显示详细信息
+                        if (mindmapData.meta) {
+                            log(`📋 名称: ${mindmapData.meta.name || '未命名'}`);
+                            log(`👤 作者: ${mindmapData.meta.author || '未知'}`);
+                            log(`📅 版本: ${mindmapData.meta.version || '1.0'}`);
+                        }
+                        
+                        // 如果有文档数据，显示文档信息
+                        if (jsonData.documents) {
+                            const docs = Object.values(jsonData.documents);
+                            log('📚 文档列表:');
+                            docs.slice(0, 5).forEach((doc, index) => {
+                                log(`   ${index + 1}. ${doc.title || '未命名文档'}`);
+                            });
+                            if (docs.length > 5) {
+                                log(`   ... 以及其他 ${docs.length - 5} 个文档`);
+                            }
+                        }
+                        
+                    } else {
+                        throw new Error('无法创建思维导图显示');
+                    }
+                    
+                } catch (error) {
+                    log(`❌ 导入失败: ${error.message}`);
+                    showMessage(`❌ 导入失败: ${error.message}`, 'error');
+                    console.error('导入错误详情:', error);
+                }
+            };
+            
+            reader.onerror = function() {
+                log('❌ 文件读取失败');
+                showMessage('❌ 文件读取失败', 'error');
+            };
+            
+            reader.readAsText(file);
+            
+            // 重置输入
+            event.target.value = '';
+        }
+        
+        // 页面加载完成后初始化
+        window.addEventListener('load', function() {
+            log('🚀 页面加载完成');
+            
+            // 初始化jsMind
+            initJsMind();
+            
+            // 绑定文件输入事件
+            const fileInput = document.getElementById('file-input');
+            fileInput.addEventListener('change', handleFileImport);
+            
+            log('🎯 JSON导入修复工具准备就绪');
+            showMessage('🎯 工具已准备就绪，请选择JSON文件进行导入', 'info');
+        });
+    </script>
+</body>
+</html> 

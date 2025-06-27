@@ -2,16 +2,25 @@
   "name": "jsmind-demo",
   "version": "1.0.0",
   "description": "jsMind思维导图演示项目",
+  "type": "module",
   "main": "jsmind-demo.html",
   "scripts": {
     "start": "npx http-server . -p 8080 -o",
-    "dev": "npx http-server . -p 8080 -o jsmind-demo.html"
+    "dev": "live-server --port=8080 --open=index.html",
+    "lint": "eslint *.html *.js src/",
+    "lint:fix": "eslint *.html *.js src/ --fix",
+    "lint:check": "eslint jsmind-project.html",
+    "lint:js": "eslint src/**/*.js",
+    "lint:html": "eslint *.html"
   },
   "dependencies": {
     "jsmind": "^0.8.7"
   },
   "devDependencies": {
-    "http-server": "^14.1.1"
+    "eslint": "^9.29.0",
+    "eslint-plugin-html": "^8.1.3",
+    "http-server": "^14.1.1",
+    "live-server": "^1.2.2"
   },
   "keywords": [
     "jsmind",
@@ -27,4 +36,4 @@
     "url": "https://github.com/hizzgdev/jsmind"
   },
   "homepage": "https://hizzgdev.github.io/jsmind/"
-} 
+}

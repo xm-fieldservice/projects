@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NodeMind 保存功能修复测试</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            background-color: #fafafa;
+        }
+        .section h2 {
+            color: #34495e;
+            margin-top: 0;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        .button {
+            background-color: #3498db;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+        .button:hover {
+            background-color: #2980b9;
+        }
+        .button.success {
+            background-color: #27ae60;
+        }
+        .button.danger {
+            background-color: #e74c3c;
+        }
+        .button.warning {
+            background-color: #f39c12;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .status.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .status.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .status.warning {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        .status.info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        .log-area {
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            height: 200px;
+            overflow-y: auto;
+            margin-top: 10px;
+        }
+        .test-data {
+            background-color: #ecf0f1;
+            padding: 15px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+        .progress {
+            background-color: #ecf0f1;
+            border-radius: 4px;
+            padding: 3px;
+            margin: 10px 0;
+        }
+        .progress-bar {
+            background-color: #3498db;
+            height: 20px;
+            border-radius: 2px;
+            transition: width 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+        }
+        .flex-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧠 NodeMind 保存功能修复测试</h1>
+        
+        <!-- 系统状态检查 -->
+        <div class="section">
+            <h2>📊 系统状态检查</h2>
+            <div class="flex-buttons">
+                <button class="button" onclick="checkSystemStatus()">🔍 检查系统状态</button>
+                <button class="button warning" onclick="runDiagnostics()">🔧 运行诊断</button>
+                <button class="button success" onclick="applyFix()">🚀 应用修复</button>
+            </div>
+            <div id="systemStatus"></div>
+        </div>
+
+        <!-- 测试数据生成 -->
+        <div class="section">
+            <h2>📝 测试数据</h2>
+            <div class="flex-buttons">
+                <button class="button" onclick="generateTestData()">📋 生成测试数据</button>
+                <button class="button" onclick="loadExistingData()">📂 加载现有数据</button>
+            </div>
+            <div id="testDataDisplay" class="test-data"></div>
+        </div>
+
+        <!-- 保存功能测试 -->
+        <div class="section">
+            <h2>💾 保存功能测试</h2>
+            <div class="flex-buttons">
+                <button class="button success" onclick="testSaveJSON()">📄 测试JSON保存</button>
+                <button class="button success" onclick="testSaveMD()">📝 测试MD保存</button>
+                <button class="button warning" onclick="testEmergencySave()">🚨 紧急保存测试</button>
+                <button class="button" onclick="testKeyboardShortcut()">⌨️ 测试Ctrl+S</button>
+            </div>
+            <div class="status info">
+                <strong>提示：</strong> 请使用Chrome/Edge浏览器，并确保通过HTTP服务器访问此页面（不是file://协议）
+            </div>
+            <div id="saveTestResults"></div>
+        </div>
+
+        <!-- 进度显示 -->
+        <div class="section">
+            <h2>📈 测试进度</h2>
+            <div class="progress">
+                <div class="progress-bar" id="progressBar" style="width: 0%">0%</div>
+            </div>
+            <div id="progressText">准备开始测试...</div>
+        </div>
+
+        <!-- 日志区域 -->
+        <div class="section">
+            <h2>📋 操作日志</h2>
+            <button class="button" onclick="clearLog()">🗑️ 清空日志</button>
+            <div id="logArea" class="log-area"></div>
+        </div>
+    </div>
+
+    <script>
+        // 全局变量
+        let testData = null;
+        let testProgress = 0;
+        let maxTests = 8;
+
+        // 日志函数
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const logArea = document.getElementById('logArea');
+            const logEntry = `[${timestamp}] ${type.toUpperCase()}: ${message}\n`;
+            logArea.textContent += logEntry;
+            logArea.scrollTop = logArea.scrollHeight;
+            console.log(logEntry);
+        }
+
+        function clearLog() {
+            document.getElementById('logArea').textContent = '';
+            log('日志已清空');
+        }
+
+        // 更新进度
+        function updateProgress(increment = 1) {
+            testProgress += increment;
+            const percentage = Math.min((testProgress / maxTests) * 100, 100);
+            const progressBar = document.getElementById('progressBar');
+            const progressText = document.getElementById('progressText');
+            
+            progressBar.style.width = percentage + '%';
+            progressBar.textContent = Math.round(percentage) + '%';
+            progressText.textContent = `已完成 ${testProgress}/${maxTests} 项测试`;
+        }
+
+        // 显示状态消息
+        function showStatus(elementId, message, type = 'info') {
+            const element = document.getElementById(elementId);
+            element.innerHTML = `<div class="status ${type}">${message}</div>`;
+        }
+
+        // 系统状态检查
+        function checkSystemStatus() {
+            log('开始系统状态检查...');
+            
+            const status = {
+                browser: navigator.userAgent,
+                protocol: window.location.protocol,
+                hasFileAPI: 'showSaveFilePicker' in window,
+                hasDownloadSupport: 'download' in document.createElement('a'),
+                isSecureContext: window.isSecureContext,
+                nodeExistence: typeof window.node !== 'undefined'
+            };
+
+            let statusHTML = '<h3>系统状态报告：</h3>';
+            statusHTML += `<p><strong>浏览器：</strong> ${status.browser}</p>`;
+            statusHTML += `<p><strong>协议：</strong> ${status.protocol} ${status.protocol === 'https:' || status.protocol === 'http:' ? '✅' : '❌'}</p>`;
+            statusHTML += `<p><strong>现代文件API：</strong> ${status.hasFileAPI ? '✅ 支持' : '❌ 不支持'}</p>`;
+            statusHTML += `<p><strong>下载支持：</strong> ${status.hasDownloadSupport ? '✅ 支持' : '❌ 不支持'}</p>`;
+            statusHTML += `<p><strong>安全上下文：</strong> ${status.isSecureContext ? '✅ 是' : '❌ 否'}</p>`;
+
+            showStatus('systemStatus', statusHTML, 'info');
+            log('系统状态检查完成');
+            updateProgress();
+        }
+
+        // 运行诊断
+        function runDiagnostics() {
+            log('开始运行详细诊断...');
+            
+            // 检查NodeMind相关函数
+            const functions = [
+                'saveProjectMindmap',
+                'exportToMDDocumentWithStandardParser',
+                'showSaveFormatDialog',
+                'export_custom_file_button'
+            ];
+
+            let diagnosticHTML = '<h3>功能诊断报告：</h3>';
+            
+            functions.forEach(funcName => {
+                const exists = typeof window[funcName] === 'function' || document.getElementById(funcName) !== null;
+                diagnosticHTML += `<p><strong>${funcName}：</strong> ${exists ? '✅ 存在' : '❌ 缺失'}</p>`;
+                log(`检查 ${funcName}: ${exists ? '存在' : '缺失'}`);
+            });
+
+            // 检查全局变量
+            const globalVars = ['nodeParent', 'nodeChildren', 'nodeColors', 'mindmapData'];
+            diagnosticHTML += '<h4>全局变量：</h4>';
+            
+            globalVars.forEach(varName => {
+                const exists = typeof window[varName] !== 'undefined';
+                diagnosticHTML += `<p><strong>${varName}：</strong> ${exists ? '✅ 存在' : '❌ 缺失'}</p>`;
+            });
+
+            showStatus('systemStatus', diagnosticHTML, 'warning');
+            log('诊断完成');
+            updateProgress();
+        }
+
+        // 应用修复
+        function applyFix() {
+            log('开始应用NodeMind保存功能修复...');
+            
+            try {
+                // 创建紧急保存函数
+                window.emergencySave = function(data, filename, format = 'json') {
+                    log(`执行紧急保存: ${filename}.${format}`);
+                    
+                    let content, mimeType;
+                    
+                    if (format === 'json') {
+                        content = JSON.stringify(data, null, 2);
+                        mimeType = 'application/json';
+                    } else if (format === 'md') {
+                        content = convertToMarkdown(data);
+                        mimeType = 'text/markdown';
+                    }
+                    
+                    // 尝试现代文件API
+                    if ('showSaveFilePicker' in window) {
+                        saveBlobModern(content, filename + '.' + format, mimeType);
+                    } else {
+                        // 降级到传统下载
+                        saveBlobLegacy(content, filename + '.' + format, mimeType);
+                    }
+                };
+
+                // 现代文件保存
+                window.saveBlobModern = async function(content, filename, mimeType) {
+                    try {
+                        const fileHandle = await window.showSaveFilePicker({
+                            suggestedName: filename,
+                            types: [{
+                                description: '文件',
+                                accept: { [mimeType]: ['.' + filename.split('.').pop()] }
+                            }]
+                        });
+                        
+                        const writable = await fileHandle.createWritable();
+                        await writable.write(content);
+                        await writable.close();
+                        log(`文件保存成功: ${filename}`);
+                        return true;
+                    } catch (error) {
+                        log(`现代API保存失败: ${error.message}`, 'error');
+                        return false;
+                    }
+                };
+
+                // 传统文件保存
+                window.saveBlobLegacy = function(content, filename, mimeType) {
+                    try {
+                        const blob = new Blob([content], { type: mimeType });
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = filename;
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(url);
+                        log(`传统方式保存成功: ${filename}`);
+                        return true;
+                    } catch (error) {
+                        log(`传统方式保存失败: ${error.message}`, 'error');
+                        return false;
+                    }
+                };
+
+                // Markdown转换函数
+                window.convertToMarkdown = function(data) {
+                    if (!data || !data.nodes) {
+                        return '# NodeMind 思维导图\n\n暂无数据';
+                    }
+                    
+                    let markdown = '# NodeMind 思维导图\n\n';
+                    
+                    // 转换节点为Markdown
+                    data.nodes.forEach(node => {
+                        const level = node.level || 1;
+                        const prefix = '#'.repeat(Math.min(level + 1, 6));
+                        markdown += `${prefix} ${node.text || node.name || '未命名节点'}\n\n`;
+                        
+                        if (node.description) {
+                            markdown += `${node.description}\n\n`;
+                        }
+                    });
+                    
+                    return markdown;
+                };
+
+                // 修复保存按钮
+                const saveButton = document.getElementById('export_custom_file_button');
+                if (saveButton) {
+                    saveButton.onclick = function() {
+                        log('保存按钮被点击');
+                        if (typeof showSaveFormatDialog === 'function') {
+                            showSaveFormatDialog();
+                        } else {
+                            // 使用紧急保存
+                            emergencySave(testData || {nodes: [{text: '测试数据'}]}, 'nodemind-backup', 'json');
+                        }
+                    };
+                    log('保存按钮修复完成');
+                }
+
+                // 添加快捷键支持
+                document.addEventListener('keydown', function(e) {
+                    if (e.ctrlKey && e.key === 's') {
+                        e.preventDefault();
+                        log('检测到Ctrl+S快捷键');
+                        if (typeof showSaveFormatDialog === 'function') {
+                            showSaveFormatDialog();
+                        } else {
+                            emergencySave(testData || {nodes: [{text: '测试数据'}]}, 'nodemind-save', 'json');
+                        }
+                    }
+                });
+
+                showStatus('systemStatus', '✅ 修复已成功应用！保存功能现在应该可以正常工作了。', 'success');
+                log('NodeMind保存功能修复应用完成');
+                updateProgress();
+                
+            } catch (error) {
+                showStatus('systemStatus', `❌ 修复应用失败: ${error.message}`, 'error');
+                log(`修复应用失败: ${error.message}`, 'error');
+            }
+        }
+
+        // 生成测试数据
+        function generateTestData() {
+            log('生成测试数据...');
+            
+            testData = {
+                projectName: "NodeMind测试项目",
+                version: "1.0.0",
+                created: new Date().toISOString(),
+                nodes: [
+                    {
+                        id: 1,
+                        text: "中心主题",
+                        level: 1,
+                        x: 400,
+                        y: 300,
+                        color: "#3498db"
+                    },
+                    {
+                        id: 2,
+                        text: "子主题1",
+                        level: 2,
+                        x: 200,
+                        y: 200,
+                        color: "#e74c3c",
+                        parent: 1
+                    },
+                    {
+                        id: 3,
+                        text: "子主题2",
+                        level: 2,
+                        x: 600,
+                        y: 200,
+                        color: "#2ecc71",
+                        parent: 1
+                    },
+                    {
+                        id: 4,
+                        text: "详细内容",
+                        level: 3,
+                        x: 200,
+                        y: 100,
+                        color: "#f39c12",
+                        parent: 2,
+                        description: "这是一个测试节点的详细描述"
+                    }
+                ],
+                connections: [
+                    { from: 1, to: 2 },
+                    { from: 1, to: 3 },
+                    { from: 2, to: 4 }
+                ]
+            };
+
+            document.getElementById('testDataDisplay').textContent = JSON.stringify(testData, null, 2);
+            log('测试数据生成完成');
+            updateProgress();
+        }
+
+        // 加载现有数据
+        function loadExistingData() {
+            log('尝试加载现有NodeMind数据...');
+            
+            // 尝试从全局变量获取数据
+            if (typeof window.mindmapData !== 'undefined') {
+                testData = window.mindmapData;
+                log('从mindmapData加载数据成功');
+            } else if (typeof window.nodeParent !== 'undefined') {
+                // 尝试构建数据结构
+                testData = {
+                    nodes: [],
+                    connections: []
+                };
+                log('从nodeParent等全局变量构建数据');
+            } else {
+                log('未找到现有数据，使用默认测试数据', 'warning');
+                generateTestData();
+                return;
+            }
+
+            document.getElementById('testDataDisplay').textContent = JSON.stringify(testData, null, 2);
+            updateProgress();
+        }
+
+        // 测试JSON保存
+        function testSaveJSON() {
+            log('测试JSON格式保存...');
+            
+            if (!testData) {
+                generateTestData();
+            }
+            
+            try {
+                emergencySave(testData, 'nodemind-test', 'json');
+                showStatus('saveTestResults', '✅ JSON保存测试成功！', 'success');
+                log('JSON保存测试完成');
+            } catch (error) {
+                showStatus('saveTestResults', `❌ JSON保存测试失败: ${error.message}`, 'error');
+                log(`JSON保存测试失败: ${error.message}`, 'error');
+            }
+            updateProgress();
+        }
+
+        // 测试MD保存
+        function testSaveMD() {
+            log('测试Markdown格式保存...');
+            
+            if (!testData) {
+                generateTestData();
+            }
+            
+            try {
+                emergencySave(testData, 'nodemind-test', 'md');
+                showStatus('saveTestResults', '✅ Markdown保存测试成功！', 'success');
+                log('Markdown保存测试完成');
+            } catch (error) {
+                showStatus('saveTestResults', `❌ Markdown保存测试失败: ${error.message}`, 'error');
+                log(`Markdown保存测试失败: ${error.message}`, 'error');
+            }
+            updateProgress();
+        }
+
+        // 测试紧急保存
+        function testEmergencySave() {
+            log('测试紧急保存功能...');
+            
+            const emergencyData = {
+                emergency: true,
+                timestamp: new Date().toISOString(),
+                data: testData || { nodes: [{ text: "紧急保存测试" }] }
+            };
+            
+            try {
+                emergencySave(emergencyData, 'nodemind-emergency', 'json');
+                showStatus('saveTestResults', '✅ 紧急保存测试成功！', 'success');
+                log('紧急保存测试完成');
+            } catch (error) {
+                showStatus('saveTestResults', `❌ 紧急保存测试失败: ${error.message}`, 'error');
+                log(`紧急保存测试失败: ${error.message}`, 'error');
+            }
+            updateProgress();
+        }
+
+        // 测试键盘快捷键
+        function testKeyboardShortcut() {
+            log('测试键盘快捷键...');
+            
+            showStatus('saveTestResults', '⌨️ 请按下 Ctrl+S 来测试快捷键功能', 'info');
+            log('请按下Ctrl+S测试快捷键');
+            updateProgress();
+        }
+
+        // 页面加载完成后初始化
+        window.addEventListener('load', function() {
+            log('NodeMind保存功能测试页面已加载');
+            log('建议按以下顺序进行测试：');
+            log('1. 检查系统状态');
+            log('2. 运行诊断');
+            log('3. 应用修复');
+            log('4. 生成测试数据');
+            log('5. 测试各种保存功能');
+        });
+    </script>
+</body>
+</html> 

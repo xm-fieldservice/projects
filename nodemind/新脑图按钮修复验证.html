@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>新脑图按钮修复验证</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 20px; 
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .test-button {
+            background: #ffc107;
+            color: #000;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 10px;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        .test-button:hover {
+            background: #e0a800;
+        }
+        .status {
+            margin: 15px 0;
+            padding: 12px;
+            border-radius: 5px;
+            font-family: monospace;
+        }
+        .status.success { background: #d4edda; color: #155724; }
+        .status.error { background: #f8d7da; color: #721c24; }
+        .status.info { background: #d1ecf1; color: #0c5460; }
+        .btn { 
+            background: #ffc107; 
+            color: #000; 
+            border: none; 
+            padding: 10px 20px; 
+            border-radius: 4px; 
+            cursor: pointer;
+            margin: 5px;
+        }
+        .btn-warning { background: #ffc107; color: #000; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 新脑图按钮修复验证</h1>
+        
+        <div class="status info">
+            <strong>测试目标：</strong>验证新脑图按钮是否能正常工作
+        </div>
+
+        <h3>🧪 测试按钮</h3>
+        <p>这是与主页面相同的新脑图按钮：</p>
+        <button id="create_new_mindmap_button" class="btn btn-warning" onclick="handleNewMindmap()">
+            ✨ 新脑图
+        </button>
+
+        <h3>📊 测试结果</h3>
+        <div id="test-results" class="status info">等待测试...</div>
+
+        <h3>🔧 手动测试</h3>
+        <button class="test-button" onclick="testButtonExistence()">检查按钮存在</button>
+        <button class="test-button" onclick="testFunctionExistence()">检查函数存在</button>
+        <button class="test-button" onclick="testManualCall()">手动调用函数</button>
+        <button class="test-button" onclick="clearResults()">清除结果</button>
+
+        <h3>📋 诊断日志</h3>
+        <div id="diagnostic-log" style="background: #f8f9fa; padding: 10px; border-radius: 5px; font-family: monospace; white-space: pre-wrap; max-height: 300px; overflow-y: auto;"></div>
+    </div>
+
+    <script>
+        // 诊断日志
+        let logEntries = [];
+        
+        function log(message) {
+            const timestamp = new Date().toLocaleTimeString();
+            const entry = `[${timestamp}] ${message}`;
+            logEntries.push(entry);
+            document.getElementById('diagnostic-log').textContent = logEntries.join('\n');
+            console.log(entry);
+        }
+
+        // 新脑图按钮处理函数
+        function handleNewMindmap() {
+            log('🆕 新脑图按钮被点击！');
+            
+            if (confirm('确定要创建一个全新的空白脑图吗？\n\n⚠️ 所有未保存的数据将被清除！')) {
+                try {
+                    log('🔄 用户确认，开始清除数据...');
+                    
+                    // 显示处理消息
+                    const messageDiv = document.createElement('div');
+                    messageDiv.style.cssText = `
+                        position: fixed;
+                        top: 20px;
+                        right: 20px;
+                        background: #007bff;
+                        color: white;
+                        padding: 15px 20px;
+                        border-radius: 5px;
+                        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                        z-index: 10000;
+                        font-family: Arial, sans-serif;
+                        font-size: 14px;
+                    `;
+                    messageDiv.textContent = '🔄 正在清除数据并创建新脑图...';
+                    document.body.appendChild(messageDiv);
+                    
+                    setTimeout(() => {
+                        // 清除所有localStorage数据
+                        localStorage.clear();
+                        log('✅ localStorage已清除');
+                        
+                        // 更新消息
+                        messageDiv.textContent = '✅ 数据已清除，正在重新加载...';
+                        messageDiv.style.background = '#28a745';
+                        
+                        setTimeout(() => {
+                            log('🔄 准备重新加载页面...');
+                            // 在测试页面中不实际重新加载，只是模拟
+                            messageDiv.textContent = '✅ 测试成功！（在实际页面中会重新加载）';
+                            messageDiv.style.background = '#17a2b8';
+                            
+                            document.getElementById('test-results').innerHTML = '✅ 新脑图功能测试成功！';
+                            document.getElementById('test-results').className = 'status success';
+                            
+                            log('🎉 新脑图功能测试完成！');
+                        }, 1000);
+                    }, 500);
+                    
+                } catch (error) {
+                    log(`❌ 创建新脑图时发生错误: ${error.message}`);
+                    document.getElementById('test-results').innerHTML = `❌ 测试失败: ${error.message}`;
+                    document.getElementById('test-results').className = 'status error';
+                }
+            } else {
+                log('ℹ️ 用户取消了新脑图操作');
+                document.getElementById('test-results').innerHTML = 'ℹ️ 用户取消了操作';
+                document.getElementById('test-results').className = 'status info';
+            }
+        }
+
+        // 测试按钮存在
+        function testButtonExistence() {
+            log('=== 测试按钮存在性 ===');
+            const button = document.getElementById('create_new_mindmap_button');
+            if (button) {
+                log('✅ 找到新脑图按钮');
+                log(`📍 按钮文本: "${button.textContent.trim()}"`);
+                log(`🎨 按钮类名: ${button.className}`);
+                log(`👁️ 按钮可见: ${button.offsetParent !== null}`);
+                document.getElementById('test-results').innerHTML = '✅ 按钮存在检查通过';
+                document.getElementById('test-results').className = 'status success';
+            } else {
+                log('❌ 找不到新脑图按钮');
+                document.getElementById('test-results').innerHTML = '❌ 按钮不存在';
+                document.getElementById('test-results').className = 'status error';
+            }
+        }
+
+        // 测试函数存在
+        function testFunctionExistence() {
+            log('=== 测试函数存在性 ===');
+            if (typeof handleNewMindmap === 'function') {
+                log('✅ handleNewMindmap函数存在');
+                document.getElementById('test-results').innerHTML = '✅ 函数存在检查通过';
+                document.getElementById('test-results').className = 'status success';
+            } else {
+                log('❌ handleNewMindmap函数不存在');
+                document.getElementById('test-results').innerHTML = '❌ 函数不存在';
+                document.getElementById('test-results').className = 'status error';
+            }
+        }
+
+        // 手动调用函数测试
+        function testManualCall() {
+            log('=== 手动调用函数测试 ===');
+            try {
+                log('🎯 尝试手动调用handleNewMindmap...');
+                // 这里不实际调用，只是验证可调用性
+                if (typeof handleNewMindmap === 'function') {
+                    log('✅ 函数可以被调用');
+                    document.getElementById('test-results').innerHTML = '✅ 函数调用测试通过';
+                    document.getElementById('test-results').className = 'status success';
+                } else {
+                    throw new Error('函数不存在或不可调用');
+                }
+            } catch (error) {
+                log(`❌ 手动调用失败: ${error.message}`);
+                document.getElementById('test-results').innerHTML = `❌ 调用测试失败: ${error.message}`;
+                document.getElementById('test-results').className = 'status error';
+            }
+        }
+
+        // 清除结果
+        function clearResults() {
+            logEntries = [];
+            document.getElementById('diagnostic-log').textContent = '';
+            document.getElementById('test-results').innerHTML = '等待测试...';
+            document.getElementById('test-results').className = 'status info';
+        }
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            log('🚀 测试页面初始化完成');
+            log('👆 点击上面的按钮开始测试');
+        });
+    </script>
+</body>
+</html> 

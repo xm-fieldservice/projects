@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>跟进标签功能测试</title>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            margin: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        .test-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+        }
+        .mock-node {
+            display: inline-block;
+            padding: 10px 15px;
+            margin: 10px;
+            background: #f8f9fa;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 120px;
+            text-align: center;
+        }
+        .mock-node:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .mock-node.selected {
+            border-color: #007bff;
+            box-shadow: 0 0 10px rgba(0,123,255,0.3);
+        }
+        .tag-section {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 6px;
+        }
+        .tag-group {
+            margin-bottom: 15px;
+        }
+        .tag-group-title {
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #495057;
+        }
+        .tag-item {
+            display: inline-block;
+            padding: 6px 12px;
+            margin: 4px;
+            background: #e9ecef;
+            border: 1px solid #ddd;
+            border-radius: 16px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+        .tag-item:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .tag-item.selected {
+            background: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+        .tag-blue {
+            background: #e6f4ff;
+            color: #1677ff;
+        }
+        .tag-blue:hover {
+            background: #91caff;
+        }
+        .tag-blue.selected {
+            background: #1677ff;
+            color: #ffffff;
+        }
+        .follow-up-style {
+            background-color: #e3f2fd !important;
+            border-color: #2196f3 !important;
+            color: #1565c0 !important;
+        }
+        .status-display {
+            margin-top: 15px;
+            padding: 10px;
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .btn {
+            padding: 8px 16px;
+            margin: 5px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .btn-test {
+            background: #28a745;
+            color: white;
+        }
+        .btn-reset {
+            background: #6c757d;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏷️ NodeMind 跟进标签功能测试</h1>
+        
+        <div class="test-section">
+            <div class="test-title">📋 功能说明</div>
+            <p>当某个节点获得焦点后，点击"跟进"标签，该节点的底色会染成浅蓝色 (#e3f2fd)。</p>
+            <p>取消"跟进"标签时，节点背景色会恢复默认状态。</p>
+        </div>
+
+        <div class="test-section">
+            <div class="test-title">🎯 测试节点</div>
+            <div class="mock-node" id="node1" onclick="selectNode('node1')">
+                📝 测试节点 1
+            </div>
+            <div class="mock-node" id="node2" onclick="selectNode('node2')">
+                💡 测试节点 2
+            </div>
+            <div class="mock-node" id="node3" onclick="selectNode('node3')">
+                🚀 测试节点 3
+            </div>
+            
+            <div class="status-display" id="nodeStatus">
+                请点击上方节点进行选择
+            </div>
+        </div>
+
+        <div class="test-section">
+            <div class="test-title">🏷️ 标签面板</div>
+            <div id="tagPanel" style="display: none;">
+                <div class="tag-section">
+                    <div class="tag-group">
+                        <div class="tag-group-title">笔记</div>
+                        <div class="tag-group-items">
+                            <div class="tag-item tag-blue" data-tag="跟进" data-group="笔记" onclick="toggleTag(this)">跟进</div>
+                            <div class="tag-item tag-blue" data-tag="议题" data-group="笔记" onclick="toggleTag(this)">议题</div>
+                        </div>
+                    </div>
+                    
+                    <div class="tag-group">
+                        <div class="tag-group-title">常规</div>
+                        <div class="tag-group-items">
+                            <div class="tag-item" data-tag="项目" data-group="常规" onclick="toggleTag(this)">项目</div>
+                            <div class="tag-item" data-tag="完成" data-group="常规" onclick="toggleTag(this)">完成</div>
+                            <div class="tag-item" data-tag="进行中" data-group="常规" onclick="toggleTag(this)">进行中</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="status-display" id="tagStatus">
+                    未选择任何标签
+                </div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <div class="test-title">🧪 测试控制</div>
+            <button class="btn btn-test" onclick="runAutoTest()">🚀 自动测试</button>
+            <button class="btn btn-reset" onclick="resetTest()">🔄 重置测试</button>
+            <button class="btn btn-test" onclick="showTestResults()">📊 查看结果</button>
+        </div>
+    </div>
+
+    <script>
+        // 模拟数据
+        let selectedNodeId = null;
+        let nodeData = {
+            'node1': { tags: { categories: [], status: [], technical: [] } },
+            'node2': { tags: { categories: [], status: [], technical: [] } },
+            'node3': { tags: { categories: [], status: [], technical: [] } }
+        };
+
+        // 选择节点
+        function selectNode(nodeId) {
+            // 清除之前的选择
+            document.querySelectorAll('.mock-node').forEach(node => {
+                node.classList.remove('selected');
+            });
+            
+            // 选择新节点
+            const nodeElement = document.getElementById(nodeId);
+            nodeElement.classList.add('selected');
+            selectedNodeId = nodeId;
+            
+            // 显示标签面板
+            document.getElementById('tagPanel').style.display = 'block';
+            
+            // 更新状态显示
+            document.getElementById('nodeStatus').innerHTML = 
+                `✅ 已选择节点: <strong>${nodeId}</strong><br>` +
+                `当前标签: ${getNodeTags(nodeId).join(', ') || '无'}`;
+                
+            // 恢复标签状态
+            restoreTagStates(nodeId);
+            
+            console.log(`🎯 选择节点: ${nodeId}`);
+        }
+
+        // 切换标签
+        function toggleTag(tagElement) {
+            if (!selectedNodeId) {
+                alert('请先选择一个节点');
+                return;
+            }
+            
+            const tagName = tagElement.dataset.tag;
+            const tagGroup = tagElement.dataset.group;
+            
+            // 切换选中状态
+            if (tagElement.classList.contains('selected')) {
+                // 取消选中
+                tagElement.classList.remove('selected');
+                removeTagFromNode(selectedNodeId, tagName, tagGroup);
+                
+                // 如果是跟进标签，移除节点背景色
+                if (tagName === '跟进') {
+                    removeNodeBackgroundColor(selectedNodeId);
+                }
+                
+                console.log(`❌ 移除标签: ${tagName}`);
+            } else {
+                // 选中
+                tagElement.classList.add('selected');
+                addTagToNode(selectedNodeId, tagName, tagGroup);
+                
+                // 如果是跟进标签，设置节点背景色为浅蓝色
+                if (tagName === '跟进') {
+                    setNodeBackgroundColor(selectedNodeId, '#e3f2fd');
+                }
+                
+                console.log(`✅ 添加标签: ${tagName}`);
+            }
+            
+            // 更新状态显示
+            updateStatusDisplay();
+        }
+
+        // 添加标签到节点
+        function addTagToNode(nodeId, tagName, tagGroup) {
+            let targetArray;
+            switch(tagGroup) {
+                case '常规':
+                    targetArray = nodeData[nodeId].tags.status;
+                    break;
+                case 'AI':
+                    targetArray = nodeData[nodeId].tags.technical;
+                    break;
+                case '笔记':
+                    targetArray = nodeData[nodeId].tags.categories;
+                    break;
+                default:
+                    targetArray = nodeData[nodeId].tags.categories;
+            }
+            
+            if (!targetArray.includes(tagName)) {
+                targetArray.push(tagName);
+            }
+        }
+
+        // 从节点移除标签
+        function removeTagFromNode(nodeId, tagName, tagGroup) {
+            let targetArray;
+            switch(tagGroup) {
+                case '常规':
+                    targetArray = nodeData[nodeId].tags.status;
+                    break;
+                case 'AI':
+                    targetArray = nodeData[nodeId].tags.technical;
+                    break;
+                case '笔记':
+                    targetArray = nodeData[nodeId].tags.categories;
+                    break;
+                default:
+                    targetArray = nodeData[nodeId].tags.categories;
+            }
+            
+            const index = targetArray.indexOf(tagName);
+            if (index > -1) {
+                targetArray.splice(index, 1);
+            }
+        }
+
+        // 获取节点标签
+        function getNodeTags(nodeId) {
+            const tags = nodeData[nodeId].tags;
+            return [
+                ...tags.status,
+                ...tags.technical,
+                ...tags.categories
+            ];
+        }
+
+        // 恢复标签状态
+        function restoreTagStates(nodeId) {
+            const allSelectedTags = getNodeTags(nodeId);
+            
+            // 清除所有标签选中状态
+            document.querySelectorAll('.tag-item').forEach(tagItem => {
+                tagItem.classList.remove('selected');
+            });
+            
+            // 恢复选中状态
+            document.querySelectorAll('.tag-item').forEach(tagItem => {
+                const tagName = tagItem.dataset.tag;
+                if (allSelectedTags.includes(tagName)) {
+                    tagItem.classList.add('selected');
+                }
+            });
+            
+            // 恢复跟进标签的背景色
+            if (allSelectedTags.includes('跟进')) {
+                setNodeBackgroundColor(nodeId, '#e3f2fd');
+            }
+        }
+
+        // 设置节点背景色
+        function setNodeBackgroundColor(nodeId, color) {
+            const nodeElement = document.getElementById(nodeId);
+            if (nodeElement) {
+                nodeElement.classList.add('follow-up-style');
+                console.log(`🎨 节点 ${nodeId} 背景色已设置为: ${color}`);
+                return true;
+            }
+            return false;
+        }
+
+        // 移除节点背景色
+        function removeNodeBackgroundColor(nodeId) {
+            const nodeElement = document.getElementById(nodeId);
+            if (nodeElement) {
+                nodeElement.classList.remove('follow-up-style');
+                console.log(`🧹 节点 ${nodeId} 背景色已移除`);
+                return true;
+            }
+            return false;
+        }
+
+        // 更新状态显示
+        function updateStatusDisplay() {
+            if (!selectedNodeId) return;
+            
+            const tags = getNodeTags(selectedNodeId);
+            document.getElementById('nodeStatus').innerHTML = 
+                `✅ 已选择节点: <strong>${selectedNodeId}</strong><br>` +
+                `当前标签: ${tags.join(', ') || '无'}`;
+                
+            document.getElementById('tagStatus').innerHTML = 
+                `当前节点标签: ${tags.join(', ') || '无'}`;
+        }
+
+        // 自动测试
+        function runAutoTest() {
+            console.log('🧪 开始自动测试...');
+            
+            // 测试步骤1: 选择节点1
+            setTimeout(() => {
+                selectNode('node1');
+                console.log('✅ 步骤1: 选择节点1');
+            }, 500);
+            
+            // 测试步骤2: 点击跟进标签
+            setTimeout(() => {
+                const followUpTag = document.querySelector('[data-tag="跟进"]');
+                toggleTag(followUpTag);
+                console.log('✅ 步骤2: 点击跟进标签');
+            }, 1000);
+            
+            // 测试步骤3: 选择节点2
+            setTimeout(() => {
+                selectNode('node2');
+                console.log('✅ 步骤3: 选择节点2');
+            }, 1500);
+            
+            // 测试步骤4: 点击跟进标签
+            setTimeout(() => {
+                const followUpTag = document.querySelector('[data-tag="跟进"]');
+                toggleTag(followUpTag);
+                console.log('✅ 步骤4: 为节点2添加跟进标签');
+            }, 2000);
+            
+            // 测试步骤5: 回到节点1，取消跟进标签
+            setTimeout(() => {
+                selectNode('node1');
+                console.log('✅ 步骤5: 回到节点1');
+            }, 2500);
+            
+            setTimeout(() => {
+                const followUpTag = document.querySelector('[data-tag="跟进"]');
+                toggleTag(followUpTag);
+                console.log('✅ 步骤6: 取消节点1的跟进标签');
+            }, 3000);
+            
+            setTimeout(() => {
+                alert('🎉 自动测试完成！请查看控制台日志和节点颜色变化。');
+            }, 3500);
+        }
+
+        // 重置测试
+        function resetTest() {
+            // 重置数据
+            nodeData = {
+                'node1': { tags: { categories: [], status: [], technical: [] } },
+                'node2': { tags: { categories: [], status: [], technical: [] } },
+                'node3': { tags: { categories: [], status: [], technical: [] } }
+            };
+            
+            // 清除选择
+            selectedNodeId = null;
+            document.querySelectorAll('.mock-node').forEach(node => {
+                node.classList.remove('selected', 'follow-up-style');
+            });
+            
+            // 清除标签选择
+            document.querySelectorAll('.tag-item').forEach(tag => {
+                tag.classList.remove('selected');
+            });
+            
+            // 隐藏标签面板
+            document.getElementById('tagPanel').style.display = 'none';
+            
+            // 重置状态显示
+            document.getElementById('nodeStatus').innerHTML = '请点击上方节点进行选择';
+            document.getElementById('tagStatus').innerHTML = '未选择任何标签';
+            
+            console.log('🔄 测试已重置');
+        }
+
+        // 显示测试结果
+        function showTestResults() {
+            const results = [];
+            
+            ['node1', 'node2', 'node3'].forEach(nodeId => {
+                const tags = getNodeTags(nodeId);
+                const hasFollowUp = tags.includes('跟进');
+                const element = document.getElementById(nodeId);
+                const hasStyle = element.classList.contains('follow-up-style');
+                
+                results.push({
+                    nodeId,
+                    tags: tags.join(', ') || '无',
+                    hasFollowUp,
+                    hasStyle,
+                    consistent: hasFollowUp === hasStyle
+                });
+            });
+            
+            let report = '📊 测试结果报告:\n\n';
+            results.forEach(result => {
+                report += `节点 ${result.nodeId}:\n`;
+                report += `  - 标签: ${result.tags}\n`;
+                report += `  - 有跟进标签: ${result.hasFollowUp ? '是' : '否'}\n`;
+                report += `  - 有背景样式: ${result.hasStyle ? '是' : '否'}\n`;
+                report += `  - 状态一致: ${result.consistent ? '✅' : '❌'}\n\n`;
+            });
+            
+            const allConsistent = results.every(r => r.consistent);
+            report += `总体状态: ${allConsistent ? '✅ 所有节点状态一致' : '❌ 存在不一致的节点'}`;
+            
+            alert(report);
+            console.log('📊 测试结果:', results);
+        }
+
+        // 页面加载完成后的初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 跟进标签功能测试页面已加载');
+        });
+    </script>
+</body>
+</html> 

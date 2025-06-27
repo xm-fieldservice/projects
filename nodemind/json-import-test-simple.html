@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSON导入简单测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f0f2f5;
+        }
+        
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .btn {
+            background: #007bff;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 0;
+        }
+        
+        .btn:hover {
+            background: #0056b3;
+        }
+        
+        .result {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+        
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧠 JSON导入简单测试</h1>
+        <p>测试您的JSON文件是否可以正常导入</p>
+        
+        <input type="file" id="file-input" accept=".json" style="display: none;">
+        <button class="btn" onclick="selectFile()">📁 选择JSON文件测试</button>
+        
+        <div id="result-area"></div>
+    </div>
+
+    <script>
+        function selectFile() {
+            document.getElementById('file-input').click();
+        }
+        
+        function showResult(message, type = 'info') {
+            const resultArea = document.getElementById('result-area');
+            const div = document.createElement('div');
+            div.className = `result ${type}`;
+            div.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            resultArea.appendChild(div);
+            console.log(message);
+        }
+        
+        function clearResults() {
+            document.getElementById('result-area').innerHTML = '';
+        }
+        
+        // 处理文件选择
+        document.getElementById('file-input').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            clearResults();
+            showResult(`📁 选择文件: ${file.name}`, 'info');
+            showResult(`📏 文件大小: ${Math.round(file.size / 1024)} KB`, 'info');
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const content = e.target.result;
+                    showResult(`📄 文件读取成功，内容长度: ${content.length} 字符`, 'info');
+                    
+                    // 解析JSON
+                    const jsonData = JSON.parse(content);
+                    showResult('✅ JSON解析成功', 'success');
+                    
+                    // 分析JSON结构
+                    showResult('🔍 JSON结构分析:', 'info');
+                    showResult(`   - 是否有mindmap? ${!!jsonData.mindmap}`, 'info');
+                    showResult(`   - 是否有documents? ${!!jsonData.documents}`, 'info');
+                    showResult(`   - 是否有exportInfo? ${!!jsonData.exportInfo}`, 'info');
+                    showResult(`   - 是否有meta? ${!!jsonData.meta}`, 'info');
+                    showResult(`   - 是否有format? ${!!jsonData.format}`, 'info');
+                    showResult(`   - 是否有data? ${!!jsonData.data}`, 'info');
+                    
+                    // 检查具体格式
+                    if (jsonData.mindmap && jsonData.mindmap.data) {
+                        showResult('🎯 检测到：NodeMind项目格式', 'success');
+                        showResult(`   - 思维导图名称: ${jsonData.mindmap.meta?.name || '未命名'}`, 'info');
+                        showResult(`   - 根节点主题: ${jsonData.mindmap.data.topic}`, 'info');
+                        
+                        if (jsonData.documents) {
+                            const docCount = Object.keys(jsonData.documents).length;
+                            showResult(`   - 文档数量: ${docCount}`, 'info');
+                        }
+                        
+                        // 计算节点数量
+                        function countNodes(node) {
+                            let count = 1;
+                            if (node.children && Array.isArray(node.children)) {
+                                for (const child of node.children) {
+                                    count += countNodes(child);
+                                }
+                            }
+                            return count;
+                        }
+                        
+                        const nodeCount = countNodes(jsonData.mindmap.data);
+                        showResult(`   - 节点总数: ${nodeCount}`, 'info');
+                        
+                        showResult('🎉 这是一个有效的NodeMind项目文件！', 'success');
+                        showResult('💡 建议：清除浏览器缓存后重新尝试导入', 'info');
+                        
+                    } else if (jsonData.meta && jsonData.format && jsonData.data) {
+                        showResult('🎯 检测到：标准思维导图格式', 'success');
+                        showResult('🎉 文件格式正确！', 'success');
+                        
+                    } else if (jsonData.data && jsonData.data.id) {
+                        showResult('🎯 检测到：直接节点数据格式', 'success');
+                        showResult('🎉 文件格式正确！', 'success');
+                        
+                    } else if (jsonData.id && jsonData.topic) {
+                        showResult('🎯 检测到：根节点格式', 'success');
+                        showResult('🎉 文件格式正确！', 'success');
+                        
+                    } else {
+                        showResult('⚠️ 无法识别的JSON格式', 'error');
+                        showResult('请确保选择的是NodeMind导出的文件', 'error');
+                    }
+                    
+                } catch (error) {
+                    showResult(`❌ JSON解析失败: ${error.message}`, 'error');
+                    
+                    if (error instanceof SyntaxError) {
+                        showResult('这不是一个有效的JSON文件', 'error');
+                    }
+                }
+            };
+            
+            reader.onerror = function() {
+                showResult('❌ 文件读取失败', 'error');
+            };
+            
+            reader.readAsText(file);
+            
+            // 重置输入
+            event.target.value = '';
+        });
+        
+        window.onload = function() {
+            showResult('🚀 测试工具已准备就绪', 'info');
+            showResult('请选择您的JSON文件进行测试', 'info');
+        };
+    </script>
+</body>
+</html> 

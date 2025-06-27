@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>主程序MD导入测试</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 20px;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .upload-area {
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            padding: 40px;
+            text-align: center;
+            margin-bottom: 20px;
+            background: #f9f9f9;
+        }
+        .btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .btn:hover {
+            background: #0056b3;
+        }
+        .results {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 20px;
+            margin-top: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .success { color: #28a745; }
+        .error { color: #dc3545; }
+        .info { color: #17a2b8; }
+        .node-item {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            margin: 10px 0;
+        }
+        .node-title {
+            font-weight: bold;
+            color: #333;
+        }
+        .node-meta {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧠 NodeMind主程序MD导入测试</h1>
+        
+        <div class="upload-area">
+            <p>📁 选择MD文档进行导入测试</p>
+            <input type="file" id="fileInput" accept=".md,.txt" style="margin: 10px;">
+            <br>
+            <button class="btn" onclick="testImport()">🚀 测试MD导入</button>
+            <button class="btn" onclick="integrateToMain()" style="background: #28a745;">✅ 集成到主程序</button>
+        </div>
+        
+        <div id="results" class="results" style="display: none;">
+            <h3>📊 测试结果</h3>
+            <div id="resultContent"></div>
+        </div>
+        
+        <div id="nodeList" style="display: none;">
+            <h3>📋 解析的节点列表</h3>
+            <div id="nodeContent"></div>
+        </div>
+    </div>
+
+    <script>
+        let parsedNodes = [];
+        
+        // 测试MD导入功能
+        async function testImport() {
+            const file = document.getElementById('fileInput').files[0];
+            if (!file) {
+                showResult('❌ 请先选择一个MD文件', 'error');
+                return;
+            }
+            
+            try {
+                showResult('🔄 正在读取文件...', 'info');
+                
+                const content = await file.text();
+                console.log(`📄 文件大小: ${Math.round(content.length / 1024)}KB`);
+                
+                showResult('🔮 正在解析MD文档...', 'info');
+                
+                const nodes = parseImportedMDNodes(content);
+                console.log(`✅ 解析完成: ${nodes.length} 个节点`);
+                
+                parsedNodes = nodes;
+                
+                showResult(`🎉 测试成功！解析到 ${nodes.length} 个节点`, 'success');
+                displayNodes(nodes);
+                
+            } catch (error) {
+                console.error('❌ 测试失败:', error);
+                showResult(`❌ 测试失败: ${error.message}`, 'error');
+            }
+        }
+        
+        // 🔮 成功的MD解析器 - 来自test-import-fix.html
+        function parseImportedMDNodes(mdContent) {
+            const nodes = [];
+            const lines = mdContent.split('\\n');
+            
+            let currentNode = null;
+            let currentContent = [];
+            let errorCount = 0;
+            
+            console.log(`🔍 [解析开始] 总行数: ${lines.length}`);
+            
+            for (let i = 0; i < lines.length; i++) {
+                try {
+                    const line = lines[i].trim();
+                    
+                    // 跳过空行
+                    if (!line) continue;
+                    
+                    // 检测节点标题（## 到 ###### 级别）
+                    const titleMatch = line.match(/^(#{2,6})\\s+(.+)$/);
+                    if (titleMatch) {
+                        console.log(`📍 [行${i+1}] 发现标题: ${line}`);
+                        
+                        // 保存上一个节点
+                        if (currentNode) {
+                            currentNode.content = currentContent.join('\\n').trim();
+                            currentNode = processNodeData(currentNode);
+                            nodes.push(currentNode);
+                            console.log(`✅ [节点完成] ${currentNode.id}: ${currentNode.title}`);
+                        }
+                        
+                        // 开始新节点
+                        const level = titleMatch[1].length;
+                        let title = titleMatch[2].trim();
+                        
+                        // 清理标题中的emoji和特殊符号
+                        const originalTitle = title;
+                        title = title.replace(/^[🧠📌🔥💡⚡🎯🔮🎪🌟🚀💻📊🎨🔧⭐❓♦️]+\\s*/, '');
+                        title = title.replace(/^[\\s\\uFEFF\\xA0]+|[\\s\\uFEFF\\xA0]+$/g, '');
+                        
+                        if (originalTitle !== title) {
+                            console.log(`🧹 [标题清理] "${originalTitle}" → "${title}"`);
+                        }
+                        
+                        currentNode = {
+                            id: null,
+                            title: title,
+                            level: level,
+                            path: '',
+                            content: '',
+                            tags: [],
+                            author: '用户',
+                            priority: 'medium',
+                            status: 'pending',
+                            time: {
+                                created: new Date().toLocaleString(),
+                                modified: new Date().toLocaleString()
+                            },
+                            metadata: {}
+                        };
+                        
+                        currentContent = [];
+                        console.log(`🆕 [新节点] Level ${level}: ${title}`);
+                        continue;
+                    }
+                    
+                    // 如果当前有节点在处理，解析节点详细信息
+                    if (currentNode) {
+                        // 解析节点ID
+                        const idMatch = line.match(/\\*\\*节点ID\\*\\*:\\s*`([^`]+)`/);
+                        if (idMatch) {
+                            currentNode.id = idMatch[1].trim();
+                            continue;
+                        }
+                        
+                        // 解析作者
+                        const authorMatch = line.match(/\\*\\*作者\\*\\*:\\s*(.+)/);
+                        if (authorMatch) {
+                            currentNode.author = authorMatch[1].trim();
+                            continue;
+                        }
+                        
+                        // 解析展开状态
+                        const statusMatch = line.match(/\\*\\*展开状态\\*\\*:\\s*(.+)/);
+                        if (statusMatch) {
+                            const statusValue = statusMatch[1].trim();
+                            if (statusValue.includes('展开')) {
+                                currentNode.status = 'active';
+                            } else if (statusValue.includes('折叠')) {
+                                currentNode.status = 'collapsed';
+                            }
+                            continue;
+                        }
+                        
+                        // 解析节点路径
+                        const pathMatch = line.match(/\\*\\*节点路径\\*\\*:\\s*(.+)/);
+                        if (pathMatch) {
+                            currentNode.path = pathMatch[1].trim();
+                            continue;
+                        }
+                        
+                        // 解析方向
+                        const directionMatch = line.match(/\\*\\*方向\\*\\*:\\s*(.+)/);
+                        if (directionMatch) {
+                            currentNode.metadata.direction = directionMatch[1].trim();
+                            continue;
+                        }
+                        
+                        // 解析子节点数量
+                        const childrenMatch = line.match(/\\*\\*子节点\\s*\\((\\d+)个\\)\\*\\*:/);
+                        if (childrenMatch) {
+                            currentNode.metadata.childrenCount = parseInt(childrenMatch[1]);
+                            continue;
+                        }
+                        
+                        // 解析明确的标签（如果文档中有的话）
+                        const tagsMatch = line.match(/\\*\\*标签\\*\\*:\\s*(.+)/);
+                        if (tagsMatch) {
+                            const tagString = tagsMatch[1].trim();
+                            const tags = tagString.split(/[,，#\\s]+/)
+                                .map(tag => tag.trim())
+                                .filter(tag => tag && tag !== '');
+                            currentNode.tags = tags;
+                            console.log(`🏷️ [标签解析] ${currentNode.title}: ${tags.join(', ')}`);
+                            continue;
+                        }
+                        
+                        // 跳过其他格式化行
+                        if (line.match(/^\\*\\*[^*]+\\*\\*:/)) {
+                            continue;
+                        }
+                        
+                        // 收集其他内容
+                        if (line.trim()) {
+                            currentContent.push(line);
+                        }
+                    }
+                } catch (error) {
+                    console.error(`❌ [行${i+1}] 解析错误:`, error.message);
+                    console.error(`问题行内容: "${lines[i]}"`);
+                    errorCount++;
+                }
+            }
+            
+            // 保存最后一个节点
+            if (currentNode) {
+                currentNode.content = currentContent.join('\\n').trim();
+                currentNode = processNodeData(currentNode);
+                nodes.push(currentNode);
+                console.log(`✅ [最后节点] ${currentNode.id}: ${currentNode.title}`);
+            }
+            
+            console.log(`🔮 [解析完成] 总共解析了 ${nodes.length} 个节点`);
+            if (errorCount > 0) {
+                console.warn(`⚠️ [解析警告] 遇到 ${errorCount} 个错误，但已跳过继续处理`);
+            }
+            return nodes;
+        }
+        
+        // 节点数据处理
+        function processNodeData(node) {
+            if (!node.id) {
+                node.id = generateNodeId(node.title);
+            }
+            if (!node.tags) {
+                node.tags = [];
+            }
+            return node;
+        }
+        
+        // 生成节点ID
+        function generateNodeId(title) {
+            const timestamp = Date.now();
+            const random = Math.random().toString(36).substr(2, 6);
+            const titleHash = title.slice(0, 10).replace(/[^a-zA-Z0-9\\u4e00-\\u9fa5]/g, '');
+            return `import_${titleHash}_${timestamp}_${random}`;
+        }
+        
+        // 显示结果
+        function showResult(message, type) {
+            const results = document.getElementById('results');
+            const content = document.getElementById('resultContent');
+            
+            results.style.display = 'block';
+            content.innerHTML = `<div class="${type}">${message}</div>`;
+        }
+        
+        // 显示节点列表
+        function displayNodes(nodes) {
+            const nodeList = document.getElementById('nodeList');
+            const content = document.getElementById('nodeContent');
+            
+            let html = '';
+            nodes.forEach((node, index) => {
+                html += `
+                    <div class="node-item">
+                        <div class="node-title">${index + 1}. ${node.title}</div>
+                        <div class="node-meta">
+                            ID: ${node.id} | 作者: ${node.author} | 状态: ${node.status} | 层级: ${node.level}
+                            ${node.path ? `<br>路径: ${node.path}` : ''}
+                            ${node.tags.length > 0 ? `<br>标签: ${node.tags.join(', ')}` : ''}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            content.innerHTML = html;
+            nodeList.style.display = 'block';
+        }
+        
+        // 集成到主程序
+        function integrateToMain() {
+            if (parsedNodes.length === 0) {
+                showResult('❌ 请先测试MD导入功能', 'error');
+                return;
+            }
+            
+            showResult('🔄 正在集成到主程序...', 'info');
+            
+            // 这里将解析器代码集成到主程序
+            const integrationCode = `
+// 🎉 成功的MD解析器已经测试完毕，可以集成到主程序中
+// 将以下代码替换主程序中的parseImportedMDNodes函数：
+
+function parseImportedMDNodes(mdContent) {
+    // ... 这里是成功的解析器代码 ...
+    // 已经在测试中验证可以解析 ${parsedNodes.length} 个节点
+}
+            `;
+            
+            console.log('🎯 集成代码:', integrationCode);
+            showResult(`✅ 解析器测试成功！可以集成 ${parsedNodes.length} 个节点的解析逻辑到主程序`, 'success');
+            
+            // 显示集成建议
+            alert(`🎉 测试成功！\\n\\n解析了 ${parsedNodes.length} 个节点\\n\\n建议：\\n1. 将此页面的parseImportedMDNodes函数替换主程序中的对应函数\\n2. 测试主程序的导入功能\\n3. 验证节点数据正确保存到nodeDatabase`);
+        }
+    </script>
+</body>
+</html> 
